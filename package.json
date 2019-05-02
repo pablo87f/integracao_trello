@@ -1,0 +1,17 @@
+{
+  "name": "integracao_trello",
+  "version": "1.0.0",
+  "description": "Integração com o Trello para obter relatórios",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pablo Fernandes",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "trello": "^0.9.1"
+  }
+}
