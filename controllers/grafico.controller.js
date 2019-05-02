@@ -232,7 +232,15 @@ GraficoController.calculaHorasEsperadasDiaSemana = async (dia, equipeProgramador
         if (membro && membro.cargo && membro.cargo.cargaHorariaSemanal && membro.cargo.fatorEsperadoCargaHorariaSemanal) {
             let cargaDia = membro.cargo.cargaHorariaSemanal[diaSemana]
             let fatorEsperadoDia = membro.cargo.fatorEsperadoCargaHorariaSemanal[diaSemana]
-            qtdeHorasEsperadasDia += cargaDia * fatorEsperadoDia
+
+            let tempoEstimadoAtividadesExtrasDiarias = 0
+            if (membro.tempoAtividadesExtrasDiarias) {
+                for (let valorHoras of Object.values(membro.tempoAtividadesExtrasDiarias)) {
+                    tempoEstimadoAtividadesExtrasDiarias += valorHoras
+                }
+            }
+
+            qtdeHorasEsperadasDia += (cargaDia * fatorEsperadoDia) - (tempoEstimadoAtividadesExtrasDiarias * fatorEsperadoDia)
         }
     }
 
