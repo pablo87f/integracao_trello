@@ -24,7 +24,7 @@ _padrao.cargaHorariaSemanal = {
 }
 
 _padrao.fatorEsperadoCargaHorariaSemanal = {
-    '1': 0.001,
+    '1': 0,
     '2': 0.8,
     '3': 0.8,
     '4': 0.8,

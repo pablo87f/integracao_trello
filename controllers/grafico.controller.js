@@ -3,19 +3,10 @@
 var _ = require('lodash')
 var Trello = require("trello")
 var moment = require('moment')
+var _feriados = require('../dados/_feriados')
 var trello = new Trello("87dc9de469e75e93dc71170012c930eb", "bebf362640978bcd8cab62b0121bcbf038dfab966cef8a1cb6cb2cb07c686407");
 
 let GraficoController = {}
-
-GraficoController.imprimirMembrosDoQuadro = async (idQuadro) => {
-
-    let membros = await trello.getBoardMembers(idQuadro)
-
-    console.warn('Qdt membros no quadro: ', membros.length)
-    for (let membro of membros) {
-        console.warn('membro:', membro)
-    }
-}
 
 GraficoController.imprimirColecao = (colecao) => {
     console.warn(colecao ? 'Qdt itens na coleção: ' + colecao.length : 'Colecao:' + colecao)
@@ -150,8 +141,8 @@ GraficoController.converterTempoNumero = (tempo) => {
 
 GraficoController.recuperaDiasPassadosStrint = async (diaInicial) => {
     const diaInicioSprint = moment(diaInicial, 'YYYY-MM-DD')
-    const hoje = moment()
-    const qtdeDias = hoje.diff(diaInicioSprint, 'days')
+    const ontem = moment().add(-1, 'days')
+    const qtdeDias = ontem.diff(diaInicioSprint, 'days')
 
     let diasSprint = []
 
@@ -247,9 +238,27 @@ GraficoController.calculaHorasEsperadasDiaSemana = async (dia, equipeProgramador
     return qtdeHorasEsperadasDia
 }
 
+GraficoController.obtemFatorDiaSemana = (dia) => {
+
+    let eh_feriado = _feriados[dia.format('DD/MM/YYYY')]
+    if (eh_feriado) return 0
+
+    let diaSemana = dia.day() + 1
+
+    let qtdeRelativaDia = 1 // se for de segunda a sexta
+
+    if (diaSemana == 1) { // se for domingo
+        qtdeRelativaDia = 0
+    }
+    else if (diaSemana == 7) { // se for sábado
+        qtdeRelativaDia = 0.375
+    }
+    return qtdeRelativaDia
+}
+
 GraficoController.gerarBurningDown = async (projeto) => {
 
-    let dataInicioSprint, dataFimSprint, dataFimRitmo, dataFimTendencia
+    let dataInicioSprint, dataFimSprint, dataFimRitmo = null, dataFimTendencia = null
     // recuperar todos os cards do board 
     let cards = await trello.getCardsOnBoard(projeto.idBoard)
 
@@ -269,104 +278,92 @@ GraficoController.gerarBurningDown = async (projeto) => {
 
     const movimentacoesExecuxao = await GraficoController.recuperarMovimentacoesExecucao(cardsExecucao, listasExecucao)
 
-    GraficoController.imprimirColecao(movimentacoesExecuxao)
     // processa os dias da sprint
     let diasSprint = await GraficoController.recuperaDiasPassadosStrint(projeto.dataInicioSprint)
 
     // calcula o tempo executado do dia pela posição dos cards nas listas
 
+    let restante = []
     let executado = []
     let meta = []
 
     let totalJaExecutadoSprint = 0
-    let qtdeRelativaDiasPassadosSprint = 0
+    let qtdeRelativaDiasTrabalhadosSprint = 0
 
     for (var dia of diasSprint) {
 
         let totalExecutadoDia = await GraficoController.calcularTempoExecutadoDia(dia, movimentacoesExecuxao, projeto.configuracaoCalculoTempoExecucao, totalJaExecutadoSprint)
 
         totalJaExecutadoSprint = totalExecutadoDia
-        executado.push({ t: dia, y: tempoEsforcoTotalEstimado - totalExecutadoDia })
+        restante.push({ t: dia, y: tempoEsforcoTotalEstimado - totalExecutadoDia })
+        executado.push({ t: dia, y: totalExecutadoDia })
 
-
-        let qtdeRelativaDia = 0
-        let diaSemana = dia.day() + 1
-        if (diaSemana == 1) {
-            qtdeRelativaDia = 0
-        }
-        else if (diaSemana == 7) {
-            qtdeRelativaDia = 0.375
-        }
-        else {
-            qtdeRelativaDia = 1
-        }
-        qtdeRelativaDiasPassadosSprint += qtdeRelativaDia
+        let fatorDiaSemana = GraficoController.obtemFatorDiaSemana(dia)
+        qtdeRelativaDiasTrabalhadosSprint += fatorDiaSemana
     }
 
-    let mediaExecutadoDiaSprint = totalJaExecutadoSprint / qtdeRelativaDiasPassadosSprint
+    let mediaExecutadoDiaSprint = totalJaExecutadoSprint / qtdeRelativaDiasTrabalhadosSprint
 
-    console.warn('totalJaExecutadoSprint', totalJaExecutadoSprint, 'qtdeRelativaDiasPassadosSprint', qtdeRelativaDiasPassadosSprint, 'mediaExecutadoDiaSprint', mediaExecutadoDiaSprint)
+    console.warn('totalJaExecutadoSprint', totalJaExecutadoSprint, 'qtdeRelativaDiasPassadosSprint', qtdeRelativaDiasTrabalhadosSprint, 'mediaExecutadoDiaSprint', mediaExecutadoDiaSprint)
 
     let tempoRestanteRitmo = tempoEsforcoTotalEstimado
     let diaInicioSprint = moment(projeto.dataInicioSprint, 'YYYY-MM-DD')
     dataInicioSprint = diaInicioSprint
     dataFimSprint = dataInicioSprint.clone().add(projeto.diasDuracaoSprint, 'days')
+
     let diaRitmo = diaInicioSprint.clone()
 
     let ritmo = []
     let tendencia = []
 
-    let hoje = moment(moment().format('YYYY-MM-DD'), 'YYYY-MM-DD')
+    let ontem = moment(moment().add(-1, 'days').format('YYYY-MM-DD'), 'YYYY-MM-DD')
 
     let totalRestanteTendencia = tempoEsforcoTotalEstimado - totalJaExecutadoSprint
 
-    while ((totalRestanteTendencia > -20 || tempoRestanteRitmo > -20) && ritmo.length <= (projeto.diasDuracaoSprint * 2)) {
-
-        ritmo.push({ t: diaRitmo.clone(), y: tempoRestanteRitmo })
+    while ((totalRestanteTendencia > -10 || tempoRestanteRitmo > -10)) {
 
         meta.push({ t: diaRitmo, y: tempoEsforcoTotalEstimado })
 
+        let fatorDiaSemana = GraficoController.obtemFatorDiaSemana(diaRitmo)
+
         let qtdeHorasEsperadasDia = await GraficoController.calculaHorasEsperadasDiaSemana(diaRitmo, projeto.equipeProgramadores)
 
-        tempoRestanteRitmo -= qtdeHorasEsperadasDia
+        tempoRestanteRitmo -= qtdeHorasEsperadasDia * fatorDiaSemana
 
-        if (diaRitmo >= hoje) {
-            tendencia.push({ t: diaRitmo, y: totalRestanteTendencia })
-            if (diaRitmo.day() + 1 == 1) { fatorDiaSemana = 0.001 }
-            else if (diaRitmo.day() + 1 == 7) { fatorDiaSemana = 0.357 }
-            else { fatorDiaSemana = 1 }
+        ritmo.push({ t: diaRitmo.clone(), y: tempoRestanteRitmo })
+
+        if (diaRitmo.format('DD/MM/YYYY') == ontem.format('DD/MM/YYYY')) {
+            tendencia.push({ t: diaRitmo.clone(), y: totalRestanteTendencia })
+        }
+        else if (diaRitmo > ontem) {
             totalRestanteTendencia -= mediaExecutadoDiaSprint * fatorDiaSemana
-            if (diaRitmo > hoje) {
-                executado.push({ t: diaRitmo, y: null })
-            }
+            tendencia.push({ t: diaRitmo.clone(), y: totalRestanteTendencia })
+            restante.push({ t: diaRitmo, y: null })
+            executado.push({ t: diaRitmo, y: null })
+
         } else {
-            tendencia.push({ t: diaRitmo, y: null })
+            tendencia.push({ t: diaRitmo.clone(), y: null })
+        }
+
+        console.warn('totalRestanteTendencia', totalRestanteTendencia, 'dia', diaRitmo.format('DD/MM/YYYY'), 'fator', fatorDiaSemana)
+
+        if (totalRestanteTendencia < 0 && !dataFimTendencia) {
+            dataFimTendencia = diaRitmo.clone()
+        }
+
+        if (tempoRestanteRitmo < 0 && !dataFimRitmo) {
+            dataFimRitmo = diaRitmo.clone()
         }
 
         diaRitmo = diaRitmo.clone().add(1, 'days')
 
-        if (!dataFimTendencia && totalRestanteTendencia < 0) {
-            dataFimTendencia = diaRitmo.clone()
-        }
-
-        if (!dataFimRitmo && tempoRestanteRitmo < 0) {
-            dataFimRitmo = diaRitmo.clone()
-        }
     }
-
-    executado.push({ t: diaRitmo, y: null })
-
-    ritmo.push({ t: diaRitmo, y: tempoRestanteRitmo })
-
-    tendencia.push({ t: diaRitmo, y: totalRestanteTendencia })
-
-    meta.push({ t: diaRitmo, y: tempoEsforcoTotalEstimado })
 
     let diaFimEsperado = diaRitmo.clone()
 
-    let linhaHoje = [{ t: hoje, y: tempoEsforcoTotalEstimado }, { t: hoje, y: tempoRestanteRitmo }]
+    let linhaOntem = [{ t: ontem, y: tempoEsforcoTotalEstimado }, { t: ontem, y: tempoRestanteRitmo }]
 
-    return { executado, meta, tendencia, ritmo, linhaHoje, dataInicioSprint, dataFimSprint, dataFimRitmo, dataFimTendencia }
+    return { executado, restante, meta, tendencia, ritmo, linhaOntem, dataInicioSprint, dataFimSprint, dataFimRitmo, dataFimTendencia, mediaExecutadoDiaSprint }
 }
 
 module.exports = GraficoController

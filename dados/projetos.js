@@ -18,12 +18,12 @@ const _equipeProgramadoresPadrao = [
 module.exports = [
     {
         id: 1,
-        nome: 'Projeto Teste',
-        dataInicioSprint: '2019-04-25',
+        nome: 'Gráfico de acompanhamento',
+        dataInicioSprint: '2019-05-02',
         idBoard: idBoardProjetoTeste,
         nomesListas: _padrao.listas,
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
-        equipeProgramadores: _equipeProgramadoresPadrao,
+        equipeProgramadores: [{ pessoa: pessoa.Pablo, cargo: cargo.desenvolvedor, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao
     },
     {

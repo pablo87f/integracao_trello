@@ -71,6 +71,20 @@
                             <span id='dataFimTendencia'>--/--/--</span>
                         </div>
                     </div>
+                    <div class='row'>
+                        <div class='col'>
+                            Valor médio horas dia:
+                        </div>
+                        <div class='col'>
+                            <span id='mediaExecutadoDiaSprint'>--,--</span>
+                        </div>
+                        <div class='col'>
+                            
+                        </div>
+                        <div class='col'>
+                            
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -141,7 +155,16 @@
                         //     showLine: false
                         // },
                         {
-                            label: 'Execução',
+                            label: 'Restante',
+                            backgroundColor: 'red',
+                            borderColor: 'red',
+                            data: dados.restante,
+                            type: 'line',
+                            fill: false,
+                            lineTension: 0,
+                        },
+                        {
+                            label: 'Executado',
                             backgroundColor: 'blue',
                             borderColor: 'blue',
                             data: dados.executado,
@@ -169,18 +192,18 @@
                         },
                         {
                             label: 'Total Estimado',
-                            backgroundColor: 'red',
-                            borderColor: 'red',
+                            backgroundColor: 'yellow',
+                            borderColor: 'yellow',
                             data: dados.meta,
                             type: 'line',
                             fill: false,
                             lineTension: 0,
                         },
                         {
-                            label: 'Hoje',
+                            label: 'Ontem',
                             backgroundColor: 'orange',
                             borderColor: 'orange',
-                            data: dados.linhaHoje,
+                            data: dados.linhaOntem,
                             type: 'line',
                             fill: false,
                             lineTension: 0,
@@ -190,12 +213,6 @@
                     ],
                 },
                 options: {
-                    responsive: true,
-                    legend: {
-                        labels: {
-                            usePointStyle: false
-                        }
-                    },
                     scales: {
                         xAxes: [{
                             type: "time",
@@ -204,19 +221,26 @@
                                     day: 'DD/MM'
                                 },
                                 tooltipFormat: 'DD/MM/YYYY',
+                                unit: 'day',
+                                stepSize: 1,
+                                minUnit: 'day'
                             },
                             display: true,
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Dia Sprint'
-                            }
+                            },
+
                         }],
                         yAxes: [{
                             display: true,
                             scaleLabel: {
                                 display: true,
-                                labelString: 'Horas restantes'
-                            }
+                                labelString: 'Horas Sprint'
+                            },
+                            gridLines: {
+                                zeroLineWidth: 2,
+                            },
                         }]
                     },
                     tooltips: {
@@ -251,6 +275,7 @@
         function montarInfoProjeto(data) {
             if (data) {
                 $('#nomeProjeto').html(data.nomeProjeto)
+                $('#mediaExecutadoDiaSprint').html(data.mediaExecutadoDiaSprint)
             }
         }
 
