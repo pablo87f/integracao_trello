@@ -215,6 +215,7 @@ GraficoController.filtrarCardsExecucao = async (cards, listasExecucao) => {
 
 GraficoController.calculaHorasEsperadasDiaSemana = async (dia, equipeProgramadores) => {
 
+    // obtem o dia da semana
     let diaSemana = dia.day() + 1
 
     let qtdeHorasEsperadasDia = 0
@@ -222,7 +223,7 @@ GraficoController.calculaHorasEsperadasDiaSemana = async (dia, equipeProgramador
     for (let membro of equipeProgramadores) {
         if (membro && membro.cargo && membro.cargo.cargaHorariaSemanal && membro.cargo.fatorEsperadoCargaHorariaSemanal) {
             let cargaDia = membro.cargo.cargaHorariaSemanal[diaSemana]
-            let fatorEsperadoDia = membro.cargo.fatorEsperadoCargaHorariaSemanal[diaSemana]
+            let percentProdutivoEsperadoDia = membro.cargo.fatorEsperadoCargaHorariaSemanal[diaSemana]
 
             let tempoEstimadoAtividadesExtrasDiarias = 0
             if (membro.tempoAtividadesExtrasDiarias) {
@@ -230,8 +231,8 @@ GraficoController.calculaHorasEsperadasDiaSemana = async (dia, equipeProgramador
                     tempoEstimadoAtividadesExtrasDiarias += valorHoras
                 }
             }
-
-            qtdeHorasEsperadasDia += (cargaDia * fatorEsperadoDia) - (tempoEstimadoAtividadesExtrasDiarias * fatorEsperadoDia)
+            
+            qtdeHorasEsperadasDia += (cargaDia * percentProdutivoEsperadoDia) - (tempoEstimadoAtividadesExtrasDiarias * percentProdutivoEsperadoDia)
         }
     }
 
