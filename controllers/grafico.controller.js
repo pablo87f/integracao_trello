@@ -266,8 +266,7 @@ GraficoController.gerarBurningDown = async (projeto) => {
     let cardsProcessados = await GraficoController.processarCards(cards)
 
     const tempoEsforcoTotalEstimado = await GraficoController.calculaEsforcoTotalEstimado(cardsProcessados)
-    console.warn('tempoEsforcoTotalEstimado', tempoEsforcoTotalEstimado)
-
+    
     // recuperar listas do board
     const listas = await trello.getListsOnBoard(projeto.idBoard)
     const dadosListasProjeto = await GraficoController.associarInfoListaProjeto(listas, projeto.nomesListas)
@@ -303,8 +302,6 @@ GraficoController.gerarBurningDown = async (projeto) => {
     }
 
     let mediaExecutadoDiaSprint = totalJaExecutadoSprint / qtdeRelativaDiasTrabalhadosSprint
-
-    console.warn('totalJaExecutadoSprint', totalJaExecutadoSprint, 'qtdeRelativaDiasPassadosSprint', qtdeRelativaDiasTrabalhadosSprint, 'mediaExecutadoDiaSprint', mediaExecutadoDiaSprint)
 
     let tempoRestanteRitmo = tempoEsforcoTotalEstimado
     let diaInicioSprint = moment(projeto.dataInicioSprint, 'YYYY-MM-DD')
@@ -344,8 +341,6 @@ GraficoController.gerarBurningDown = async (projeto) => {
         } else {
             tendencia.push({ t: diaRitmo.clone(), y: null })
         }
-
-        console.warn('totalRestanteTendencia', totalRestanteTendencia, 'dia', diaRitmo.format('DD/MM/YYYY'), 'fator', fatorDiaSemana)
 
         if (totalRestanteTendencia < 0 && !dataFimTendencia) {
             dataFimTendencia = diaRitmo.clone()
