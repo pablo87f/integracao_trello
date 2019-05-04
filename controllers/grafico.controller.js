@@ -231,7 +231,7 @@ GraficoController.calculaHorasEsperadasDiaSemana = async (dia, equipeProgramador
                     tempoEstimadoAtividadesExtrasDiarias += valorHoras
                 }
             }
-            
+
             qtdeHorasEsperadasDia += (cargaDia * percentProdutivoEsperadoDia) - (tempoEstimadoAtividadesExtrasDiarias * percentProdutivoEsperadoDia)
         }
     }
@@ -267,7 +267,7 @@ GraficoController.gerarBurningDown = async (projeto) => {
     let cardsProcessados = await GraficoController.processarCards(cards)
 
     const tempoEsforcoTotalEstimado = await GraficoController.calculaEsforcoTotalEstimado(cardsProcessados)
-    
+
     // recuperar listas do board
     const listas = await trello.getListsOnBoard(projeto.idBoard)
     const dadosListasProjeto = await GraficoController.associarInfoListaProjeto(listas, projeto.nomesListas)
@@ -318,7 +318,7 @@ GraficoController.gerarBurningDown = async (projeto) => {
 
     let totalRestanteTendencia = tempoEsforcoTotalEstimado - totalJaExecutadoSprint
 
-    while ((totalRestanteTendencia > -10 || tempoRestanteRitmo > -10) && (ritmo.length < projeto.diasDuracaoSprint * 2)) {
+    while ((totalRestanteTendencia > -10 || tempoRestanteRitmo > -10) && (diaRitmo.diff(ontem, 'days') < 30)) {
 
         meta.push({ t: diaRitmo, y: tempoEsforcoTotalEstimado })
 
