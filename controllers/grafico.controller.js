@@ -318,7 +318,7 @@ GraficoController.gerarBurningDown = async (projeto) => {
 
     let totalRestanteTendencia = tempoEsforcoTotalEstimado - totalJaExecutadoSprint
 
-    while ((totalRestanteTendencia > -10 || tempoRestanteRitmo > -10)) {
+    while ((totalRestanteTendencia > -10 || tempoRestanteRitmo > -10) && (ritmo.length < projeto.diasDuracaoSprint * 2)) {
 
         meta.push({ t: diaRitmo, y: tempoEsforcoTotalEstimado })
 
