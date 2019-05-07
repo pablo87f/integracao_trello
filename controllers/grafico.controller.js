@@ -8,6 +8,16 @@ var trello = new Trello("87dc9de469e75e93dc71170012c930eb", "bebf362640978bcd8ca
 
 let GraficoController = {}
 
+GraficoController.imprimirMembrosDoQuadro = async (idQuadro) => {
+
+    let membros = await trello.getBoardMembers(idQuadro)
+
+    console.warn('Qdt membros no quadro: ', membros.length)
+    for (let membro of membros) {
+        console.warn('membro:', membro)
+    }
+}
+
 GraficoController.imprimirColecao = (colecao) => {
     console.warn(colecao ? 'Qdt itens na coleção: ' + colecao.length : 'Colecao:' + colecao)
     for (let item of colecao) {
@@ -318,7 +328,7 @@ GraficoController.gerarBurningDown = async (projeto) => {
 
     let totalRestanteTendencia = tempoEsforcoTotalEstimado - totalJaExecutadoSprint
 
-    while ((totalRestanteTendencia > -10 || tempoRestanteRitmo > -10) && (diaRitmo.diff(ontem, 'days') < 30)) {
+    while ((totalRestanteTendencia > -10 || tempoRestanteRitmo > -10) && (diaRitmo.diff(ontem, 'days') < 60)) {
 
         meta.push({ t: diaRitmo, y: tempoEsforcoTotalEstimado })
 
