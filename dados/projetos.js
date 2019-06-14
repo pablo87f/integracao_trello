@@ -9,10 +9,10 @@ const idBoardMateusApp = 'ctc37b0n' // 'ctc37b0n'//'55eH7xza' // 5cabb4d1279f154
 const idBoardProjetoTeste = '55eH7xza'
 const idBoardMateusCash = '4iMXNbY2'
 const statusProjetos = {
-    ativo: { id: 1, nome: 'ativo', cor: 'green', classeEstilo: 'success' },
+    ativo: { id: 1, nome: 'ativo', cor: 'green', classeEstilo: 'primary' },
     pausado: { id: 2, nome: 'pausado', cor: 'orange', classeEstilo: 'warning' },
-    finalizado: { id: 3, nome: 'finalizado', cor: 'gray', classeEstilo: 'secondary' },
-    arquivado: { id: 4, nome: 'arquivado', cor: 'red', classeEstilo: 'danger' }
+    finalizado: { id: 3, nome: 'entrege', cor: 'gray', classeEstilo: 'success' },
+    arquivado: { id: 4, nome: 'arquivado', cor: 'red', classeEstilo: 'secondary' }
 }
 
 const _equipeProgramadoresPadrao = [

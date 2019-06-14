@@ -13,16 +13,16 @@ app.set('views', './views');
 let projetos = require('./dados/projetos')
 let GraficoController = require('./controllers/grafico.controller')
 
-app.get('/projetos', function (req, res) {
+app.get('/projeto/:id', function (req, res) {
     res.render('projetos/index.html', { 'projetos': projetos })
 });
 
 app.get('/', function (req, res) {
+    res.render('home/index.html', { 'projetos': projetos })
+});
 
-    // let page_content = res.render(, { 'projetos': projetos });
-    res.render('projetos/index.html', { 'projetos': projetos })
-
-    // res.render('shared/main_layout.html', { partial: path.join(__dirname + '/views/projetos/index.html') })
+app.get('/home', function (req, res) {
+    res.render('home/index.html', { 'projetos': projetos })
 });
 
 app.get('/listar_projetos', function (req, res) {
