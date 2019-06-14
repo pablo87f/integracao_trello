@@ -2,27 +2,38 @@ var _ = require('lodash')
 
 const express = require('express');
 const app = express();
+const mustacheExpress = require('mustache-express');
+const mustache = require('mustache')
 const path = require('path');
-const router = express.Router();
+
+app.engine('html', mustacheExpress());
+app.set('view engine', 'html');
+app.set('views', './views');
 
 let projetos = require('./dados/projetos')
-
 let GraficoController = require('./controllers/grafico.controller')
 
-router.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname + '/views/index.view.html'));
-    //__dirname : It will resolve to your project folder.
+app.get('/projetos', function (req, res) {
+    res.render('projetos/index.html', { 'projetos': projetos })
 });
 
-router.get('/listar_projetos', function (req, res) {
+app.get('/', function (req, res) {
+
+    // let page_content = res.render(, { 'projetos': projetos });
+    res.render('projetos/index.html', { 'projetos': projetos })
+
+    // res.render('shared/main_layout.html', { partial: path.join(__dirname + '/views/projetos/index.html') })
+});
+
+app.get('/listar_projetos', function (req, res) {
     res.send(projetos)
 });
 
-router.get('/grafico', function (req, res) {
+app.get('/grafico', function (req, res) {
     res.sendFile(path.join(__dirname + '/views/grafico.view.html'));
 });
 
-router.get('/dados_grafico_projeto/:id_projeto', function (req, res) {
+app.get('/dados_grafico_projeto/:id_projeto', function (req, res) {
     let id_projeto = req.params.id_projeto
 
     let projeto = _.find(projetos, { id: parseInt(id_projeto) })
@@ -37,8 +48,6 @@ router.get('/dados_grafico_projeto/:id_projeto', function (req, res) {
     })
 });
 
-//add the router
-app.use('/', router);
 app.use('/public', express.static('public'))
 app.listen(process.env.port || 3000);
 
