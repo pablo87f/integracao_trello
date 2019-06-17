@@ -13,10 +13,6 @@ app.set('views', './views');
 let projetos = require('./dados/projetos')
 let GraficoController = require('./controllers/grafico.controller')
 
-app.get('/projeto/:id', function (req, res) {
-    res.render('projetos/index.html', { 'projetos': projetos })
-});
-
 app.get('/', function (req, res) {
     res.render('home/index.html', { 'projetos': projetos })
 });
@@ -24,6 +20,19 @@ app.get('/', function (req, res) {
 app.get('/home', function (req, res) {
     res.render('home/index.html', { 'projetos': projetos })
 });
+
+app.get('/projeto/:id', function (req, res) {
+
+    if (!req.params.id || isNaN(req.params.id)) res.sendStatus(401)
+
+    let projeto = _.find(projetos, { id: parseInt(req.params.id) })
+
+    if (!projeto) res.sendStatus(404)
+
+    res.render('projeto/index.html', { 'projeto': projeto })
+});
+
+// -------------------------------------------------------------
 
 app.get('/listar_projetos', function (req, res) {
     res.send(projetos)
