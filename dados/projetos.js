@@ -28,6 +28,7 @@ module.exports = [
         prefixo: 'GA',
         nome: 'Gráfico de acompanhamento',
         dataInicioSprint: '2019-05-02',
+        dataEntregaSprint: '',
         idBoard: idBoardProjetoTeste,
         nomesListas: _padrao.listas,
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
@@ -40,6 +41,7 @@ module.exports = [
         prefixo: 'MHP',
         nome: 'Merge home com prod. e cód. barras',
         dataInicioSprint: '2019-04-29',
+        dataEntregaSprint: '',
         idBoard: idBoardMateusApp,
         nomesListas: _padrao.listas,
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
@@ -48,13 +50,14 @@ module.exports = [
             { pessoa: pessoa.Teo, cargo: cargo.desenvolvedor, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
-        status: statusProjetos.ativo
+        status: statusProjetos.finalizado
     },
     {
         id: 3,
         prefixo: 'CPC',
         nome: 'Catálogo Produtos Cashback',
         dataInicioSprint: '2019-05-07',
+        dataEntregaSprint: '',
         idBoard: idBoardMateusCash,
         nomesListas: _padrao.listas,
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
@@ -64,5 +67,26 @@ module.exports = [
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.finalizado
-    }
+    },
+    {
+        id: 4,
+        prefixo: 'HO',
+        nome: 'Refatoração M2 - Home com produtos',
+        dataInicioSprint: '2019-07-01',
+        dataEntregaSprint: '',
+        idBoard: idBoardMateusApp,
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado':'Planejado - FRONT - Refatoração M2 - Home',
+            'concluido': 'Concluído - FRONT - Refatoração M2 - Home'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedor, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorInicial, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicial, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+        ],
+        configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
+        status: statusProjetos.ativo
+    },
 ]

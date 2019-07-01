@@ -49,6 +49,7 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">#ID</th>
+                                    <th class="text-center">Prefixo</th>
                                     <th>Nome</th>
                                     <th class="text-center">Quadro Trello</th>
                                     <th class="text-center">Status</th>
@@ -59,6 +60,9 @@
                                 {{#projetos}}
                                 <tr>
                                     <td class="text-center text-muted">#{{id}}</td>
+                                    <td class="text-center">
+                                        {{prefixo}}
+                                    </td>
                                     <td>
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">

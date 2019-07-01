@@ -18,7 +18,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/home', function (req, res) {
-    res.render('home/index.html', { 'projetos': projetos })
+    res.render('home/index.html', { 'projetos': _.orderBy(projetos, 'status.id') })
 });
 
 app.get('/projeto/:id', function (req, res) {
