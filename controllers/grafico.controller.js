@@ -56,7 +56,7 @@ GraficoController.extrairInfoCardsPadraoTitulo = async (cards) => {
         if (dadosTituloCard.length == 4) {
 
             const dados = {
-                indice: dadosTituloCard[0].trim(),
+                prefixo: dadosTituloCard[0].trim().replace('[', '').replace(']', ''),
                 modulo: dadosTituloCard[1].trim().replace('[', '').replace(']', ''),
                 descricao: dadosTituloCard[2].trim(),
                 tempoEstimado: dadosTituloCard[3].trim().replace('[', '').replace(']', ''),
@@ -108,7 +108,7 @@ GraficoController.recuperarMovimentacoesExecucao = async (cards, listasExecucao)
                         card: {
                             id: card.id,
                             dateLastActivity: card.dateLastActivity,
-                            indice: card.indice,
+                            prefixo: card.prefixo,
                             modulo: card.modulo,
                             descricao: card.descricao,
                             tempoEstimado: card.tempoEstimado
@@ -275,6 +275,8 @@ GraficoController.gerarBurningDown = async (projeto) => {
 
     // recuperar os cards do board 
     let cardsProcessados = await GraficoController.processarCards(cards)
+
+    cardsProcessados = _.filter(cardsProcessados, (card) => _.startsWith(card.prefixo, projeto.prefixo))
 
     const tempoEsforcoTotalEstimado = await GraficoController.calculaEsforcoTotalEstimado(cardsProcessados)
 
