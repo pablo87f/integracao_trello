@@ -72,7 +72,7 @@ module.exports = [
         id: 4,
         prefixo: 'HO',
         nome: 'Refatoração M2 - Home com produtos',
-        dataInicioSprint: '2019-07-01',
+        dataInicioSprint: '2019-07-02',
         dataEntregaSprint: '',
         idBoard: idBoardMateusApp,
         nomesListas: {
