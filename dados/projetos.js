@@ -82,9 +82,9 @@ module.exports = [
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
         equipeProgramadores: [
-            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedor, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
-            { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorInicial, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
-            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicial, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
