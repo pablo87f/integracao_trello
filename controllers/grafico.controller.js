@@ -225,6 +225,9 @@ GraficoController.filtrarCardsExecucao = async (cards, listasExecucao) => {
 
 GraficoController.calculaHorasEsperadasDiaSemana = async (dia, equipeProgramadores) => {
 
+    let eh_feriado = _feriados[dia.format('DD/MM/YYYY')]
+    if (eh_feriado) return 0
+    
     // obtem o dia da semana
     let diaSemana = dia.day() + 1
 
