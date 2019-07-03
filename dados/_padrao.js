@@ -13,6 +13,11 @@ _padrao.listas = {
 
 _padrao.diasDuracaoSprint = 15
 
+_padrao.contratoCargaHorariaDia = {
+    '8horas': 8,
+    '6horas': 6,
+}
+
 _padrao.cargaHorariaSemanal = {
     '1': 0,
     '2': 8,

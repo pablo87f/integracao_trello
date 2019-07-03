@@ -3,10 +3,12 @@ const _padrao = require('./_padrao')
 
 const cargo = {
     desenvolvedor: {
+        contrato: _padrao.contratoCargaHorariaDia["8horas"],
         cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
         fatorEsperadoCargaHorariaSemanal: _padrao.fatorEsperadoCargaHorariaSemanal
     },
     desenvolvedorInicial: {
+        contrato: _padrao.contratoCargaHorariaDia["8horas"],
         cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
         fatorEsperadoCargaHorariaSemanal: {
             '1': 0,
@@ -19,6 +21,7 @@ const cargo = {
         }
     },
     desenvolvedorSabadoEstudos: {
+        contrato: _padrao.contratoCargaHorariaDia["8horas"],
         cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
         fatorEsperadoCargaHorariaSemanal: {
             ..._padrao.fatorEsperadoCargaHorariaSemanal,
@@ -26,6 +29,7 @@ const cargo = {
         }
     },
     desenvolvedorInicialSabadoEstudos: {
+        contrato: _padrao.contratoCargaHorariaDia["8horas"],
         cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
         fatorEsperadoCargaHorariaSemanal: {
             '1': 0,
