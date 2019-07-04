@@ -14,7 +14,7 @@ let projetos = require('./dados/projetos')
 let GraficoController = require('./controllers/grafico.controller')
 
 app.get('/', function (req, res) {
-    res.render('home/index.html', { 'projetos': projetos })
+    res.render('home/index.html', { 'projetos':  _.orderBy(projetos, 'status.id') })
 });
 
 app.get('/home', function (req, res) {
