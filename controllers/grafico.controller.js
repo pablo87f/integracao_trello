@@ -252,22 +252,45 @@ GraficoController.calculaHorasEsperadasDiaSemana = async (dia, equipeProgramador
     return qtdeHorasEsperadasDia
 }
 
-GraficoController.obtemFatorDiaSemana = (dia) => {
+GraficoController.obtemFatorDiaSemana = (dia, equipeProgramadores) => {
+
+    // let eh_feriado = _feriados[dia.format('DD/MM/YYYY')]
+    // if (eh_feriado) return 0
+
+    // let diaSemana = dia.day() + 1
+
+    // let qtdeRelativaDia = 1 // se for de segunda a sexta
+
+    // if (diaSemana == 1) { // se for domingo
+    //     qtdeRelativaDia = 0
+    // }
+    // else if (diaSemana == 7) { // se for sábado
+    //     qtdeRelativaDia = 0.375
+    // }
+    // return qtdeRelativaDia
+
 
     let eh_feriado = _feriados[dia.format('DD/MM/YYYY')]
     if (eh_feriado) return 0
-
+    
+    // obtem o dia da semana
     let diaSemana = dia.day() + 1
 
-    let qtdeRelativaDia = 1 // se for de segunda a sexta
+    let fatorEsperadoEquipeDia = 0
+    let qtdeMembrosAtivosDia = 0
 
-    if (diaSemana == 1) { // se for domingo
-        qtdeRelativaDia = 0
+    for (let membro of equipeProgramadores) {
+        if (membro && membro.cargo && membro.cargo.cargaHorariaSemanal && membro.cargo.fatorEsperadoCargaHorariaSemanal && membro.cargo.cargaHorariaDia && membro.cargo.maxFatorEsperadoDia) {
+            let cargaDia = membro.cargo.cargaHorariaSemanal[diaSemana]
+            let percentProdutivoEsperadoDia = membro.cargo.fatorEsperadoCargaHorariaSemanal[diaSemana]
+            
+            fatorEsperadoEquipeDia += (cargaDia / membro.cargo.cargaHorariaDia) *(percentProdutivoEsperadoDia/membro.cargo.maxFatorEsperadoDia)
+
+            qtdeMembrosAtivosDia += (percentProdutivoEsperadoDia > 0 ? 1: 0)
+        }
     }
-    else if (diaSemana == 7) { // se for sábado
-        qtdeRelativaDia = 0.375
-    }
-    return qtdeRelativaDia
+
+    return qtdeMembrosAtivosDia > 0 ? fatorEsperadoEquipeDia / qtdeMembrosAtivosDia : 0
 }
 
 GraficoController.gerarBurningDown = async (projeto) => {
@@ -313,7 +336,7 @@ GraficoController.gerarBurningDown = async (projeto) => {
         restante.push({ t: dia, y: tempoEsforcoTotalEstimado - totalExecutadoDia })
         executado.push({ t: dia, y: totalExecutadoDia })
 
-        let fatorDiaSemana = GraficoController.obtemFatorDiaSemana(dia)
+        let fatorDiaSemana = GraficoController.obtemFatorDiaSemana(dia, projeto.equipeProgramadores)
         qtdeRelativaDiasTrabalhadosSprint += fatorDiaSemana
     }
 
@@ -337,7 +360,7 @@ GraficoController.gerarBurningDown = async (projeto) => {
 
         meta.push({ t: diaRitmo, y: tempoEsforcoTotalEstimado })
 
-        let fatorDiaSemana = GraficoController.obtemFatorDiaSemana(diaRitmo)
+        let fatorDiaSemana = GraficoController.obtemFatorDiaSemana(diaRitmo, projeto.equipeProgramadores)
 
         let qtdeHorasEsperadasDia = await GraficoController.calculaHorasEsperadasDiaSemana(diaRitmo, projeto.equipeProgramadores)
 
