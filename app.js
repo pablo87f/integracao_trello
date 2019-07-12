@@ -12,9 +12,12 @@ app.set('views', './views');
 
 let projetos = require('./dados/projetos')
 let GraficoController = require('./controllers/grafico.controller')
+let repo = require('./repositorio')
+
+// -----------------------------------------
 
 app.get('/', function (req, res) {
-    res.render('home/index.html', { 'projetos':  _.orderBy(projetos, 'status.id') })
+    res.render('home/index.html', { 'projetos':  _.orderBy(repo.getAll(repo.Entities.Projetos), 'status.id') })
 });
 
 app.get('/home', function (req, res) {
@@ -50,7 +53,7 @@ app.get('/dados_grafico_projeto/:id_projeto', function (req, res) {
     GraficoController.gerarBurningDown(projeto).then((dados) => {
         const nomeProjeto = projeto.nome
 
-        res.send({ ...dados, nomeProjeto })
+        res.send({ ...dados, nomeProjeto})
     }).catch(e => {
         console.warn('erro:', e, e.message)
         res.send('Falha ao executar')
