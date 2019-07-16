@@ -73,7 +73,7 @@ module.exports = [
         prefixo: 'HO',
         nome: 'Refatoração M2 - Home com produtos',
         dataInicioSprint: '2019-07-02',
-        dataEntregaSprint: '',
+        dataEntregaSprint: '2019-07-12',
         idBoard: idBoardMateusApp,
         nomesListas: {
             ..._padrao.listas,
@@ -87,6 +87,28 @@ module.exports = [
             { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
+        status: statusProjetos.finalizado
+    },
+    {
+        id: 5,
+        prefixo: 'BL',
+        nome: 'Busca e Seleção de lojas',
+        dataInicioSprint: '2019-07-17',
+        dataEntregaSprint: '',
+        idBoard: idBoardMateusApp,
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado':'Planejado - FRONT - Busca e Seleção Lojas',
+            'concluido': 'Concluído - FRONT - Busca e Seleção Lojas'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+        ],
+        configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
     },
+
 ]
