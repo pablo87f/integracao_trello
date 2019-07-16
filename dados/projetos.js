@@ -112,7 +112,7 @@ module.exports = [
     },
     {
         id: 6,
-        prefixo: 'BL',
+        prefixo: 'IR',
         nome: 'Infra Ricardinho',
         dataInicioSprint: '2019-07-17',
         dataEntregaSprint: '',
