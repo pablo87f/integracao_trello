@@ -5,6 +5,7 @@ const app = express();
 const mustacheExpress = require('mustache-express');
 const mustache = require('mustache')
 const path = require('path');
+var bodyParser = require('body-parser')
 
 app.engine('html', mustacheExpress());
 app.set('view engine', 'html');
@@ -14,14 +15,19 @@ let projetos = require('./dados/projetos')
 let GraficoController = require('./controllers/grafico.controller')
 let repo = require('./repositorio')
 
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({
+    extended:true 
+}))
+
 // -----------------------------------------
 
 app.get('/', function (req, res) {
-    res.render('home/index.html', { 'projetos':  _.orderBy(repo.getAll(repo.Entities.Projetos), 'status.id') })
+    res.render('home/index.html', { 'projetosSalvos':  _.orderBy(repo.getAll(repo.Entities.Projetos), 'status.id'), 'projetos': _.orderBy(projetos, 'status.id') })
 });
 
 app.get('/home', function (req, res) {
-    res.render('home/index.html', { 'projetos': _.orderBy(projetos, 'status.id') })
+    res.render('home/index.html', { 'projetosSalvos':  _.orderBy(repo.getAll(repo.Entities.Projetos), 'status.id'), 'projetos': _.orderBy(projetos, 'status.id') })
 });
 
 app.get('/projeto/:id', function (req, res) {
@@ -33,6 +39,25 @@ app.get('/projeto/:id', function (req, res) {
     if (!projeto) res.sendStatus(404)
 
     res.render('projeto/index.html', { 'projeto': projeto })
+});
+
+
+app.post('/projeto/criar', function (req, res) {
+    
+    if(!req.body) res.status(400).send({ sucess: false, message: 'Não foi possível recuperar corpo da requisição' })
+
+    if(!req.body.nome) res.status(400).send({ sucess: false, message: "Campo 'nome' é obrigatório" })
+    
+    if(!req.body.codigoQuadroTrello) res.status(400).send({ sucess: false, message: "Campo 'codigoQuadroTrello' é obrigatório" })
+
+    let projeto = {
+        nome: req.body.nome,
+        idBoard: req.body.codigoQuadroTrello
+    }
+
+    repo.insert(repo.Entities.Projetos, projeto)
+
+    res.send({sucess: true})
 });
 
 // -------------------------------------------------------------
@@ -61,6 +86,7 @@ app.get('/dados_grafico_projeto/:id_projeto', function (req, res) {
 });
 
 app.use('/public', express.static('public'))
+
 app.listen(process.env.port || 3000);
 
 console.log('Running at Port 3000');

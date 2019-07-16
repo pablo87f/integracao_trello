@@ -13,7 +13,7 @@ if (typeof localStorage === "undefined" || localStorage === null) {
 
 Repositorio.Entities = {
     'Projetos' : 'projetos',
-    'Pessoas': 'Pessoas',
+    'Pessoas': 'pessoas',
     'Cargos': 'Cargos',
 }
 
@@ -38,14 +38,16 @@ Repositorio.findByField =  async (entityName, filedName, valueToFind) => {
 Repositorio.insert = async (entityName, data) => {
     
     let allData = Repositorio.getAll(entityName)
-    
-    if(!allData) {throw Error('Não foi possível encontrar a coleção de dados')  }
+    if(!allData) { allData = [] }
     
     let projetoExistente = _.find(allData, {id: data.id} )
-    
     if(projetoExistente){ throw Error('Já existe um projeto com o mesmo id') }
-
-    allData.push(data)
+    
+    let idsExistentes = allData.length > 0 ? allData.reduce((item)=> item.id) : [0]
+    let nextId = _.max(idsExistentes) + 1
+    
+    allData.push({...data, id: nextId })
+    
     Repositorio.setAll(entityName, allData)
 }
 
