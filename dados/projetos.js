@@ -110,5 +110,26 @@ module.exports = [
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
     },
+    {
+        id: 6,
+        prefixo: 'BL',
+        nome: 'Infra Ricardinho',
+        dataInicioSprint: '2019-07-17',
+        dataEntregaSprint: '',
+        idBoard: 'ilBSsFhM',
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado':'Planejado - FRONT - Busca e Seleção Lojas',
+            'concluido': 'Concluído - FRONT - Busca e Seleção Lojas'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Ricardo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+        ],
+        configuracaoCalculoTempoExecucao: {
+            'concluido': 1
+        },
+        status: statusProjetos.ativo
+    },
 
 ]
