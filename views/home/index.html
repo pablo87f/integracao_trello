@@ -19,9 +19,9 @@
                 </div>
             </div>
             <div class="page-title-actions">
-                <button type="button" data-toggle="tooltip" title="Clique para criar um novo projeto"
+                    <button type="button"
                     data-placement="bottom" aria-haspopup="true" aria-expanded="false"
-                    class="btn-shadow mr-3 btn btn-info">
+                    class="btn-shadow mr-3 btn btn-info" data-toggle="modal" data-target=".bd-example-modal-lg">
                     <i class="fa fa-document"></i>
 
                     <span class="btn-icon-wrapper pr-2 ">
@@ -97,10 +97,144 @@
                     <div class="d-block text-center card-footer">
 
                     </div>
+                   
                 </div>
+            </div>
+        </div>
+    </div>
+    <div id='div_projetos'>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="main-card mb-3 card">
+                        <div class="card-header">PROJETOS
+                            <div class="btn-actions-pane-right">
+                                <div role="group" class="btn-group-sm btn-group">
+                                    <button class="active btn btn-focus">Last Week</button>
+                                    <button class="btn btn-focus">All Month</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="align-middle mb-0 table table-borderless table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#ID</th>
+                                        <th>Nome</th>
+                                        <th class="text-center">Quadro Trello</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#projetosSalvos}}
+                                    <tr>
+                                        <td class="text-center text-muted">#{{id}}</td>
+                                        <td>
+                                            <div class="widget-content p-0">
+                                                <div class="widget-content-wrapper">
+                                                    <a href="/projeto/{{id}}">
+                                                        <div class="widget-content-left flex2">
+                                                            <div class="widget-heading">{{nome}}</div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <a target="_blank" rel="noopener noreferrer"
+                                                href='https://trello.com/b/{{idBoard}}'>
+                                                <i class="fa fa-trello pr-2" aria-hidden="true"></i>
+                                                Ir para Trello
+                                            </a>
+                                        </td>
+                                        
+                                    </tr>
+                                    {{/projetosSalvos}}
+                                </tbody>
+                            </table>
+                        </div>
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+</div>
+
+{{>shared/main_layout/footer}}
+
+<div class="modal fade bd-example-modal-lg"  role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Criar novo projeto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <div class="position-relative form-group">
+                            <label for="bnomeProjeto" class="">Nome</label>
+                            <input name="nomeProjeto" id="nomeProjeto" placeholder="Digite o nome do projeto" type="text" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <div class="position-relative form-group">
+                            <label for="examplePassword11" class="">Código do quadro do Trello - (https://trello.com/b/<span style="color: magenta">ctc37b0n</span>/mateus-app)</label>
+                            <input name="shortLink" id="codigoQuadroTrello" placeholder="Ex.: ctc37b0n" type="text" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="btnSalvarProjeto">Salvar</button>
             </div>
         </div>
     </div>
 </div>
 
-{{>shared/main_layout/footer}}
+<script type="text/javascript">
+
+    $('document').ready(function(){
+        $('#btnSalvarProjeto').click(()=>salvarProjeto())
+    })
+    
+    function salvarProjeto(dados){
+        let textoBotao = $('#btnSalvarProjeto').html();
+        $('#btnSalvarProjeto').html('...');
+        $('#btnSalvarProjeto').prop('disabled', true);
+
+        let nomeProjeto = $("#nomeProjeto").val()
+        let codTrello = $('#codigoQuadroTrello').val()
+
+        console.warn('nomeProjeto', nomeProjeto)
+        console.warn('codTrello', codTrello)
+
+        $.ajax({
+            url : "/projeto/criar",
+            type : 'post',
+            data : {
+                 nome: nomeProjeto,
+                 codigoQuadroTrello: codTrello
+            },
+            // beforeSend : function() {
+                
+            // }
+        })
+        .done(function(msg){
+            $('#btnSalvarProjeto').html(textoBotao);
+            $('#btnSalvarProjeto').prop('disabled', false);
+            
+            if(msg){
+
+            }
+        })
+        .fail(function(jqXHR, textStatus, msg) {
+            $('#btnSalvarProjeto').html(textoBotao);
+            $('#btnSalvarProjeto').prop('disabled', false);
+        }); 
+    }
+</script>

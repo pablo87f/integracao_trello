@@ -20,3 +20,5 @@ ProjetoController.salvarProjeto = async (projeto) =>{
 ProjetoController._validarProjeto = async (projeto) => {
 
 }
+
+module.exports = ProjetoController
