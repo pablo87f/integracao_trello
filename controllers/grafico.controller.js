@@ -123,7 +123,7 @@ GraficoController.recuperarMovimentacoesExecucao = async (cards, listasExecucao)
     return movimentacoesExecucao
 }
 
-GraficoController.calculaEsforcoTotalEstimado = async (infoCards) => {
+GraficoController.calculaEsforcoTotalEstimado = async (infoCards, configuracaoExecucao) => {
 
     let tempoBase = moment('00:00:00', 'HH:mm:ss')
     let tempoEstimado = tempoBase.clone()
@@ -135,9 +135,11 @@ GraficoController.calculaEsforcoTotalEstimado = async (infoCards) => {
 
     }
 
+    let fatorExecucao = _.sum(Object.values(configuracaoExecucao))
+
     let minutos = tempoEstimado.diff(tempoBase, 'minutes')
 
-    return (minutos / 60) * 1.5
+    return (minutos / 60) * fatorExecucao
 }
 
 GraficoController.converterTempoNumero = (tempo) => {
@@ -304,7 +306,7 @@ GraficoController.gerarBurningDown = async (projeto) => {
 
     cardsProcessados = _.filter(cardsProcessados, (card) => _.startsWith(card.prefixo, projeto.prefixo))
 
-    const tempoEsforcoTotalEstimado = await GraficoController.calculaEsforcoTotalEstimado(cardsProcessados)
+    const tempoEsforcoTotalEstimado = await GraficoController.calculaEsforcoTotalEstimado(cardsProcessados, projeto.configuracaoCalculoTempoExecucao)
 
     // recuperar listas do board
     const listas = await trello.getListsOnBoard(projeto.idBoard)
