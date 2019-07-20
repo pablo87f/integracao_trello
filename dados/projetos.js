@@ -119,8 +119,9 @@ module.exports = [
         idBoard: 'ilBSsFhM',
         nomesListas: {
             ..._padrao.listas,
-            'planejado':'Planejado - FRONT - Busca e Seleção Lojas',
-            'concluido': 'Concluído - FRONT - Busca e Seleção Lojas'
+            'fazendo': 'Fazendo',
+            'planejado':'Planejado',
+            'concluido': 'Concluído'
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
         equipeProgramadores: [
