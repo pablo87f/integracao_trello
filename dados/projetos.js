@@ -94,7 +94,7 @@ module.exports = [
         prefixo: 'BL',
         nome: 'Busca e Seleção de lojas',
         dataInicioSprint: '2019-07-17',
-        dataEntregaSprint: '',
+        dataEntregaSprint: '2019-07-25',
         idBoard: idBoardMateusApp,
         nomesListas: {
             ..._padrao.listas,
@@ -108,7 +108,7 @@ module.exports = [
             { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
-        status: statusProjetos.ativo
+        status: statusProjetos.finalizado
     },
     {
         id: 6,
@@ -130,6 +130,28 @@ module.exports = [
         configuracaoCalculoTempoExecucao: {
             'concluido': 1
         },
+        status: statusProjetos.ativo
+    },
+    {
+        id: 7,
+        prefixo: 'RC',
+        nome: 'Refatoração cache',
+        dataInicioSprint: '2019-07-26',
+        dataEntregaSprint: '',
+        idBoard: idBoardMateusApp,
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado':'Planejado - RC - Refatoração Cache',
+            'concluido': 'Concluído - RC - Refatoração Cache'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+        ],
+        configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
     },
 
