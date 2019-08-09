@@ -45,6 +45,34 @@ const cargo = {
             '7': 0,
         }
     },
+    desenvolvedorVoltandoSabadoEstudos: {
+        cargaHorariaDia: 8,
+        maxFatorEsperadoDia: 0.5,
+        cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
+        fatorEsperadoCargaHorariaSemanal: {
+            '1': 0,
+            '2': 0.65,
+            '3': 0.65,
+            '4': 0.65,
+            '5': 0.65,
+            '6': 0.65,
+            '7': 0,
+        }
+    },
+    desenvolvedorInicial2SabadoEstudos: {
+        cargaHorariaDia: 8,
+        maxFatorEsperadoDia: 0.65,
+        cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
+        fatorEsperadoCargaHorariaSemanal: {
+            '1': 0,
+            '2': 0.65,
+            '3': 0.65,
+            '4': 0.65,
+            '5': 0.65,
+            '6': 0.65,
+            '7': 0,
+        }
+    }
 }
 
 module.exports = cargo
