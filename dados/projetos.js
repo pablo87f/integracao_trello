@@ -157,7 +157,7 @@ module.exports = [
     {
         id: 8,
         prefixo: 'ILH',
-        nome: 'Integração Home e Login',
+        nome: 'Integração Login e Home',
         dataInicioSprint: '2019-08-08',
         dataEntregaSprint: '',
         idBoard: idBoardMateusApp,
