@@ -115,7 +115,7 @@ module.exports = [
         prefixo: 'IR',
         nome: 'Infra Ricardinho',
         dataInicioSprint: '2019-07-17',
-        dataEntregaSprint: '',
+        dataEntregaSprint: '2019-07-26',
         idBoard: 'ilBSsFhM',
         nomesListas: {
             ..._padrao.listas,
@@ -130,7 +130,7 @@ module.exports = [
         configuracaoCalculoTempoExecucao: {
             'concluido': 1
         },
-        status: statusProjetos.ativo
+        status: statusProjetos.finalizado
     },
     {
         id: 7,
@@ -150,6 +150,28 @@ module.exports = [
             { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+        ],
+        configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
+        status: statusProjetos.ativo
+    },
+    {
+        id: 8,
+        prefixo: 'ILH',
+        nome: 'Integração Home e Login',
+        dataInicioSprint: '2019-08-08',
+        dataEntregaSprint: '',
+        idBoard: idBoardMateusApp,
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado':'Planejado - ILH - Integração Login Home',
+            'concluido': 'Concluído - ILH - Integração Login e Home'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorInicial2SabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
