@@ -9,6 +9,7 @@ const pessoa = {
     'Nadson': { user: "nadson4", nome: "Nadson" },
     'MarcosCosta': { nome: "Marcos Costa", user: "mark_marsh" },
     'Luis': { nome: "Marcos Costa", user: "luisalvesdossantosneto" },
+    'Elaine': { nome: "Elaine Portela", user: "elainepportela" },
 }
 
 module.exports = pessoa
