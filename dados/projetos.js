@@ -137,7 +137,7 @@ module.exports = [
         prefixo: 'RC',
         nome: 'Refatoração cache',
         dataInicioSprint: '2019-07-26',
-        dataEntregaSprint: '',
+        dataEntregaSprint: '2019-08-10',
         idBoard: idBoardMateusApp,
         nomesListas: {
             ..._padrao.listas,
@@ -152,7 +152,7 @@ module.exports = [
             { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
-        status: statusProjetos.ativo
+        status: statusProjetos.finalizado
     },
     {
         id: 8,
@@ -176,5 +176,4 @@ module.exports = [
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
     },
-
 ]
