@@ -159,7 +159,7 @@ module.exports = [
         prefixo: 'ILH',
         nome: 'Integração Login e Home',
         dataInicioSprint: '2019-08-08',
-        dataEntregaSprint: '',
+        dataEntregaSprint: '2019-08-29',
         idBoard: idBoardMateusApp,
         nomesListas: {
             ..._padrao.listas,
@@ -174,7 +174,7 @@ module.exports = [
             { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
-        status: statusProjetos.ativo
+        status: statusProjetos.finalizado
     },
     {
         id: 9,
@@ -196,6 +196,31 @@ module.exports = [
             { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Ricardo, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+        ],
+        configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
+        status: statusProjetos.ativo
+    },
+    {
+        id: 10,
+        prefixo: 'RFB',
+        nome: 'Restante das Funcionalidades Básicas - Refat.',
+        dataInicioSprint: '2019-08-31',
+        dataEntregaSprint: '',
+        idBoard: idBoardMateusApp,
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado': 'Planejado - RFB - Restante Funcionalidades Básicas',
+            'concluido': 'Concluído - RFB - Restante Funcionalidades Básicas'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 0.5 } },
+            { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorInicial2SabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicial2SabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'sac': 0.5 } },
+            { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Ricardo, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Pablo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'analises': 3 } },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
