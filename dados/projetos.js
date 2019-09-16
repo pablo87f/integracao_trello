@@ -198,7 +198,7 @@ module.exports = [
             { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
-        status: statusProjetos.ativo
+        status: statusProjetos.finalizado
     },
     {
         id: 10,
@@ -221,6 +221,48 @@ module.exports = [
             { pessoa: pessoa.Ricardo, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Pablo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'analises': 3 } },
+        ],
+        configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
+        status: statusProjetos.finalizado
+    },
+    {
+        id: 11,
+        prefixo: 'LCP',
+        nome: 'Lista de Compras',
+        dataInicioSprint: '2019-09-16',
+        dataEntregaSprint: '',
+        idBoard: idBoardMateusApp,
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado': 'Planejado - LCP - Lista de Compras',
+            'concluido': 'Concluído - LCP - Lista de Compras'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 0.5 } },
+            { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'sac': 0.5 } },
+            { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+        ],
+        configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
+        status: statusProjetos.ativo
+    },
+    {
+        id: 12,
+        prefixo: 'ENC',
+        nome: 'Encarte Virtual',
+        dataInicioSprint: '2019-09-16',
+        dataEntregaSprint: '',
+        idBoard: idBoardMateusApp,
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado': 'Planejado - ENC - Encarte Virtual',
+            'concluido': 'Concluído - ENC - Encarte Virtual'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias } },
+            { pessoa: pessoa.Ricardo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
