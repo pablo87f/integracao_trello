@@ -1,18 +1,17 @@
-var _ = require('lodash')
-
+import _ from 'lodash'
+import { LocalStorage } from 'node-localstorage'
 let Repositorio = {}
 
 let localStorage = null
 
 if (typeof localStorage === "undefined" || localStorage === null) {
-    LocalStorage = require('node-localstorage').LocalStorage;
     localStorage = new LocalStorage('./repositorio');
 }
 
 // -----------------------------------------
 
 Repositorio.Entities = {
-    'Projetos' : 'projetos',
+    'Projetos': 'projetos',
     'Pessoas': 'pessoas',
     'Cargos': 'Cargos',
 }
@@ -28,39 +27,39 @@ Repositorio.setAll = (entityName, data) => {
 
 Repositorio.findById = (entityName, id) => {
     let allData = Repositorio.getAll(entityName)
-    return _.find(allData, {id: id} )
+    return _.find(allData, { id: id })
 }
 
-Repositorio.findByField =  async (entityName, filedName, valueToFind) => {
+Repositorio.findByField = async (entityName, filedName, valueToFind) => {
 
 }
 
 Repositorio.insert = async (entityName, data) => {
-    
+
     let allData = Repositorio.getAll(entityName)
-    if(!allData) { allData = [] }
-    
-    let projetoExistente = _.find(allData, {id: data.id} )
-    if(projetoExistente){ throw Error('Já existe um projeto com o mesmo id') }
-    
-    let idsExistentes = allData.length > 0 ? allData.reduce((item)=> item.id) : [0]
+    if (!allData) { allData = [] }
+
+    let projetoExistente = _.find(allData, { id: data.id })
+    if (projetoExistente) { throw Error('Já existe um projeto com o mesmo id') }
+
+    let idsExistentes = allData.length > 0 ? allData.reduce((item) => item.id) : [0]
     let nextId = _.max(idsExistentes) + 1
-    
-    allData.push({...data, id: nextId })
-    
+
+    allData.push({ ...data, id: nextId })
+
     Repositorio.setAll(entityName, allData)
 }
 
 Repositorio.updateById = async (entityName, id, newData) => {
     let allData = Repositorio.getAll(entityName)
-    let indexRegister = _.findIndex(allData, {id: id} )
+    let indexRegister = _.findIndex(allData, { id: id })
     allData[indexRegister] = newData
     Repositorio.setAll(allData)
 }
 
 Repositorio.deleteById = async (entityName, id) => {
     let allData = Repositorio.getAll(entityName)
-    let indexRegister = _.findIndex(allData, {id: id} )
+    let indexRegister = _.findIndex(allData, { id: id })
     if (indexRegister > -1) {
         allData.splice(indexRegister, 1);
     }
@@ -68,3 +67,5 @@ Repositorio.deleteById = async (entityName, id) => {
 }
 
 module.exports = Repositorio
+
+export default Repositorio

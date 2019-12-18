@@ -402,4 +402,4 @@ GraficoController.gerarBurningDown = async (projeto) => {
     return { executado, restante, meta, tendencia, ritmo, linhaOntem, dataInicioSprint, dataFimSprint, dataFimRitmo, dataFimTendencia, mediaExecutadoDiaSprint }
 }
 
-module.exports = GraficoController
+export default GraficoController

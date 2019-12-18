@@ -272,7 +272,7 @@ module.exports = [
         prefixo: 'BRE',
         nome: 'Back Recomendação',
         dataInicioSprint: '2019-10-15',
-        dataEntregaSprint: '',
+        dataEntregaSprint: '2019-12-19',
         idBoard: idBoardMateusApp,
         nomesListas: {
             ..._padrao.listas,
@@ -286,6 +286,29 @@ module.exports = [
             { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'sac':0.5 } },
             { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+        ],
+        configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
+        status: statusProjetos.finalizado
+    },
+    {
+        id: 14,
+        prefixo: 'SUP',
+        nome: 'Home Super App',
+        dataInicioSprint: '2019-12-19',
+        dataEntregaSprint: '',
+        idBoard: idBoardMateusApp,
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado': 'Planejado - SUP - Home Super App',
+            'concluido': 'Concluído - SUP - Home Super App'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias } },
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 1.5 }},
+            { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
+            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'sac': 2.0 } },
+            { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'sac': 2.0 } },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
