@@ -12,8 +12,9 @@ if (typeof localStorage === "undefined" || localStorage === null) {
 
 Repositorio.Entities = {
     'Projetos': 'projetos',
-    'Pessoas': 'pessoas',
+    'Pessoas': 'Pessoas',
     'Cargos': 'Cargos',
+    'Funcionalidades': 'Funcionalidades',
 }
 
 Repositorio.getAll = (entityName) => {

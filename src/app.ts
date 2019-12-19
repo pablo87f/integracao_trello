@@ -72,6 +72,28 @@ app.post('/projeto/criar', function (req, res) {
     res.send({ sucess: true })
 });
 
+app.get('/projeto/:id/funcionalidades', function (req: express.Request, res: express.Response) {
+
+    if (!req.params.id) res.sendStatus(401);
+
+    let idProjeto: number = 0
+
+    try {
+        idProjeto = parseInt(req.params.id);
+    }
+    catch (e) {
+        res.sendStatus(401);
+    }
+
+    let projeto = _.find(projetos, { id: idProjeto })
+
+    if (!projeto) res.sendStatus(404)
+    const funcionalidades = repo.getAll(repo.Entities.Funcionalidades) || []
+    res.render('projeto/funcionalidades/index.html', { 'projeto': projeto, 'funcionalidades': funcionalidades })
+});
+
+
+
 // -------------------------------------------------------------
 
 app.get('/listar_projetos', function (req, res) {
