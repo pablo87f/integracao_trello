@@ -1,9 +1,4 @@
 {{>shared/project_layout/header}}
-<!-- 
-        <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
-        <script type="text/javascript" charset="utf8"
-            src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script> -->
-
 
 <div class="app-main__inner">
     <div class="app-page-title">
@@ -17,82 +12,66 @@
 
                 </div>
             </div>
-            <div class="page-title-actions">
-                <button type="button" data-toggle="tooltip" title="Clique para criar um novo projeto"
-                    data-placement="bottom" aria-haspopup="true" aria-expanded="false"
-                    class="btn-shadow mr-3 btn btn-info" data-toggle="modal" data-target=".bd-example-modal-lg">
-                    <i class="fa fa-document"></i>
-
-                    <span class="btn-icon-wrapper pr-2 ">
-                        <i class="fa fa-plus "></i>
-                    </span>
-                    Novo
-                </button>
-                <!-- <button type="button" class="btn mr-2 mb-2 btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Large modal</button> -->
-            </div>
         </div>
     </div>
     <div id='div_projetos'>
         <div class="row">
             <div class="col-md-12">
                 <div class="main-card mb-3 card">
-                    <div class="card-header">PROJETOS
-                        <div class="btn-actions-pane-right">
-                            <div role="group" class="btn-group-sm btn-group">
-                                <button class="active btn btn-focus">Last Week</button>
-                                <button class="btn btn-focus">All Month</button>
-                            </div>
-                        </div>
+                    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+                        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+                        crossorigin="anonymous"></script>
+                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+                        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+                        crossorigin="anonymous"></script>
+
+
+                    <script type="text/javascript" charset="utf8"
+                        src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+                    <script src="https://unpkg.com/moment"></script>
+                    <script src="../public/chartjs/Chart.min.js"></script>
+
+                    <div class="card-header">GRÁFICO DE ACOMPANHAMENTO
+
                     </div>
                     <div class="table-responsive">
-                        <table class="align-middle mb-0 table table-borderless table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">#ID</th>
-                                    <th>Nome</th>
-                                    <th class="text-center">Quadro Trello</th>
-                                    <th class="text-center">Status</th>
-                                    <th class="text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#projetos}}
-                                <tr>
-                                    <td class="text-center text-muted">#{{id}}</td>
-                                    <td>
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left mr-3">
-                                                    <div class="widget-content-left">
-                                                        <img width="40" class="rounded-circle"
-                                                            src="assets/images/avatars/4.jpg" alt="">
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-left flex2">
-                                                    <div class="widget-heading">{{nome}}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <a target="_blank" rel="noopener noreferrer"
-                                            href='https://trello.com/b/{{idBoard}}'>
-                                            <i class="fa fa-trello pr-2" aria-hidden="true"></i>
-                                            Ir para Trello
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="badge badge-{{status.classeEstilo}}">{{status.nome}}</div>
-                                    </td>
-                                    <td class="text-center">
-                                        <a target="_blank" href='/grafico?id_projeto={{id}}'>
-                                            <i class="pe-7s-graph1 pr-2 "></i>Gráfico</a>
+                        <div class='col'>
+                            <div class='row'>
+                                <div class='col'>
+                                    Data Inicio:
+                                </div>
+                                <div class='col'>
+                                    <span id='dataInicio'>--/--/--</span>
+                                </div>
+                                <div class='col'>
+                                    Valor médio horas dia:
+                                </div>
+                                <div class='col'>
+                                    <span id='mediaExecutadoDiaSprint'>--,--</span>
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col'>
+                                    Data Fim Ritmo Estimado:
+                                </div>
+                                <div class='col'>
+                                    <span id='dataFimRitmoEstimado'>--/--/--</span>
+                                </div>
+                                <div class='col'>
+                                    Data Fim Tendencia:
+                                </div>
+                                <div class='col'>
+                                    <span id='dataFimTendencia'>--/--/--</span>
+                                </div>
+                            </div>
 
-                                    </td>
-                                </tr>
-                                {{/projetos}}
-                            </tbody>
-                        </table>
+                            <br />
+                            <div id="chartContainer" class='container'>
+                                
+                            </div>
+                        </div>
                     </div>
                     <div class="d-block text-center card-footer">
 
@@ -102,6 +81,220 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    var $chart;
+
+    $(document).ready(function () {
+
+        montarGraficoProjeto()
+    });
+
+
+    function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            }
+        }
+    };
+
+    function converterData(strData) {
+        return moment(strData, 'YYYY-MM-DD')
+    }
+
+    function montarConfigGrafico(dados) {
+        var tempoTotalEstimado = dados.meta
+        var tempoExecutado = dados.executado
+        var tendencia = dados.tendencia
+
+        var cfg = {
+
+            data: {
+                datasets: [
+                    // {
+                    //     label: 'Fim Ritmo',
+                    //     backgroundColor: 'lightblue',
+                    //     borderColor: 'lightblue',
+                    //     data: [{ t: dados.dataFimRitmo, y: 0 }],
+                    //     type: 'line',
+                    //     fill: false,
+                    //     lineTension: 0,
+                    //     borderWidth: 2,
+                    //     backgroundColor: '#0000DD50',
+                    //     borderColor: 'lighblue',
+                    //     pointStyle: 'rectRot',
+                    //     pointRadius: 10,
+                    //     pointHoverRadius: 10,
+                    //     pointBorderColor: 'rgb(0, 0, 0)',
+                    //     showLine: false
+                    // },
+                    {
+                        label: 'Restante',
+                        backgroundColor: 'red',
+                        borderColor: 'red',
+                        data: dados.restante,
+                        type: 'line',
+                        fill: false,
+                        lineTension: 0,
+                    },
+                    {
+                        label: 'Executado',
+                        backgroundColor: 'blue',
+                        borderColor: 'blue',
+                        data: dados.executado,
+                        type: 'line',
+                        fill: false,
+                        lineTension: 0,
+                    },
+                    {
+                        label: 'Tendência',
+                        backgroundColor: 'lightgreen',
+                        borderColor: 'lightgreen',
+                        data: dados.tendencia,
+                        type: 'line',
+                        fill: false,
+                        lineTension: 0,
+                    },
+                    {
+                        label: 'Ritmo Esperado',
+                        backgroundColor: 'lightblue',
+                        borderColor: 'lightblue',
+                        data: dados.ritmo,
+                        type: 'line',
+                        fill: false,
+                        lineTension: 0,
+                    },
+                    {
+                        label: 'Total Estimado',
+                        backgroundColor: 'yellow',
+                        borderColor: 'yellow',
+                        data: dados.meta,
+                        type: 'line',
+                        fill: false,
+                        lineTension: 0,
+                    },
+                    {
+                        label: 'Ontem',
+                        backgroundColor: 'orange',
+                        borderColor: 'orange',
+                        data: dados.linhaOntem,
+                        type: 'line',
+                        fill: false,
+                        lineTension: 0,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time: {
+                            displayFormats: {
+                                day: 'DD/MM'
+                            },
+                            tooltipFormat: 'DD/MM/YYYY',
+                            unit: 'day',
+                            stepSize: 1,
+                            minUnit: 'day'
+                        },
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Dia Sprint'
+                        },
+
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Horas Sprint'
+                        },
+                        gridLines: {
+                            zeroLineWidth: 2,
+                        },
+                    }]
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: true
+                    // callbacks: {
+                    //     label: function (tooltipItem, myData) {
+                    //         var label = myData.datasets[tooltipItem.datasetIndex].label || '';
+                    //         if (label) {
+                    //             label += ': ';
+                    //         }
+                    //         label += parseFloat(tooltipItem.value).toFixed(2);
+                    //         return label;
+                    //     }
+                    // }
+                },
+            }
+        };
+
+        return cfg
+    }
+
+    function montarDatasProjeto(data) {
+        if (data) {
+            $('#dataInicio').html(moment(data.dataInicioSprint).format('DD/MM/YYYY'))
+            $('#dataFim').html(moment(data.dataFimSprint).format('DD/MM/YYYY'))
+            $('#dataFimRitmoEstimado').html(moment(data.dataFimRitmo).format('DD/MM/YYYY'))
+            $('#dataFimTendencia').html(moment(data.dataFimTendencia).format('DD/MM/YYYY'))
+        }
+    }
+
+    function montarInfoProjeto(data) {
+        if (data) {
+            $('#mediaExecutadoDiaSprint').html(data.mediaExecutadoDiaSprint)
+        }
+    }
+
+    function montarGraficoProjeto() {
+
+        let id_projeto = {{ projeto.id }}
+
+        console.warn('id_projeto', id_projeto)
+
+        if (id_projeto) {
+            let url = "/dados_grafico_projeto/" + id_projeto
+            $.get(url, function (data) {
+
+                // console.warn('dados grafico', data)
+
+                montarDatasProjeto(data)
+
+                montarInfoProjeto(data)
+
+                $('#chartContainer').empty();
+    
+                $('#chartContainer').html('<canvas id="canvas" width="90%" height="50%"></canvas>'); // then load chart.
+    
+                var ctx = document.getElementById('canvas').getContext('2d');
+
+                if (typeof $chart !== "undefined") {
+                    $chart.destroy();
+                }
+
+                $chart = new Chart(ctx, montarConfigGrafico(data));
+                $chart.update()
+
+            })
+        }
+    }
+
+
+</script>
 
 
 
