@@ -77,7 +77,7 @@ module.exports = [
         idBoard: idBoardMateusApp,
         nomesListas: {
             ..._padrao.listas,
-            'planejado':'Planejado - FRONT - Refatoração M2 - Home',
+            'planejado': 'Planejado - FRONT - Refatoração M2 - Home',
             'concluido': 'Concluído - FRONT - Refatoração M2 - Home'
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
@@ -98,7 +98,7 @@ module.exports = [
         idBoard: idBoardMateusApp,
         nomesListas: {
             ..._padrao.listas,
-            'planejado':'Planejado - FRONT - Busca e Seleção Lojas',
+            'planejado': 'Planejado - FRONT - Busca e Seleção Lojas',
             'concluido': 'Concluído - FRONT - Busca e Seleção Lojas'
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
@@ -120,7 +120,7 @@ module.exports = [
         nomesListas: {
             ..._padrao.listas,
             'fazendo': 'Fazendo',
-            'planejado':'Planejado',
+            'planejado': 'Planejado',
             'concluido': 'Concluído'
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
@@ -141,7 +141,7 @@ module.exports = [
         idBoard: idBoardMateusApp,
         nomesListas: {
             ..._padrao.listas,
-            'planejado':'Planejado - RC - Refatoração Cache',
+            'planejado': 'Planejado - RC - Refatoração Cache',
             'concluido': 'Concluído - RC - Refatoração Cache'
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
@@ -163,12 +163,12 @@ module.exports = [
         idBoard: idBoardMateusApp,
         nomesListas: {
             ..._padrao.listas,
-            'planejado':'Planejado - ILH - Integração Login Home',
+            'planejado': 'Planejado - ILH - Integração Login Home',
             'concluido': 'Concluído - ILH - Integração Login e Home'
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
         equipeProgramadores: [
-            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 0.5 } },
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 0.5 } },
             { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorInicial2SabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicial2SabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'sac': 0.5 } },
             { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
@@ -185,12 +185,12 @@ module.exports = [
         idBoard: idBoardMateusApp,
         nomesListas: {
             ..._padrao.listas,
-            'planejado':'Planejado - TMH - Tudo Menos Home',
+            'planejado': 'Planejado - TMH - Tudo Menos Home',
             'concluido': 'Concluído - TMH - Tudo Menos Home'
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
         equipeProgramadores: [
-            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 0.5 } },
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 0.5 } },
             { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorInicial2SabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicial2SabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'sac': 0.5 } },
             { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
@@ -214,13 +214,13 @@ module.exports = [
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
         equipeProgramadores: [
-            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 0.5 } },
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 0.5 } },
             { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorInicial2SabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorInicial2SabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'sac': 0.5 } },
             { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Ricardo, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
-            { pessoa: pessoa.Pablo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'analises': 3 } },
+            { pessoa: pessoa.Pablo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'analises': 3 } },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.finalizado
@@ -239,7 +239,7 @@ module.exports = [
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
         equipeProgramadores: [
-            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 0.5 } },
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 0.5 } },
             { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
             { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'sac': 0.5 } },
             { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
@@ -261,7 +261,7 @@ module.exports = [
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
         equipeProgramadores: [
-            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias } },
+            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias } },
             { pessoa: pessoa.Ricardo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
@@ -281,10 +281,10 @@ module.exports = [
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
         equipeProgramadores: [
-            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias } },
-            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 0.5 }},
+            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias } },
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 0.5 } },
             { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
-            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'sac':0.5 } },
+            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'sac': 0.5 } },
             { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
@@ -304,11 +304,11 @@ module.exports = [
         },
         diasDuracaoSprint: _padrao.diasDuracaoSprint,
         equipeProgramadores: [
-            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias } },
-            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 1.5 }},
-            { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias },
-            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'sac': 2.0 } },
-            { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: {..._padrao.tempoAtividadesExtrasDiarias, 'sac': 2.0 } },
+            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias } },
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'cadastro': 1.5 } },
+            { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: _padrao.tempoAtividadesExtrasDiarias, 'atividades_caio': 1 },
+            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'sac': 2.0 } },
+            { pessoa: pessoa.MarcosCosta, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'sac': 2.0 } },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
