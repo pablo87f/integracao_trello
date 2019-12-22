@@ -229,7 +229,7 @@ GraficoController.calculaHorasEsperadasDiaSemana = async (dia, equipeProgramador
 
     let eh_feriado = _feriados[dia.format('DD/MM/YYYY')]
     if (eh_feriado) return 0
-    
+
     // obtem o dia da semana
     let diaSemana = dia.day() + 1
 
@@ -274,7 +274,7 @@ GraficoController.obtemFatorDiaSemana = (dia, equipeProgramadores) => {
 
     let eh_feriado = _feriados[dia.format('DD/MM/YYYY')]
     if (eh_feriado) return 0
-    
+
     // obtem o dia da semana
     let diaSemana = dia.day() + 1
 
@@ -285,10 +285,10 @@ GraficoController.obtemFatorDiaSemana = (dia, equipeProgramadores) => {
         if (membro && membro.cargo && membro.cargo.cargaHorariaSemanal && membro.cargo.fatorEsperadoCargaHorariaSemanal && membro.cargo.cargaHorariaDia && membro.cargo.maxFatorEsperadoDia) {
             let cargaDia = membro.cargo.cargaHorariaSemanal[diaSemana]
             let percentProdutivoEsperadoDia = membro.cargo.fatorEsperadoCargaHorariaSemanal[diaSemana]
-            
-            fatorEsperadoEquipeDia += (cargaDia / membro.cargo.cargaHorariaDia) *(percentProdutivoEsperadoDia/membro.cargo.maxFatorEsperadoDia)
 
-            qtdeMembrosAtivosDia += (percentProdutivoEsperadoDia > 0 ? 1: 0)
+            fatorEsperadoEquipeDia += (cargaDia / membro.cargo.cargaHorariaDia) * (percentProdutivoEsperadoDia / membro.cargo.maxFatorEsperadoDia)
+
+            qtdeMembrosAtivosDia += (percentProdutivoEsperadoDia > 0 ? 1 : 0)
         }
     }
 
@@ -399,7 +399,7 @@ GraficoController.gerarBurningDown = async (projeto) => {
 
     let linhaOntem = [{ t: ontem, y: tempoEsforcoTotalEstimado }, { t: ontem, y: tempoRestanteRitmo }]
 
-    return { executado, restante, meta, tendencia, ritmo, linhaOntem, dataInicioSprint, dataFimSprint, dataFimRitmo, dataFimTendencia, mediaExecutadoDiaSprint }
+    return { executado, restante, meta, tendencia, ritmo, linhaOntem, dataInicioSprint, dataFimSprint, dataFimRitmo, dataFimTendencia, mediaExecutadoDiaSprint, tempoEsforcoTotalEstimado, totalJaExecutadoSprint }
 }
 
 export default GraficoController

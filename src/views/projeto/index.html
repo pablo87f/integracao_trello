@@ -1,4 +1,17 @@
 {{>shared/project_layout/header}}
+<script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+<script src="https://unpkg.com/moment"></script>
+<script src="../public/chartjs/Chart.min.js"></script>
 
 <div class="app-main__inner">
     <div class="app-page-title">
@@ -18,34 +31,31 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="main-card mb-3 card">
-                    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
-
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-                        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-                        crossorigin="anonymous"></script>
-                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-                        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-                        crossorigin="anonymous"></script>
-
-
-                    <script type="text/javascript" charset="utf8"
-                        src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
-                    <script src="https://unpkg.com/moment"></script>
-                    <script src="../public/chartjs/Chart.min.js"></script>
-
-                    <div class="card-header">GRÁFICO DE ACOMPANHAMENTO
+                    <div class="card-body">
+                        <h5 class="card-title">Progresso do Projeto</h5>
+                        <div id="progresso-projeto" class="mb-3 progress">
+                            
+                        </div>
 
                     </div>
+                </div>
+                <div class="main-card mb-3 card">
+                    <div class="card-header">
+                        GRÁFICO DE ACOMPANHAMENTO
+                    </div>
                     <div class="table-responsive">
+
+                        <br />
                         <div class='col'>
+
                             <div class='row'>
-                                <div class='col'>
+                                <div class='col' style="font-weight: bold;">
                                     Data Inicio:
                                 </div>
                                 <div class='col'>
                                     <span id='dataInicio'>--/--/--</span>
                                 </div>
-                                <div class='col'>
+                                <div class='col' style="font-weight: bold;">
                                     Valor médio horas dia:
                                 </div>
                                 <div class='col'>
@@ -53,13 +63,13 @@
                                 </div>
                             </div>
                             <div class='row'>
-                                <div class='col'>
+                                <div class='col' style="font-weight: bold;">
                                     Data Fim Ritmo Estimado:
                                 </div>
                                 <div class='col'>
                                     <span id='dataFimRitmoEstimado'>--/--/--</span>
                                 </div>
-                                <div class='col'>
+                                <div class='col' style="font-weight: bold;">
                                     Data Fim Tendencia:
                                 </div>
                                 <div class='col'>
@@ -68,8 +78,10 @@
                             </div>
 
                             <br />
-                            <div id="chartContainer" class='container'>
-                                
+                            <div id="chartContainer" class='container' style="width: 90%; height: 50%;">
+                                <span style="font-weight: bold;">
+                                    Carregando dados do gráfico...
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -245,6 +257,22 @@
         return cfg
     }
 
+    function calcularPorcentagemProgressoProjeto(data) {
+        if (data && data.tempoEsforcoTotalEstimado && data.totalJaExecutadoSprint) {
+
+            
+            var percentualFeito = Math.round((100 * data.totalJaExecutadoSprint) / data.tempoEsforcoTotalEstimado)
+            console.warn('percentual:',  percentualFeito)
+            $('#progresso-projeto').empty();
+            $('#progresso-projeto').html(`
+                <div class="progress-bar" role="progressbar" aria-valuenow="${percentualFeito}" aria-valuemin="0" 
+                aria-valuemax="100" style="width: ${percentualFeito}%;">
+                    ${percentualFeito}%
+                </div>
+            `)
+        }
+    }
+
     function montarDatasProjeto(data) {
         if (data) {
             $('#dataInicio').html(moment(data.dataInicioSprint).format('DD/MM/YYYY'))
@@ -263,23 +291,24 @@
     function montarGraficoProjeto() {
 
         let id_projeto = {{ projeto.id }}
-
-        console.warn('id_projeto', id_projeto)
+    
 
         if (id_projeto) {
             let url = "/dados_grafico_projeto/" + id_projeto
             $.get(url, function (data) {
 
-                // console.warn('dados grafico', data)
+                console.warn('dados grafico', data)
+
+                calcularPorcentagemProgressoProjeto(data)
 
                 montarDatasProjeto(data)
 
                 montarInfoProjeto(data)
 
                 $('#chartContainer').empty();
-    
+
                 $('#chartContainer').html('<canvas id="canvas" width="90%" height="50%"></canvas>'); // then load chart.
-    
+
                 var ctx = document.getElementById('canvas').getContext('2d');
 
                 if (typeof $chart !== "undefined") {
