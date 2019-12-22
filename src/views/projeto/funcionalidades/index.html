@@ -16,56 +16,73 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="main-card mb-3 card">
-                    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
 
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-                        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-                        crossorigin="anonymous"></script>
-                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-                        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-                        crossorigin="anonymous"></script>
+                    <div class="card-header">
+                        <h5 class="card-title">FUNCIONALIDADES</h5>
+                    </div>
+                    <div class="card-body">
+                        <form class="">
+                            <div class="position-relative form-group"><label for="exampleAddress"
+                                    class="">Descrição</label><input name="descricao" id="descricao"
+                                    placeholder="Ex.: Fazer Login" type="text" class="form-control"></div>
+                            <button type="button" data-toggle="collapse" href="#collapseExample123"
+                                class="btn-shadow mr-3 btn btn-info">
+                                <span class="btn-icon-wrapper pr-2 ">
+                                    <i class="fa fa-plus"></i>
+                                </span>
+                                Adicionar
+                            </button>
+                        </form>
+                        <br/>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="mb-0 table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Descrição</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td>Fazer Login</td>
+                                            <td>
+                                                <a href="#">
+                                                    Excluir
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">2</th>
+                                            <td>Recuperar senha</td>
+                                            <td>
+                                                <a href="#">
+                                                    Excluir
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">3</th>
+                                            <td>Visualziar produtos promocionados</td>
+                                            <td>
+                                                <a href="#">
+                                                    Excluir
+                                                </a>
+                                            </td>
+                                        </tr>
 
-
-                    <script type="text/javascript" charset="utf8"
-                        src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
-                    <script src="https://unpkg.com/moment"></script>
-                    <script src="../public/chartjs/Chart.min.js"></script>
-
-                    <div class="card-header">FUNCIONALIDADES</div>
-                    <div class="table-responsive">
-                        <div class='col'>
-                            <div class='row'>
-                                <div class='col'>
-                                    Data Inicio:
-                                </div>
-                                <div class='col'>
-                                    <span id='dataInicio'>--/--/--</span>
-                                </div>
-                                <div class='col'>
-                                    Valor médio horas dia:
-                                </div>
-                                <div class='col'>
-                                    <span id='mediaExecutadoDiaSprint'>--,--</span>
-                                </div>
-                            </div>
-                            <div class='row'>
-                                <div class='col'>
-                                    Data Fim Ritmo Estimado:
-                                </div>
-                                <div class='col'>
-                                    <span id='dataFimRitmoEstimado'>--/--/--</span>
-                                </div>
-                                <div class='col'>
-                                    Data Fim Tendencia:
-                                </div>
-                                <div class='col'>
-                                    <span id='dataFimTendencia'>--/--/--</span>
-                                </div>
-                            </div>
-
-                            <br />
-                            <div id="chartContainer" class='container'>
-                                
+                                        <tr>
+                                            <th scope="row">3</th>
+                                            <td>Dar 'Eu Quero' nos produtos promocionados</td>
+                                            <td>
+                                                <a href="#">
+                                                    Excluir
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
