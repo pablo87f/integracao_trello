@@ -21,22 +21,58 @@
                         <h5 class="card-title">FUNCIONALIDADES</h5>
                     </div>
                     <div class="card-body">
-                        <form class="">
-                            <div class="position-relative form-group"><label for="exampleAddress"
-                                    class="">Descrição</label><input name="descricao" id="descricao"
-                                    placeholder="Ex.: Fazer Login" type="text" class="form-control"></div>
-                            <button type="button" data-toggle="collapse" href="#collapseExample123"
-                                class="btn-shadow mr-3 btn btn-info">
-                                <span class="btn-icon-wrapper pr-2 ">
-                                    <i class="fa fa-plus"></i>
-                                </span>
-                                Adicionar
-                            </button>
+                        <form id="formFuncionalidade" class="needs-validation" novalidate>
+                            <div class="form-row">
+                                <div class="col-md-10">
+                                    <label for="descricao">Descrição</label>
+                                    <input type="text" class="form-control" id="descricao"
+                                        placeholder="Ex.: Fazer Login" required>
+                                    <div class="invalid-feedback">
+                                        Campo obrigatório
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div style="display: flex; justify-content: flex-end; flex-direction: column;">
+                                        <label for="exampleAddress" class="">&nbsp;</label>
+                                        <button id="btnAdicionarFuncionalidade" type="button" data-toggle="collapse"
+                                            href="#collapseExample123" class="btn-shadow mr-3 btn btn-info">
+                                            <span class="btn-icon-wrapper pr-2 ">
+                                                <i class="fa fa-plus"></i>
+                                            </span>
+                                            Adicionar
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
                         </form>
-                        <br/>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="mb-0 table">
+                                <table class="align-middle mb-0 table table-borderless table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#ID</th>
+                                            <th class="text-left">Descrição</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#funcionalidades}}
+                                        <tr>
+                                            <td class="text-center text-muted">#{{id}}</td>
+                                            <td>
+                                                <div class="widget-content p-0">
+                                                    <div class="widget-content-wrapper">
+                                                        <div class="widget-content-left flex2">
+                                                            <div class="widget-heading">{{descricao}}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/funcionalidades}}
+                                    </tbody>
+                                </table>
+                                <!-- <table class="mb-0 table">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -73,7 +109,7 @@
                                         </tr>
 
                                         <tr>
-                                            <th scope="row">3</th>
+                                            <th scope="row">4</th>
                                             <td>Dar 'Eu Quero' nos produtos promocionados</td>
                                             <td>
                                                 <a href="#">
@@ -82,7 +118,7 @@
                                             </td>
                                         </tr>
                                     </tbody>
-                                </table>
+                                </table> -->
                             </div>
                         </div>
                     </div>
@@ -94,6 +130,62 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="../../../public/assets/scripts/jquery-3.4.1.min.js"></script>
+<script type="text/javascript">
+    var idProjeto = {{ projeto.id }}
+
+    $('document').ready(function () {
+        $("#descricao").focus();
+        $('#btnAdicionarFuncionalidade').click(() => salvarFuncionalidade())
+        $('#descricao').bind("enterKey", function (e) {
+            console.warn("enterKey")
+            salvarFuncionalidade()
+        });
+        $("#descricao").keydown(function (e) {
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                $(this).trigger("enterKey");
+            }
+        });
+
+    })
+
+    function salvarFuncionalidade() {
+        var form = $('#formFuncionalidade')[0]
+
+        if (form.checkValidity() === false) {
+            form.classList.add('was-validated');
+            return
+        }
+
+
+        let textoBotao = $('#btnSalvarProjeto').html();
+        $('#btnAdicionarFuncionalidade').html('...');
+        $('#btnAdicionarFuncionalidade').prop('disabled', true);
+
+        let descricao = $("#descricao").val()
+
+        console.warn('descricao', descricao)
+
+        $.ajax({
+            url: `/projeto/${idProjeto}/funcionalidade/criar`,
+            type: 'post',
+            data: {
+                descricao: descricao,
+            }
+        }).done(function (msg) {
+            $('#btnAdicionarFuncionalidade').html(textoBotao);
+            $('#btnAdicionarFuncionalidade').prop('disabled', false);
+
+            if (msg && msg.sucess) {
+                location.reload();
+            }
+        }).fail(function (jqXHR, textStatus, msg) {
+            $('#btnAdicionarFuncionalidade').html(textoBotao);
+            $('#btnAdicionarFuncionalidade').prop('disabled', false);
+        });
+    }
+</script>
 
 
 

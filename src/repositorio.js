@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _ from "lodash";
 import { LocalStorage } from 'node-localstorage'
 let Repositorio = {}
 
@@ -43,8 +43,8 @@ Repositorio.insert = async (entityName, data) => {
     let projetoExistente = _.find(allData, { id: data.id })
     if (projetoExistente) { throw Error('Já existe um projeto com o mesmo id') }
 
-    let idsExistentes = allData.length > 0 ? allData.reduce((item) => item.id) : [0]
-    let nextId = _.max(idsExistentes) + 1
+    let idsExistentes = allData.length > 0 ? allData.map((item) => item.id) : [0]
+    let nextId = Math.max.apply(Math, idsExistentes) + 1
 
     allData.push({ ...data, id: nextId })
 

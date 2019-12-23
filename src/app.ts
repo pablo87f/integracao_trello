@@ -26,11 +26,11 @@ app.use(bodyParser.urlencoded({
 
 // -----------------------------------------
 app.get('/', function (req: express.Request, res: express.Response) {
-    res.render('./home/index.html', { 'projetosSalvos': _.orderBy(repo.getAll(repo.Entities.Projetos),  ['status.id', 'id'], ['asc', 'desc']), 'projetos': _.orderBy(projetos, ['status.id', 'id'], ['asc', 'desc']) })
+    res.render('./home/index.html', { 'projetosSalvos': _.orderBy(repo.getAll(repo.Entities.Projetos), ['status.id', 'id'], ['asc', 'desc']), 'projetos': _.orderBy(projetos, ['status.id', 'id'], ['asc', 'desc']) })
 });
 
 app.get('/home', function (req, res) {
-    res.render('home/index.html', { 'projetosSalvos': _.orderBy(repo.getAll(repo.Entities.Projetos),  ['status.id', 'id'], ['asc', 'desc']), 'projetos': _.orderBy(projetos,  ['status.id', 'id'], ['asc', 'desc']) })
+    res.render('home/index.html', { 'projetosSalvos': _.orderBy(repo.getAll(repo.Entities.Projetos), ['status.id', 'id'], ['asc', 'desc']), 'projetos': _.orderBy(projetos, ['status.id', 'id'], ['asc', 'desc']) })
 });
 
 app.get('/projeto/:id', function (req: express.Request, res: express.Response) {
@@ -88,10 +88,37 @@ app.get('/projeto/:id/funcionalidades', function (req: express.Request, res: exp
     let projeto = _.find(projetos, { id: idProjeto })
 
     if (!projeto) res.sendStatus(404)
+
     const funcionalidades = repo.getAll(repo.Entities.Funcionalidades) || []
-    res.render('projeto/funcionalidades/index.html', { 'projeto': projeto, 'funcionalidades': funcionalidades })
+
+    res.render('projeto/funcionalidades/index.html', { 'projeto': projeto, 'funcionalidades': _.orderBy(funcionalidades, ['id'], ['desc']) })
 });
 
+app.post('/projeto/:id/funcionalidade/criar', function (req: express.Request, res: express.Response) {
+
+    if (!req.params.id) res.sendStatus(401);
+
+    let idProjeto: number = 0
+
+    try {
+        idProjeto = parseInt(req.params.id);
+    }
+    catch (e) {
+        res.sendStatus(401);
+    }
+
+    if (!req.body) res.status(400).send({ sucess: false, message: 'Não foi possível recuperar corpo da requisição' })
+
+    if (!req.body.descricao) res.status(400).send({ sucess: false, message: "Campo 'descricao' é obrigatório" })
+
+    let funcionalidade = {
+        descricao: req.body.descricao
+    }
+
+    repo.insert(repo.Entities.Funcionalidades, funcionalidade)
+
+    res.send({ sucess: true })
+});
 
 
 // -------------------------------------------------------------
