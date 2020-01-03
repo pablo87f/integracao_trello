@@ -53,6 +53,7 @@
                                         <tr>
                                             <th class="text-center">#ID</th>
                                             <th class="text-left">Descrição</th>
+                                            <th class="text-left">Opções</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -68,6 +69,20 @@
                                                     </div>
                                                 </div>
                                             </td>
+                                            <td>
+                                                <span>
+                                                    <a href="/projeto/{{projeto.id}}/funcionalidade/{{id}}/editar">
+                                                        Editar
+                                                    </a>
+                                                </span>
+                                                <span>
+                                                    <a href="/projeto/{{projeto.id}}/funcionalidade/{{id}}/excluir">
+                                                        Exluir
+                                                    </a>
+                                                </span>
+
+                                            </td>
+                                          
                                         </tr>
                                         {{/funcionalidades}}
                                     </tbody>
