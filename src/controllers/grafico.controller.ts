@@ -8,6 +8,8 @@ var _feriados = require('../dados/_feriados')
 import projetos from '../dados/projetos';
 import path from 'path';
 import { GraficoService } from "../services";
+import Repositorio from '../repositorio';
+import DadosGrafico from '../grafico';
 
 namespace GraficoController {
 
@@ -18,19 +20,30 @@ namespace GraficoController {
     export async function gerarGrafico(req: express.Request, res: express.Response) {
         let id_projeto = req.params.id_projeto
 
-        let projeto = _.find(projetos, { id: parseInt(id_projeto) })
+        const projeto = Repositorio.findById(Repositorio.Entities.Projetos, id_projeto)
+
+        if (!projeto) return res.status(401).send({ error: 'Projeto não encontrado' })
+
         try {
-            const dados = await GraficoService.gerarBurningDown(projeto)
+            
             const nomeProjeto = projeto ? projeto.nome : "---"
+            let dadosGrafico = {}
 
-            res.send({ ...dados, nomeProjeto })
+            if(projeto.status.nome == 'ativo') {
+                dadosGrafico = await GraficoService.gerarBurningDown(projeto)
+            }
+            else {
+                dadosGrafico = projeto.dadosGrafico
+            }
 
+            res.send({ ...dadosGrafico, nomeProjeto })
 
         } catch (e) {
             console.warn('erro:', e, e.message)
             res.send('Falha ao executar')
         }
     }
+
 }
 
 export default GraficoController

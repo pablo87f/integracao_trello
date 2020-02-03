@@ -11,7 +11,7 @@ if (typeof localStorage === "undefined" || localStorage === null) {
 // -----------------------------------------
 
 Repositorio.Entities = {
-    'Projetos': 'projetos',
+    'Projetos': 'Projetos.json',
     'Pessoas': 'Pessoas',
     'Cargos': 'Cargos',
     'Funcionalidades': 'Funcionalidades',
@@ -28,7 +28,7 @@ Repositorio.setAll = (entityName, data) => {
 
 Repositorio.findById = (entityName, id) => {
     let allData = Repositorio.getAll(entityName)
-    return _.find(allData, { id: id })
+    return _.find(allData, { id: parseInt(id) })
 }
 
 Repositorio.findByField = async (entityName, filedName, valueToFind) => {
@@ -52,11 +52,13 @@ Repositorio.insert = async (entityName, data) => {
     allData.push({ ...data })
 
     Repositorio.setAll(entityName, allData)
+
+    return data
 }
 
 Repositorio.updateById = async (entityName, id, newData) => {
     let allData = Repositorio.getAll(entityName)
-    let indexRegister = _.findIndex(allData, { id: id })
+    let indexRegister = _.findIndex(allData, { id: parseInt(id) })
     allData[indexRegister] = newData
     Repositorio.setAll(entityName, allData)
 }

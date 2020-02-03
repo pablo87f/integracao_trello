@@ -2,8 +2,10 @@ import _ from "lodash";
 import express from 'express';
 import repo from '../repositorio';
 
+import projetos from '../dados/projetos';
+
 namespace FuncionalidadeController {
-    export function criar(req: express.Request, res: express.Response) {
+    export function store(req: express.Request, res: express.Response) {
 
         if (!req.params.id) res.sendStatus(401);
     
@@ -28,6 +30,29 @@ namespace FuncionalidadeController {
     
         res.send({ sucess: true })
     }
+
+    export function index(req: express.Request, res: express.Response) {
+
+        if (!req.params.id) res.sendStatus(401);
+
+        let idProjeto: number = 0
+
+        try {
+            idProjeto = parseInt(req.params.id);
+        }
+        catch (e) {
+            res.sendStatus(401);
+        }
+
+        let projeto = _.find(projetos, { id: idProjeto })
+
+        if (!projeto) res.sendStatus(404)
+
+        const funcionalidades = repo.getAll(repo.Entities.Funcionalidades) || []
+
+        res.render('projeto/funcionalidades.html', { 'projeto': projeto, 'funcionalidades': _.orderBy(funcionalidades, ['id'], ['desc']) })
+    }
 }
 
 export default FuncionalidadeController
+    

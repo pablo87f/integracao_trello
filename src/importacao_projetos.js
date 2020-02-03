@@ -1,5 +1,7 @@
 import projetos from './dados/projetos';
 import Repositorio from "./repositorio";
+import { GraficoService } from './services';
+import StatusProjeto from './dados/status-projeto';
 
 async function importarProjetos() {
 
@@ -17,7 +19,12 @@ async function importarProjetos() {
     console.log('projetosNaoImportados', projetosNaoImportados.map(p => p.id))
 
     for (const projeto of projetosNaoImportados) {
-        await Repositorio.insert(Repositorio.Entities.Projetos, projeto)
+        const projetoInserido = await Repositorio.insert(Repositorio.Entities.Projetos, projeto)
+
+        if(projeto.status.id != StatusProjeto.ativo.id){
+            const dadosGrafico = await GraficoService.gerarBurningDown(projeto)
+            await Repositorio.updateById(Repositorio.Entities.Projetos, projeto.id, {...projeto, dadosGrafico})
+        }
     }
 
     console.log('Os projetos foram importados com sucesso')

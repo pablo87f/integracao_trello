@@ -21,10 +21,12 @@
                     <i class="pe-7s-portfolio icon-gradient bg-mean-fruit">
                     </i>
                 </div>
-                <div>{{projeto.id}} - {{projeto.prefixo}} - {{projeto.nome}}
+                <div>{{projeto.id}} - {{projeto.prefixo}} - {{projeto.nome}} <div
+                        class="badge badge-{{projeto.status.classeEstilo}}">{{projeto.status.nome}}</div>
 
                 </div>
             </div>
+
         </div>
     </div>
     <div id='div_projetos'>
@@ -34,10 +36,22 @@
                     <div class="card-body">
                         <h5 class="card-title">Progresso do Projeto</h5>
                         <div id="progresso-projeto" class="mb-3 progress">
-                            <div style="widows: 100%; align-items: center; align-self: center; flex: 1; position: absolute;">
-                                <img src="../../public/assets/images/ajax-loader.gif"/>
+                            <div
+                                style="widows: 100%; align-items: center; align-self: center; flex: 1; position: absolute;">
+                                <img src="../../public/assets/images/ajax-loader.gif" />
                             </div>
                         </div>
+
+                        <div class="float-right">
+                            <button id="btn-entregar" type="button" aria-haspopup="true" aria-expanded="false"
+                                class="mb-2 mr-2 btn btn-secondary" disabled>
+                                <span class="btn-icon-wrapper pr-2 opacity-7">
+                                    <i class="fa fa-upload fa-w-20"></i>
+                                </span>
+                                Entregar
+                            </button>
+                        </div>
+
 
                     </div>
                 </div>
@@ -80,7 +94,7 @@
 
                             <br />
                             <div id="chartContainer" class='container' style="width: 90%; height: 50%;">
-                                    <img src="../../public/assets/images/ajax-loader.gif"/>
+                                <img src="../../public/assets/images/ajax-loader.gif" />
                             </div>
                         </div>
                     </div>
@@ -96,9 +110,23 @@
 <script type="text/javascript">
     var $chart;
 
+    let status = '{{ projeto.status.nome }}'
+    let id_projeto = {{ projeto.id }}
+
     $(document).ready(function () {
 
         montarGraficoProjeto()
+
+        if (status == 'ativo') {
+            $('#btn-entregar').removeClass('mb-2 mr-2 btn btn-secondary')
+            $('#btn-entregar').addClass('mb-2 mr-2 btn btn-success')
+            $('#btn-entregar').prop('disabled', false);
+            $('#btn-entregar').click(confirmarEntregaProjeto)
+
+        }
+        else if(status == 'entregue') {
+            
+        }
     });
 
 
@@ -259,9 +287,9 @@
     function calcularPorcentagemProgressoProjeto(data) {
         if (data && data.tempoEsforcoTotalEstimado && data.totalJaExecutadoSprint) {
 
-            
+
             var percentualFeito = Math.round((100 * data.totalJaExecutadoSprint) / data.tempoEsforcoTotalEstimado)
-            console.warn('percentual:',  percentualFeito)
+            console.warn('percentual:', percentualFeito)
             $('#progresso-projeto').empty();
             $('#progresso-projeto').html(`
                 <div class="progress-bar" role="progressbar" aria-valuenow="${percentualFeito}" aria-valuemin="0" 
@@ -289,35 +317,62 @@
 
     function montarGraficoProjeto() {
 
-        let id_projeto = {{ projeto.id }}
-    
-
         if (id_projeto) {
             let url = "/dados_grafico_projeto/" + id_projeto
-            $.get(url, function (data) {
+            $.get(url, carregarDadosGrafico)
+        }
+    }
+    
+    function carregarDadosGrafico(data) {
 
-                console.warn('dados grafico', data)
+        console.warn('dados grafico', data)
 
-                calcularPorcentagemProgressoProjeto(data)
+        calcularPorcentagemProgressoProjeto(data)
 
-                montarDatasProjeto(data)
+        montarDatasProjeto(data)
 
-                montarInfoProjeto(data)
+        montarInfoProjeto(data)
 
-                $('#chartContainer').empty();
+        $('#chartContainer').empty();
 
-                $('#chartContainer').html('<canvas id="canvas" width="90%" height="50%"></canvas>'); // then load chart.
+        $('#chartContainer').html('<canvas id="canvas" width="90%" height="50%"></canvas>'); // then load chart.
 
-                var ctx = document.getElementById('canvas').getContext('2d');
+        var ctx = document.getElementById('canvas').getContext('2d');
 
-                if (typeof $chart !== "undefined") {
-                    $chart.destroy();
-                }
+        if (typeof $chart !== "undefined") {
+            $chart.destroy();
+        }
 
-                $chart = new Chart(ctx, montarConfigGrafico(data));
-                $chart.update()
+        $chart = new Chart(ctx, montarConfigGrafico(data));
+        $chart.update()
 
-            })
+    }
+    function confirmarEntregaProjeto() {
+        let confirmou = confirm("Deseja realmente entregar esse Projeto?\nEssa ação não pode ser desfeita!")
+
+        if (confirmou) {
+            entregarProjeto()
+        }
+    }
+
+    function entregarProjeto() {
+
+        if (id_projeto) {
+
+            let url = "/projeto/" + id_projeto
+
+            $.ajax({
+                type: 'PUT',
+                url: url,
+                contentType: 'application/json',
+                data: JSON.stringify({ status: 'entregue' }),
+            }).done(function () {
+                alert('Projeto entrege!')
+            }).fail(function (msg) {
+                alert('Falha ao entregar o projeto!')
+            }).always(function (msg) {
+                location.reload();
+            });
         }
     }
 

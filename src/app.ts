@@ -10,7 +10,7 @@ import projetos from './dados/projetos';
 import GraficoController from './controllers/grafico.controller';
 
 import repo from './repositorio';
-import { ProjetoController, FuncionalidadeController } from "./controllers";
+import { ProjetoController, FuncionalidadesController } from "./controllers";
 
 const app = express();
 var publicPath = path.join(__dirname, './public');
@@ -26,22 +26,22 @@ app.use(bodyParser.urlencoded({
 }))
 
 // ROUTES -----------------------------------------
-app.get('/', ProjetoController.listar);
+app.get('/home', ProjetoController.index);
+app.get('/', ProjetoController.index);
 
-app.get('/home', ProjetoController.listar2);
+app.get('/projeto/:id', ProjetoController.show);
+app.post('/projeto/criar', ProjetoController.store);
+app.put('/projeto/:id', ProjetoController.update);
 
-app.get('/projeto/:id', ProjetoController.detalheProjeto);
+app.get('/projeto/:id/funcionalidades', FuncionalidadesController.index);
+app.post('/projeto/:id/funcionalidade/criar', FuncionalidadesController.store);
 
-app.post('/projeto/criar', ProjetoController.criar);
 
-app.get('/projeto/:id/funcionalidades', ProjetoController.listarFuncionalidades);
-
-app.post('/projeto/:id/funcionalidade/criar', FuncionalidadeController.criar);
 
 
 // AJAX -------------------------------------------------------------
 
-app.get('/listar_projetos', ProjetoController.recuperarProjetos);
+app.get('/listar_projetos', ProjetoController.index);
 
 app.get('/grafico', GraficoController.mostrar);
 

@@ -1,5 +1,5 @@
-import FuncionalidadeController from "./funcionalidade.controller";
+import FuncionalidadesController from "./funcionalidades.controller";
 import ProjetoController from "./projeto.controller";
 import GraficoController from "./grafico.controller";
 
-export { FuncionalidadeController, ProjetoController, GraficoController }
+export { FuncionalidadesController, ProjetoController, GraficoController }
