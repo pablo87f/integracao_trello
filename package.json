@@ -9,7 +9,8 @@
     "start:dev": "nodemon",
     "build": "tsc",
     "start": "npm run build && node build/app.js",
-    "postbuild": "cpy '**/*' '!**/*.ts' ../build/ --cwd=src/ --no-overwrite --parents"
+    "postbuild": "cpy '**/*' '!**/*.ts' ../build/ --cwd=src/ --no-overwrite --parents",
+    "import:projects": "npm run build && node build/importacao_projetos.js"
   },
   "author": "Pablo Fernandes",
   "license": "ISC",
