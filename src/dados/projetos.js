@@ -335,4 +335,26 @@ module.exports = [
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
     },
+    {
+        id: 16,
+        prefixo: 'NSA',
+        nome: 'Novo Super App',
+        dataInicioSprint: '2020-02-11',
+        dataEntregaSprint: '',
+        idBoard: idBoardMateusApp,
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado': 'Planejado - NSA - Novo Super App',
+            'concluido': 'Concluído - NSA - Novo Super App'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Adriano, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias } },
+            { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'manutencao': 2.0 } },
+            { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'manutencao': 2.0 } },
+            { pessoa: pessoa.David, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias } },
+        ],
+        configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
+        status: statusProjetos.ativo
+    },
 ]
