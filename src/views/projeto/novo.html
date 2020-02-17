@@ -245,8 +245,8 @@
 
         $('#listaMembros').append(htmlFormMembro(idMembro, nome))
 
-        $(document).on('input', `#rngExec-${idMembro}`, function () {
-            $(`#txtExec-${idMembro}`).html($(this).val());
+        $(`#rngExec-${idMembro}`).on('input', function (e) {
+            $(`#txtExec-${idMembro}`).val(e.target.value);
         });
 
         $(`#btnRemMembro-${idMembro}`).click(() => remMembro(idMembro))
