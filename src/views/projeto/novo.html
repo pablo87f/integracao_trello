@@ -1,0 +1,226 @@
+{{>shared/project_layout/header}}
+
+<link rel="stylesheet" type="text/css" href="../../public/selectizejs/css/selectize.css" />
+<div class="app-main__inner">
+    <div class="app-page-title">
+        <div class="page-title-wrapper">
+            <div class="page-title-heading">
+                <div class="page-title-icon">
+                    <i class="pe-7s-portfolio icon-gradient bg-mean-fruit">
+                    </i>
+                </div>
+                <div>Criação de novo projeto</div>
+            </div>
+        </div>
+    </div>
+    <div id='div_projetos'>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="main-card mb-3 card">
+                    <div class="card-body">
+
+                        <form class="">
+                            <h5 class="card-title">Dados do projeto</h5>
+                            <div class="form-row">
+                                <div class="col-md-2">
+                                    <div class="position-relative form-group">
+                                        <label for="txtPrefixo" class="">Prefixo</label>
+                                        <input name="txtPrefixo" id="txtPrefixo" placeholder="Ex.: LCA"
+                                            class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-8">
+                                    <div class="position-relative form-group">
+                                        <label for="txtNome" class="">Nome</label>
+                                        <input name="txtNome" id="txtNome" placeholder="Ex.: Lista de Compras no App"
+                                            class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="position-relative form-group">
+                                        <label for="txtDataInicio" class="">Data Início</label>
+                                        <input name="txtDataInicio" id="txtDataInicio" type="date" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+                            <br />
+                            <h5 class="card-title">Dados do quadro no trello</h5>
+
+                            <div class="form-row">
+                                <div class="col-md-8">
+                                    <div class="position-relative form-group">
+                                        <label for="txtCodQuadro" class="">Código do quadro do Trello -
+                                            (https://trello.com/b/<span
+                                                style="color: magenta">ctc37b0n</span>/mateus-app)</label>
+                                        <input name="txtCodQuadro" id="txtCodQuadro" placeholder="Ex.: ctc37b0n"
+                                            type="text" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+
+                            <br />
+                            <h5 class="card-title">Listas de execução </h5>
+                            <!-- <div class="position-relative row form-group">
+                                <div for="txtBacklog" class="col-sm-2 col-form-label">
+                                    <strong>Tipo</strong>
+                                </div>
+                                <div class="col-sm-4">
+                                    <strong>Título</strong>
+                                </div>
+                                <div class="col-sm-1">
+                                    <strong>Porcentagem Exec.</strong>
+                                </div>
+                            </div> -->
+                            <button id="btnNovaListaExecucao" type="button">Add Lista</button>
+                            <br />
+                            <br />
+                            <div id="listasExecucao">
+
+                            </div>
+
+                            <br />
+
+                            <br />
+                            <h5 class="card-title">Equipe </h5>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <!-- {{#membros}}
+                                    <p value="{{username}}">{{nome}}</p>
+                                    {{/membros}} -->
+                                    <select id="selMembros" placeholder="Nome do Membro">
+                                        {{#membros}}
+                                        <option value="{{user}}">{{nome}}</option>
+                                        {{/membros}}
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button id="btnNovoMembro" type="button">Add Membro</button>
+                                </div>
+                            </div>
+                            <br />
+                            <br />
+                            <datalist id="tickmarks">
+                                <option value="5"></option>
+                                <option value="10" label="10%"></option>
+                                <option value="15"></option>
+                                <option value="20"></option>
+                                <option value="25"></option>
+                                <option value="30"></option>
+                                <option value="35"></option>
+                                <option value="40"></option>
+                                <option value="45"></option>
+                                <option value="50" label="50%"></option>
+                                <option value="55"></option>
+                                <option value="60"></option>
+                                <option value="65"></option>
+                                <option value="70"></option>
+                                <option value="75"></option>
+                                <option value="80"></option>
+                                <option value="85"></option>
+                                <option value="90"></option>
+                                <option value="95"></option>
+                                <option value="100" label="100%"></option>
+                            </datalist>
+                            <div id="listaMembros">
+
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="../../public/assets/scripts/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="../../public/selectizejs/js/standalone/selectize.min.js"></script>
+<script type="text/javascript">
+
+    const limiteListas = 6
+    let qtdeListas = 0
+
+    $('document').ready(function () {
+        $('#btnNovaListaExecucao').click(addFormListaExecucao)
+        $('#btnNovoMembro').click(addFormMembro)
+        $('#selMembros').selectize()
+
+        // $('select').selectize();
+    })
+
+    function atualizaValorExecucao(e) {
+        $('#rngExec1').val(e.target.value)
+    }
+
+    function addFormListaExecucao() {
+        if (qtdeListas >= limiteListas) {
+            alert(`O limite de listas é ${limiteListas}`)
+            return false
+        }
+
+        qtdeListas += 1
+        const htmlLista = `
+            <div class="form-row">
+                <div class="col-md-8">
+                    <div class="position-relative form-group">
+                        <label for="txtTituloLista" class="">Título</label>
+                        <input name="txtTituloLista" placeholder="Título"
+                            class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="position-relative form-group">
+                        <label for="txtExecLista" class="">Percent. Execução</label>
+                        <input name="txtExecLista" placeholder="0.0" type="number"
+                            step="0.1" value="0.0" class="form-control">
+                    </div>
+                </div>
+            </div>
+        `
+        const html = $('#listasExecucao').html()
+        const novoHtml = html + htmlLista
+        $('#listasExecucao').html(novoHtml)
+
+    }
+
+    function addFormMembro() {
+        const htmlMembro = `
+            <div class="form-row" id="membro-1">
+                <div class="col-md-6">
+                    <div class="position-relative form-group">
+                        <label for="txtTituloLista" class="">Nome</label>
+                        <input name="txtNome" class="form-control" value="Pablo Fernandes" readonly>
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    <div class="position-relative form-group">
+                        <label for="txtExecLista" class="">Percentual Esperado</label>
+                        <input name="rngExec-1" type="range" min="5" max="100" list="tickmarks"
+                            step="5" class="form-control" value="80">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="position-relative form-group">
+                        <label for="rngExec1" class="">%</label>
+                        <input type="text" readonly  id="rngExec1" 
+                        style="font-weight:bold;" value="80" class="form-control"></input>
+                    </div>
+                </div>
+            </div>
+        `
+        const html = $('#listaMembros').html()
+        const novoHtml = html + htmlMembro
+        $('#listaMembros').html(novoHtml)
+
+    }
+
+</script>
+
+{{>shared/project_layout/footer}}
