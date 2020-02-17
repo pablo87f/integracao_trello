@@ -375,11 +375,11 @@ module.exports = [
         equipeProgramadores: [
             { pessoa: pessoa.Alexandre, cargo: cargo.desenvolvedorInicialVendas, tempoAtividadesExtrasDiarias: { 'manutencao': 2.0 } },
             { pessoa: pessoa.LuisVendas, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: { 'manutencao': 2.0 } },
-            { pessoa: pessoa.Ramon, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: {  } },
-            { pessoa: pessoa.Luka, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: {  } },
-            { pessoa: pessoa.Rafael, cargo: cargo.desenvolvedorInicialVendas, tempoAtividadesExtrasDiarias: {  } },
+            { pessoa: pessoa.Ramon, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, },
+            { pessoa: pessoa.Luka, cargo: cargo.desenvolvedorInicialSabadoEstudos, },
+            { pessoa: pessoa.Rafael, cargo: cargo.desenvolvedorInicialVendas, },
             { pessoa: pessoa.Drica, cargo: cargo.desenvolvedorInicialVendas, tempoAtividadesExtrasDiarias: { 'reuniao': 2.0 } },
-            { pessoa: pessoa.Talyson, cargo: cargo.desenvolvedorInicialVendas, tempoAtividadesExtrasDiarias: {  } },
+            { pessoa: pessoa.Talyson, cargo: cargo.desenvolvedorInicialVendas, },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo

@@ -94,7 +94,7 @@
                                     {{/membros}} -->
                                     <select id="selMembros" placeholder="Nome do Membro">
                                         {{#membros}}
-                                        <option value="{{user}}">{{nome}}</option>
+                                        <option value="{{id}}">{{nome}}</option>
                                         {{/membros}}
                                     </select>
                                 </div>
@@ -144,6 +144,7 @@
 
     const limiteListas = 6
     let qtdeListas = 0
+    let membros = []
 
     $('document').ready(function () {
         $('#btnNovaListaExecucao').click(addFormListaExecucao)
@@ -157,14 +158,8 @@
         $('#rngExec1').val(e.target.value)
     }
 
-    function addFormListaExecucao() {
-        if (qtdeListas >= limiteListas) {
-            alert(`O limite de listas é ${limiteListas}`)
-            return false
-        }
-
-        qtdeListas += 1
-        const htmlLista = `
+    function htmlFormLista() {
+        return htmlLista = `
             <div class="form-row">
                 <div class="col-md-8">
                     <div class="position-relative form-group">
@@ -183,44 +178,100 @@
                 </div>
             </div>
         `
-        const html = $('#listasExecucao').html()
-        const novoHtml = html + htmlLista
-        $('#listasExecucao').html(novoHtml)
+    }
+
+    function addFormListaExecucao() {
+        if (qtdeListas >= limiteListas) {
+            alert(`O limite de listas é ${limiteListas}`)
+            return false
+        }
+
+        qtdeListas += 1
+
+        $('#listasExecucao').append(htmlFormLista())
 
     }
 
-    function addFormMembro() {
-        const htmlMembro = `
-            <div class="form-row" id="membro-1">
-                <div class="col-md-6">
+    function htmlFormMembro(idMembro, nome) {
+        return htmlMembro = `
+            <div class="form-row" name='membro' id="membro-${idMembro}">
+                
+                <div class="col-md-5">
                     <div class="position-relative form-group">
                         <label for="txtTituloLista" class="">Nome</label>
-                        <input name="txtNome" class="form-control" value="Pablo Fernandes" readonly>
+                        <input name="txtNome" class="form-control" value="${nome}" readonly>
                     </div>
                 </div>
 
                 <div class="col-md-5">
                     <div class="position-relative form-group">
                         <label for="txtExecLista" class="">Percentual Esperado</label>
-                        <input name="rngExec-1" type="range" min="5" max="100" list="tickmarks"
+                        <input name="rngExec-${idMembro}" id="rngExec-${idMembro}" type="range" min="5" max="100" list="tickmarks"
                             step="5" class="form-control" value="80">
                     </div>
                 </div>
                 <div class="col-md-1">
                     <div class="position-relative form-group">
-                        <label for="rngExec1" class="">%</label>
-                        <input type="text" readonly  id="rngExec1" 
+                        <label for="txtExec-${idMembro}" class="">%</label>
+                        <input type="text" readonly  id="txtExec-${idMembro}" 
                         style="font-weight:bold;" value="80" class="form-control"></input>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="position-relative form-group">
+                        <label for="txtTituloLista" class="">Rem.</label>
+                        <button id="btnRemMembro-${idMembro}" type="button" class="btn-shadow mr-3 btn btn-danger form-group">
+                            <span class="btn-icon-wrapper pr-2 ">
+                                <i class="fa fa-trash-alt "></i>
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>
         `
-        const html = $('#listaMembros').html()
-        const novoHtml = html + htmlMembro
-        $('#listaMembros').html(novoHtml)
+    }
+
+    function addFormMembro() {
+
+        const idMembro = $('#selMembros').val()
+        const nome = $("#selMembros option:selected").html();
+
+        console.warn('membro', idMembro, nome)
+
+        if (membros.find(id => id == idMembro)) {
+            alert('Membro já inserido');
+            return false
+        }
+
+        $('#listaMembros').append(htmlFormMembro(idMembro, nome))
+
+        $(document).on('input', `#rngExec-${idMembro}`, function () {
+            $(`#txtExec-${idMembro}`).html($(this).val());
+        });
+
+        $(`#btnRemMembro-${idMembro}`).click(() => remMembro(idMembro))
+
+        membros.push(idMembro)
+
+        return true
 
     }
 
+    function remMembro(idMembro) {
+        console.warn('rem ', idMembro)
+        const index = membros.findIndex(m => m == idMembro)
+
+        console.warn('index ', index)
+        if (index >= 0) {
+            membros.splice(index, 1);
+            
+            const htmlMembros = $("[name='membro']")
+            
+            if (htmlMembros.length > 0) {
+                htmlMembros[index].remove()
+            }
+        }
+    }
 </script>
 
 {{>shared/project_layout/footer}}
