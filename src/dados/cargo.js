@@ -78,7 +78,21 @@ const cargo = {
         maxFatorEsperadoDia: 0.8,
         cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
         fatorEsperadoCargaHorariaSemanal: _padrao.fatorEsperadoCargaHorariaSemanal
-    }
+    },
+    desenvolvedorInicialVendas: {
+        cargaHorariaDia: 8,
+        maxFatorEsperadoDia: 0.5,
+        cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
+        fatorEsperadoCargaHorariaSemanal: {
+            '1': 0,
+            '2': 0.4,
+            '3': 0.4,
+            '4': 0.4,
+            '5': 0.4,
+            '6': 0.4,
+            '7': 0,
+        }
+    },
 }
 
 module.exports = cargo

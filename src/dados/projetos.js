@@ -8,6 +8,8 @@ const _padrao = require('./_padrao')
 const idBoardMateusApp = 'ctc37b0n' // 'ctc37b0n'//'55eH7xza' // 5cabb4d1279f154d97ea16f9
 const idBoardProjetoTeste = '55eH7xza'
 const idBoardMateusCash = '4iMXNbY2'
+const idBoardVendas = '91pRazkl'
+
 const statusProjetos = {
     ativo: { id: 1, nome: 'ativo', cor: 'green', classeEstilo: 'primary' },
     pausado: { id: 2, nome: 'pausado', cor: 'orange', classeEstilo: 'warning' },
@@ -353,6 +355,31 @@ module.exports = [
             { pessoa: pessoa.Elaine, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'manutencao': 2.0 } },
             { pessoa: pessoa.Luis, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'manutencao': 2.0 } },
             { pessoa: pessoa.David, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias } },
+        ],
+        configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
+        status: statusProjetos.ativo
+    },
+    {
+        id: 17,
+        prefixo: 'BON',
+        nome: 'Bonificação Vendas',
+        dataInicioSprint: '2020-02-16',
+        dataEntregaSprint: '',
+        idBoard: idBoardVendas,
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado': 'Planejado - BON',
+            'concluido': 'Concluído - BON'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Alexandre, cargo: cargo.desenvolvedorInicialVendas, tempoAtividadesExtrasDiarias: { 'manutencao': 2.0 } },
+            { pessoa: pessoa.LuisVendas, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: { 'manutencao': 2.0 } },
+            { pessoa: pessoa.Ramon, cargo: cargo.desenvolvedorVoltandoSabadoEstudos, tempoAtividadesExtrasDiarias: {  } },
+            { pessoa: pessoa.Luka, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: {  } },
+            { pessoa: pessoa.Rafael, cargo: cargo.desenvolvedorInicialVendas, tempoAtividadesExtrasDiarias: {  } },
+            { pessoa: pessoa.Drica, cargo: cargo.desenvolvedorInicialVendas, tempoAtividadesExtrasDiarias: { 'reuniao': 2.0 } },
+            { pessoa: pessoa.Talyson, cargo: cargo.desenvolvedorInicialVendas, tempoAtividadesExtrasDiarias: {  } },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo

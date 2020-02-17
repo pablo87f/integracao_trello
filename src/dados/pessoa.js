@@ -11,6 +11,14 @@ const pessoa = {
     'Luis': { id: 7, nome: "Luis", user: "luisalvesdossantosneto" },
     'Elaine': { id: 8, nome: "Elaine Portela", user: "elainepportela" },
     'David': { id: 9, nome: 'David', user: 'davidferreira96' },
+    // --- Equipe Drica
+    'Drica': { id: 10, user: 'drieletorres', nome: 'Drica' },
+    'Alexandre': { id: 12, user: 'alexandrevazn', nome: 'Alexandre' },
+    'LuisVendas': { id: 13, user: 'luisfernandoarrais', nome: 'Luis' },
+    'Luka': { id: 14, user: 'lukadaniel', nome: 'Luka' },
+    'Rafael': { id: 15, user: 'rafaelvalle9', nome: 'Rafael' },
+    'Talyson': { id: 16, user: 'talysongarcia', nome: 'Talyson' },
+    'Ramon': { id: 17, user: 'ramonbezerra', nome: 'Ramon' },
 }
 
 module.exports = pessoa
