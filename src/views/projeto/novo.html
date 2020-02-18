@@ -143,8 +143,9 @@
 <script type="text/javascript">
 
     const limiteListas = 6
-    let qtdeListas = 0
+    let lastListId = 0
     let membros = []
+    let listas = []
 
     $('document').ready(function () {
         $('#btnNovaListaExecucao').click(addFormListaExecucao)
@@ -158,9 +159,9 @@
         $('#rngExec1').val(e.target.value)
     }
 
-    function htmlFormLista() {
+    function htmlFormLista(listId) {
         return htmlLista = `
-            <div class="form-row">
+            <div class="form-row" id="list-${listId}">
                 <div class="col-md-8">
                     <div class="position-relative form-group">
                         <label for="txtTituloLista" class="">Título</label>
@@ -176,19 +177,34 @@
                             step="0.1" value="0.0" class="form-control">
                     </div>
                 </div>
+                <div class="col-md-1">
+                    <div class="position-relative form-group">
+                        <label for="txtTituloLista" class="">Rem.</label>
+                        <button id="btnRemLista-${listId}" type="button" class="btn-shadow mr-3 btn btn-danger form-control">
+                            <span class="btn-icon-wrapper pr-2 ">
+                                <i class="fa fa-trash-alt "></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
             </div>
         `
     }
 
     function addFormListaExecucao() {
-        if (qtdeListas >= limiteListas) {
-            alert(`O limite de listas é ${limiteListas}`)
+
+        if (listas.length >= limiteListas) {
+            alert(`A quantidade limite de listas é ${limiteListas}`)
             return false
         }
 
-        qtdeListas += 1
+        lastListId += 1
+        const nextId = lastListId
 
-        $('#listasExecucao').append(htmlFormLista())
+        $('#listasExecucao').append(htmlFormLista(nextId))
+        $(`#btnRemLista-${nextId}`).click(() => remList(`${nextId}`))
+
+        listas.push(nextId)
 
     }
 
@@ -220,7 +236,7 @@
                 <div class="col-md-1">
                     <div class="position-relative form-group">
                         <label for="txtTituloLista" class="">Rem.</label>
-                        <button id="btnRemMembro-${idMembro}" type="button" class="btn-shadow mr-3 btn btn-danger form-group">
+                        <button id="btnRemMembro-${idMembro}" type="button" class="btn-shadow mr-3 btn btn-danger form-control">
                             <span class="btn-icon-wrapper pr-2 ">
                                 <i class="fa fa-trash-alt "></i>
                             </span>
@@ -232,11 +248,9 @@
     }
 
     function addFormMembro() {
-
+        
         const idMembro = $('#selMembros').val()
         const nome = $("#selMembros option:selected").html();
-
-        console.warn('membro', idMembro, nome)
 
         if (membros.find(id => id == idMembro)) {
             alert('Membro já inserido');
@@ -258,20 +272,35 @@
     }
 
     function remMembro(idMembro) {
-        console.warn('rem ', idMembro)
+        
         const index = membros.findIndex(m => m == idMembro)
 
-        console.warn('index ', index)
         if (index >= 0) {
             membros.splice(index, 1);
             
-            const htmlMembros = $("[name='membro']")
+            const htmlMembro = $(`#membro-${idMembro}`)
             
-            if (htmlMembros.length > 0) {
-                htmlMembros[index].remove()
+            if (htmlMembro.length > 0) {
+                htmlMembro.remove()
             }
         }
     }
+
+    function remList(listId) {
+        
+        const index = listas.findIndex(l => l == listId)
+        
+        if (index >= 0) {
+            listas.splice(index, 1);
+            
+            const htmlList = $(`#list-${listId}`)
+            
+            if (htmlList.length > 0) {
+                htmlList.remove()
+            }
+        }
+    }
+    
 </script>
 
 {{>shared/project_layout/footer}}
