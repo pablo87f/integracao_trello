@@ -9,6 +9,7 @@ const idBoardMateusApp = 'ctc37b0n' // 'ctc37b0n'//'55eH7xza' // 5cabb4d1279f154
 const idBoardProjetoTeste = '55eH7xza'
 const idBoardMateusCash = '4iMXNbY2'
 const idBoardVendas = '91pRazkl'
+const idBoardInfraMateus = 'ilBSsFhM'
 
 const statusProjetos = {
     ativo: { id: 1, nome: 'ativo', cor: 'green', classeEstilo: 'primary' },
@@ -402,22 +403,22 @@ module.exports = [
         configuracaoCalculoTempoExecucao: { ..._padrao.configuracaoCalculoTempoExecucao, 'concluido': 0.25 },
         status: statusProjetos.ativo
     },
-    // {
-    //     id: 19,
-    //     prefixo: 'VPN',
-    //     nome: 'INFRA - MATEUS APP - Configurar o Wireguard',
-    //     dataInicioSprint: '2020-02-16',
-    //     dataEntregaSprint: '',
-    //     idBoard: idBoardVendas,
-    //     nomesListas: {
-    //         ..._padrao.listas,
-    //         'homologacao': 'Homologação',
-    //     },
-    //     diasDuracaoSprint: 7,
-    //     equipeProgramadores: [
-    //         { pessoa: pessoa.Ricardo, cargo: cargo.desenvolvedorDevOps, tempoAtividadesExtrasDiarias: { 'manutencao': 1.0 } },
-    //     ],
-    //     configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
-    //     status: statusProjetos.ativo
-    // },
+    {
+        id: 19,
+        prefixo: 'VPN',
+        nome: 'INFRA - MATEUS APP - Configurar o Wireguard',
+        dataInicioSprint: '2020-02-22',
+        dataEntregaSprint: '',
+        idBoard: idBoardInfraMateus,
+        nomesListas: {
+            ..._padrao.listas,
+            'homologacao': 'Homologação',
+        },
+        diasDuracaoSprint: 7,
+        equipeProgramadores: [
+            { pessoa: pessoa.Ricardo, cargo: cargo.desenvolvedorDevOps, tempoAtividadesExtrasDiarias: { 'manutencao': 1.0 } },
+        ],
+        configuracaoCalculoTempoExecucao: { ..._padrao.configuracaoCalculoTempoExecucao, 'concluido': 0.25 },
+        status: statusProjetos.ativo
+    },
 ]
