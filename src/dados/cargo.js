@@ -93,6 +93,20 @@ const cargo = {
             '7': 0,
         }
     },
+    desenvolvedorDevOps: {
+        cargaHorariaDia: 8,
+        maxFatorEsperadoDia: 0.8,
+        cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
+        fatorEsperadoCargaHorariaSemanal: {
+            '1': 0,
+            '2': 0.7,
+            '3': 0.7,
+            '4': 0.7,
+            '5': 0.7,
+            '6': 0.7,
+            '7': 0,
+        }
+    },
 }
 
 module.exports = cargo
