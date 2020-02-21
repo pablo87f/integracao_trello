@@ -391,7 +391,7 @@ module.exports = [
         nome: 'INFRA - MATEUS APP - Migrações da infra antiga pra nova',
         dataInicioSprint: '2020-02-21',
         dataEntregaSprint: '',
-        idBoard: idBoardVendas,
+        idBoard: idBoardInfraMateus,
         nomesListas: {
             ..._padrao.listas,
             'homologacao': 'Homologação',
