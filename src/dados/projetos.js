@@ -384,4 +384,40 @@ module.exports = [
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
     },
+    {
+        id: 18,
+        prefixo: 'MIGR',
+        nome: 'INFRA - MATEUS APP - Migrações da infra antiga pra nova',
+        dataInicioSprint: '2020-02-21',
+        dataEntregaSprint: '',
+        idBoard: idBoardVendas,
+        nomesListas: {
+            ..._padrao.listas,
+            'homologacao': 'Homologação',
+        },
+        diasDuracaoSprint: 7,
+        equipeProgramadores: [
+            { pessoa: pessoa.Ricardo, cargo: cargo.desenvolvedorDevOps, tempoAtividadesExtrasDiarias: { 'manutencao': 1.0 } },
+        ],
+        configuracaoCalculoTempoExecucao: { ..._padrao.configuracaoCalculoTempoExecucao, 'concluido': 0.25 },
+        status: statusProjetos.ativo
+    },
+    // {
+    //     id: 19,
+    //     prefixo: 'VPN',
+    //     nome: 'INFRA - MATEUS APP - Configurar o Wireguard',
+    //     dataInicioSprint: '2020-02-16',
+    //     dataEntregaSprint: '',
+    //     idBoard: idBoardVendas,
+    //     nomesListas: {
+    //         ..._padrao.listas,
+    //         'homologacao': 'Homologação',
+    //     },
+    //     diasDuracaoSprint: 7,
+    //     equipeProgramadores: [
+    //         { pessoa: pessoa.Ricardo, cargo: cargo.desenvolvedorDevOps, tempoAtividadesExtrasDiarias: { 'manutencao': 1.0 } },
+    //     ],
+    //     configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
+    //     status: statusProjetos.ativo
+    // },
 ]
