@@ -11,6 +11,7 @@ const pessoa = {
     'Luis': { id: 7, nome: "Luis", user: "luisalvesdossantosneto" },
     'Elaine': { id: 8, nome: "Elaine Portela", user: "elainepportela" },
     'David': { id: 9, nome: 'David', user: 'davidferreira96' },
+    'Paulo': { id: 18, nome: 'Paulo', user: 'paulogomes99' },
     // --- Equipe Drica
     'Drica': { id: 10, user: 'drieletorres', nome: 'Drica' },
     'Alexandre': { id: 12, user: 'alexandrevazn', nome: 'Alexandre' },
