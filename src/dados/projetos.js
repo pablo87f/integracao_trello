@@ -421,4 +421,25 @@ module.exports = [
         configuracaoCalculoTempoExecucao: { ..._padrao.configuracaoCalculoTempoExecucao, 'concluido': 0.25 },
         status: statusProjetos.ativo
     },
+    {
+        id: 20,
+        prefixo: 'NCLP',
+        nome: 'Novo Cadastro Login Perfil',
+        dataInicioSprint: '2020-03-04',
+        dataEntregaSprint: '',
+        idBoard: idBoardMateusApp,
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado': 'Planejado - Novo Cadastro Login Perfil',
+            'concluido': 'Concluído - Novo Cadastro Login Perfil'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'manutencao': 2.0 } },
+            { pessoa: pessoa.David, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'manutencao': 2.0 } },
+            { pessoa: pessoa.Paulo, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias } },
+        ],
+        configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
+        status: statusProjetos.ativo
+    },
 ]
