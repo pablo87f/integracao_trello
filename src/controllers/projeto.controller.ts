@@ -11,7 +11,8 @@ namespace ProjetoController {
     export function index(req: express.Request, res: express.Response) {
         const projetos = Repositorio.getAll(Repositorio.Entities.Projetos)
         return res.render('./home/index.html', {
-            'projetos': _.orderBy(projetos, ['status.id', 'id'], ['asc', 'desc'])
+            'projetos': _.orderBy(projetos, ['status.id', 'id'], ['asc', 'desc']),
+            'projetos_selecionado': "mm-active"
         })
     }
 

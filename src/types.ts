@@ -105,3 +105,12 @@ export interface Projeto {
     configuracaoCalculoTempoExecucao: Array<ConfiguracaoExecucaoLista>
     status: StatusProjeto
 }
+
+
+export interface ProjetoManutencao {
+    id: number
+    nome: string
+    diasDuracaoCiclo: number
+    idBoard: string
+    status: StatusProjeto
+}

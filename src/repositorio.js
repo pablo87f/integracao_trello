@@ -15,6 +15,8 @@ Repositorio.Entities = {
     'Pessoas': 'Pessoas',
     'Cargos': 'Cargos',
     'Funcionalidades': 'Funcionalidades',
+    'Manutencao': 'Manutencao',
+    'ResultadoManutencao': 'ResultadoManutencao',
 }
 
 Repositorio.getAll = (entityName) => {

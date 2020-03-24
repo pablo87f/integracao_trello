@@ -1,0 +1,200 @@
+{{>shared/main_layout/header}}
+<!-- 
+        <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+        <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script> -->
+
+
+<div class="app-main__inner">
+    <div class="app-page-title">
+        <div class="page-title-wrapper">
+            <div class="page-title-heading">
+                <div class="page-title-icon">
+                    <i class="pe-7s-portfolio icon-gradient bg-mean-fruit">
+                    </i>
+                </div>
+                <div>Projetos
+                    <div class="page-title-subheading">Aqui você consegue ver todos os projetos que está envolvido
+                    </div>
+                </div>
+            </div>
+            <div class="page-title-actions">
+                <button id="btnNovoProjeto" type="button" class="btn-shadow mr-3 btn btn-info">
+                    <i class="fa fa-document"></i>
+
+                    <span class="btn-icon-wrapper pr-2 ">
+                        <i class="fa fa-plus "></i>
+                    </span>
+                    Novo Projeto
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id='div_projetos'>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="main-card mb-3 card">
+                    <div class="card-header">PROJETOS
+                        <div class="btn-actions-pane-right">
+                            <div role="group" class="btn-group-sm btn-group">
+                                <button class="active btn btn-focus">Last Week</button>
+                                <button class="btn btn-focus">All Month</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="align-middle mb-0 table table-borderless table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">#ID</th>
+                                    <th class="text-center">Prefixo</th>
+                                    <th>Nome</th>
+                                    <th class="text-center">Quadro Trello</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#projetos}}
+                                <tr>
+                                    <td class="text-center text-muted">#{{id}}</td>
+                                    <td class="text-center">
+                                        {{prefixo}}
+                                    </td>
+                                    <td>
+                                        <div class="widget-content p-0">
+                                            <div class="widget-content-wrapper">
+                                                <a href="/projeto/{{id}}">
+                                                    <div class="widget-content-left flex2">
+                                                        <div class="widget-heading">{{nome}}</div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <a target="_blank" rel="noopener noreferrer"
+                                            href='https://trello.com/b/{{idBoard}}'>
+                                            <i class="fa fa-trello pr-2" aria-hidden="true"></i>
+                                            Ir para Trello
+                                        </a>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="badge badge-{{status.classeEstilo}}">{{status.nome}}</div>
+                                    </td>
+
+                                </tr>
+                                {{/projetos}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-block text-center card-footer">
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id='div_projetos'>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="main-card mb-3 card">
+                    <div class="card-header">PROJETOS
+                        <div class="btn-actions-pane-right">
+                            <div role="group" class="btn-group-sm btn-group">
+                                <button class="active btn btn-focus">Last Week</button>
+                                <button class="btn btn-focus">All Month</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="align-middle mb-0 table table-borderless table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">#ID</th>
+                                    <th>Nome</th>
+                                    <th class="text-center">Quadro Trello</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#projetosSalvos}}
+                                <tr>
+                                    <td class="text-center text-muted">#{{id}}</td>
+                                    <td>
+                                        <div class="widget-content p-0">
+                                            <div class="widget-content-wrapper">
+                                                <a href="/projeto/{{id}}">
+                                                    <div class="widget-content-left flex2">
+                                                        <div class="widget-heading">{{nome}}</div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <a target="_blank" rel="noopener noreferrer"
+                                            href='https://trello.com/b/{{idBoard}}'>
+                                            <i class="fa fa-trello pr-2" aria-hidden="true"></i>
+                                            Ir para Trello
+                                        </a>
+                                    </td>
+
+                                </tr>
+                                {{/projetosSalvos}}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{{>shared/main_layout/footer}}
+
+
+<script type="text/javascript">
+
+    $('document').ready(function () {
+        $('#btnNovoProjeto').click(() => window.location = '/projeto/novo')
+        $('#btnSalvarProjeto').click(() => salvarProjeto())
+    })
+
+    function salvarProjeto(dados) {
+        let textoBotao = $('#btnSalvarProjeto').html();
+        $('#btnSalvarProjeto').html('...');
+        $('#btnSalvarProjeto').prop('disabled', true);
+
+        let nomeProjeto = $("#nomeProjeto").val()
+        let codTrello = $('#codigoQuadroTrello').val()
+
+        console.warn('nomeProjeto', nomeProjeto)
+        console.warn('codTrello', codTrello)
+
+        $.ajax({
+            url: "/projeto/criar",
+            type: 'post',
+            data: {
+                nome: nomeProjeto,
+                codigoQuadroTrello: codTrello
+            },
+            // beforeSend : function() {
+
+            // }
+        })
+            .done(function (msg) {
+                $('#btnSalvarProjeto').html(textoBotao);
+                $('#btnSalvarProjeto').prop('disabled', false);
+
+                if (msg) {
+
+                }
+            })
+            .fail(function (jqXHR, textStatus, msg) {
+                $('#btnSalvarProjeto').html(textoBotao);
+                $('#btnSalvarProjeto').prop('disabled', false);
+            });
+    }
+</script>
