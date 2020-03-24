@@ -45,7 +45,7 @@ _padrao.configuracaoCalculoTempoExecucao = {
 
 _padrao.tempoAtividadesExtrasDiarias = {
     'reuniao': 1,
-    'bugs': 0.5,
+    //'bugs': 0.5,
 }
 
 

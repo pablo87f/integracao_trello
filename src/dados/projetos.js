@@ -5,7 +5,7 @@ const cargo = require('./cargo')
 const _padrao = require('./_padrao')
 
 
-const idBoardMateusApp = 'ctc37b0n' // 'ctc37b0n'//'55eH7xza' // 5cabb4d1279f154d97ea16f9
+const idBoardMateusApp = 'ctc37b0n' 
 const idBoardProjetoTeste = '55eH7xza'
 const idBoardMateusCash = '4iMXNbY2'
 const idBoardVendas = '91pRazkl'
@@ -438,6 +438,27 @@ module.exports = [
             { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'manutencao': 2.0 } },
             { pessoa: pessoa.David, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'manutencao': 2.0 } },
             { pessoa: pessoa.Paulo, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias } },
+        ],
+        configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
+        status: statusProjetos.ativo
+    },
+    {
+        id: 21,
+        prefixo: 'RSPC',
+        nome: 'Redefinição de senha, edição de perfil e repaginacao de configurações',
+        dataInicioSprint: '2020-03-25',
+        dataEntregaSprint: '',
+        idBoard: idBoardMateusApp,
+        nomesListas: {
+            ..._padrao.listas,
+            'planejado': 'Planejado - RSPC',
+            'concluido': 'Concluído - RSPC'
+        },
+        diasDuracaoSprint: _padrao.diasDuracaoSprint,
+        equipeProgramadores: [
+            { pessoa: pessoa.Teo, cargo: cargo.desenvolvedorSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'manutencao': 2.0 } },
+            { pessoa: pessoa.David, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias } },
+            { pessoa: pessoa.Paulo, cargo: cargo.desenvolvedorInicialSabadoEstudos, tempoAtividadesExtrasDiarias: { ..._padrao.tempoAtividadesExtrasDiarias, 'manutencao': 2.0  } },
         ],
         configuracaoCalculoTempoExecucao: _padrao.configuracaoCalculoTempoExecucao,
         status: statusProjetos.ativo
