@@ -18,9 +18,11 @@ namespace GraficoController {
     }
 
     export async function gerarGrafico(req: express.Request, res: express.Response) {
-        let id_projeto = req.params.id_projeto
+        let idProjeto = req.params.id_projeto
 
-        const projeto = Repositorio.findById(Repositorio.Entities.Projetos, id_projeto)
+        const nomeArquivo = `projeto.${idProjeto}.json`
+
+        const projeto = Repositorio.getItem(nomeArquivo)
 
         if (!projeto) return res.status(401).send({ error: 'Projeto não encontrado' })
 

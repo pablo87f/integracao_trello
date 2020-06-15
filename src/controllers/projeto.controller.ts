@@ -5,13 +5,22 @@ import projetos from '../dados/projetos';
 import Repositorio from "../repositorio";
 import StatusProjetos from "../dados/status-projeto";
 import { GraficoService } from "../services";
+import { Projeto } from "../types";
 
 namespace ProjetoController {
 
-    export function index(req: express.Request, res: express.Response) {
-        const projetos = Repositorio.getAll(Repositorio.Entities.Projetos)
+    export async function index(req: express.Request, res: express.Response) {
+        const indexProjetos = Repositorio.getAll('index.projetos.json')
+        const projetosPromisses = Object.values(indexProjetos).map((arquivoProjeto) => {
+            return Repositorio.getItem(arquivoProjeto)
+        })
+
+        const projetos = await Promise.all(projetosPromisses)
+
+        const projetosOrdenados = _.orderBy(projetos, ['status.id', 'id'], ['asc', 'desc'])
+
         return res.render('./home/index.html', {
-            'projetos': _.orderBy(projetos, ['status.id', 'id'], ['asc', 'desc']),
+            'projetos': projetosOrdenados,
             'projetos_selecionado': "mm-active"
         })
     }
@@ -28,7 +37,9 @@ namespace ProjetoController {
             res.sendStatus(401);
         }
 
-        let projeto = Repositorio.findById(Repositorio.Entities.Projetos, idProjeto)
+        const nomeArquivo = `projeto.${idProjeto}.json`
+
+        const projeto = Repositorio.getItem(nomeArquivo)
 
         if (!projeto) res.sendStatus(404)
 
@@ -43,12 +54,21 @@ namespace ProjetoController {
 
         if (!req.body.codigoQuadroTrello) res.status(400).send({ sucess: false, message: "Campo 'codigoQuadroTrello' é obrigatório" })
 
-        let projeto = {
-            nome: req.body.nome,
-            idBoard: req.body.codigoQuadroTrello
+        let indexProjetos = Repositorio.getItem('index.projetos.json')
+
+        const idsExistentes = Object.keys(indexProjetos).map(id => parseInt(id))
+
+        let projeto: Projeto = {
+            ...req.body
         }
 
-        Repositorio.insert(Repositorio.Entities.Projetos, projeto)
+        projeto.id = Math.max.apply(Math, idsExistentes) + 1
+
+        const nomeArquivo = `projeto.${projeto.id}.json`
+
+        indexProjetos = { ...indexProjetos, [projeto.id]: nomeArquivo }
+
+        Repositorio.setItem(nomeArquivo, projeto)
 
         res.send({ sucess: true })
     }
@@ -58,15 +78,17 @@ namespace ProjetoController {
         const { id: idProjeto } = req.params
         console.warn('update projeto', idProjeto)
 
-        const projeto = Repositorio.findById(Repositorio.Entities.Projetos, idProjeto)
+        const nomeArquivo = `projeto.${idProjeto}.json`
+
+        const projeto = Repositorio.getItem(nomeArquivo)
 
         if (!projeto) return res.status(401).send({ error: 'Projeto não encontrado' })
 
         projeto.status = StatusProjetos.finalizado
         projeto.dataEntregaSprint = new Date()
         projeto.dadosGrafico = await GraficoService.gerarBurningDown(projeto)
-        
-        await Repositorio.updateById(Repositorio.Entities.Projetos, projeto.id, projeto)
+
+        await Repositorio.setItem(nomeArquivo, projeto)
 
         return res.send({ idProjeto })
 
