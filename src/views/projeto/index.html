@@ -124,8 +124,8 @@
             $('#btn-entregar').click(confirmarEntregaProjeto)
 
         }
-        else if(status == 'entregue') {
-            
+        else if (status == 'entregue') {
+
         }
     });
 
@@ -287,8 +287,10 @@
     function calcularPorcentagemProgressoProjeto(data) {
         if (data && data.tempoEsforcoTotalEstimado && data.totalJaExecutadoSprint) {
 
-
-            var percentualFeito = Math.round((100 * data.totalJaExecutadoSprint) / data.tempoEsforcoTotalEstimado)
+            var percentualFeito = data.tempoEsforcoTotalEstimado > 0 && data.totalJaExecutadoSprint > 0
+                ? Math.round((100 * data.totalJaExecutadoSprint) / data.tempoEsforcoTotalEstimado)
+                : 0
+                
             console.warn('percentual:', percentualFeito)
             $('#progresso-projeto').empty();
             $('#progresso-projeto').html(`
@@ -322,7 +324,7 @@
             $.get(url, carregarDadosGrafico)
         }
     }
-    
+
     function carregarDadosGrafico(data) {
 
         console.warn('dados grafico', data)

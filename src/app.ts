@@ -34,7 +34,7 @@ app.get('/', ProjetoController.index);
 app.get('/projeto/novo', ViewsProjetoController.create);
 
 app.get('/projeto/:id', ProjetoController.show);
-app.post('/projeto/criar', ProjetoController.store);
+app.post('/projeto/novo', ProjetoController.store);
 app.put('/projeto/:id', ProjetoController.update);
 
 app.get('/projeto/:id/funcionalidades', FuncionalidadesController.index);

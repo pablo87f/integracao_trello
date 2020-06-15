@@ -5,7 +5,9 @@ import projetos from '../dados/projetos';
 import Repositorio from "../repositorio";
 import StatusProjetos from "../dados/status-projeto";
 import { GraficoService } from "../services";
-import { Projeto } from "../types";
+import { Projeto, ListaProjeto, Participante, Pessoa } from "../types";
+
+import pessoas from "../dados/pessoa";
 
 namespace ProjetoController {
 
@@ -50,27 +52,60 @@ namespace ProjetoController {
 
         if (!req.body) res.status(400).send({ sucess: false, message: 'Não foi possível recuperar corpo da requisição' })
 
-        if (!req.body.nome) res.status(400).send({ sucess: false, message: "Campo 'nome' é obrigatório" })
+        const { prefixo, nome, dataInicioSprint, idBoard, idsParticipantes, titulosListas, esperadoParticipantes, execucaoListas } = req.body
 
-        if (!req.body.codigoQuadroTrello) res.status(400).send({ sucess: false, message: "Campo 'codigoQuadroTrello' é obrigatório" })
+        if (!prefixo) res.status(400).send({ sucess: false, message: "Campo 'prefíxo' é obrigatório" })
+        if (!nome) res.status(400).send({ sucess: false, message: "Campo 'nome' é obrigatório" })
+        if (!dataInicioSprint) res.status(400).send({ sucess: false, message: "Campo 'dataInicioSprint' é obrigatório" })
+        if (!idBoard) res.status(400).send({ sucess: false, message: "Campo 'idBoard' é obrigatório" })
+        if (!idsParticipantes || idsParticipantes.lenght <= 0) res.status(400).send({ sucess: false, message: "Campo 'idsParticipantes' é obrigatório" })
+        if (!titulosListas || titulosListas.lenght <= 0) res.status(400).send({ sucess: false, message: "Campo 'titulosListas' é obrigatório" })
 
-        let indexProjetos = Repositorio.getItem('index.projetos.json')
+        let indexProjetos = Repositorio.getAll('index.projetos.json')
 
         const idsExistentes = Object.keys(indexProjetos).map(id => parseInt(id))
 
+        const proximoId = Math.max.apply(Math, idsExistentes) + 1
+
+        // monta as listas informadas no formulário
+        const listasTrello: Array<ListaProjeto> = titulosListas.map((tituloLista: string, index: number) => {
+            return <ListaProjeto>{ titulo: tituloLista, valorExecucao: parseFloat(execucaoListas[index]) }
+        })
+
+        const equipeCompleta: Array<Pessoa> = Object.values(pessoas).map(p => <Pessoa>{ id: p.id, nome: p.nome, nomeCompleto: p.nome, user: p.user })
+
+        const participantes: Array<Participante> = idsParticipantes.map((id: string, index: number) => {
+            const pessoa = _.find(equipeCompleta, { id: parseInt(id) })
+            if (pessoa) { return <Participante>{ pessoa, percentualDiarioEsperado: esperadoParticipantes[index]/100 } }
+            throw new Error('Participante não encontrada dentros dos membros cadastrados')
+        })
+
         let projeto: Projeto = {
-            ...req.body
+            id: proximoId,
+            prefixo,
+            nome,
+            dataInicioSprint,
+            // dataEntregaSprint, 
+            idBoard,
+            listasProjeto: listasTrello,  // Array < ListaTrello >
+            diasDuracaoSprint: 15,
+            participantes: participantes,  // Array < ConfiguracaoFuncionario >
+            status: StatusProjetos.ativo,
+            versao: '2.0'
         }
 
-        projeto.id = Math.max.apply(Math, idsExistentes) + 1
+        const nomeArquivoProjeto = `projeto.${projeto.id}.json`
 
-        const nomeArquivo = `projeto.${projeto.id}.json`
+        indexProjetos = { ...indexProjetos, [projeto.id]: nomeArquivoProjeto }
 
-        indexProjetos = { ...indexProjetos, [projeto.id]: nomeArquivo }
+        Repositorio.setItem(nomeArquivoProjeto, projeto)
+        Repositorio.setItem('index.projetos.json', indexProjetos)
 
-        Repositorio.setItem(nomeArquivo, projeto)
-
-        res.send({ sucess: true })
+        const membros = Object.values(pessoas)
+        return res.render('./projeto/novo.html', {
+            membros,
+            sucess:true
+        })
     }
 
     export async function update(req: express.Request, res: express.Response) {

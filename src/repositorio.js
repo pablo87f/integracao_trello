@@ -20,7 +20,7 @@ Repositorio.Entities = {
 }
 
 Repositorio.getItem = (entityName) => {
-    return localStorage.getItem(entityName)[0] || undefined
+    return localStorage.getItem(entityName) || undefined
 }
 
 Repositorio.setItem = (entityName, data) => {

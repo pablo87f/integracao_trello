@@ -1,7 +1,8 @@
 // { 'planejado': 'Planejado - FRONT - Refatoração M2 - Home' }
-export interface ListaTrello {
-    nome: string
-    titulo: string
+export interface ListaProjeto {
+    titulo: string,
+    valorExecucao: number,
+    listaQuadro?: any
 }
 
 // { '8horas', 8 }
@@ -31,8 +32,8 @@ export interface CargaHorariaSemanal {
 
 // { apelido: 'Pablo', user: 'pablofernandes4', nome: 'Pablo Fernandes' }
 export interface Pessoa {
+    id: number
     nome: string
-    nomeCompleto: string 
     user: string 
 }
 
@@ -50,6 +51,11 @@ export interface ConfiguracaoFuncionario {
     atividadesExtraDiaria: Array<AtividadeExtraDiaria>
 }
 
+export interface Participante {
+    pessoa: Pessoa
+    percentualDiarioEsperado: number
+}
+
 // { nome: 'reuniao', tempo: 1 }
 export interface AtividadeExtraDiaria {
     nome: string
@@ -57,10 +63,7 @@ export interface AtividadeExtraDiaria {
 }
 
 // { nome: 'homologacao', contabilizado: 1 }
-export interface ConfiguracaoExecucaoLista {
-    lista: ListaTrello,
-    contabilizado:1 
-}
+
 
 // { id: 1, nome: 'ativo', cor: 'green', classeEstilo: 'primary' }
 export interface StatusProjeto {
@@ -99,11 +102,11 @@ export interface Projeto {
     dataInicioSprint: Date
     dataEntregaSprint?: Date
     idBoard: string
-    nomesListas: Array<ListaTrello>
+    listasProjeto: Array<ListaProjeto>
     diasDuracaoSprint: number
-    equipeProgramadores: Array<ConfiguracaoFuncionario>
-    configuracaoCalculoTempoExecucao: Array<ConfiguracaoExecucaoLista>
-    status: StatusProjeto
+    participantes: Array<Participante>
+    status: StatusProjeto,
+    versao:string
 }
 
 

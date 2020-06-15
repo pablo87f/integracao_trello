@@ -1,6 +1,7 @@
 {{>shared/project_layout/header}}
 
 <link rel="stylesheet" type="text/css" href="../../public/selectizejs/css/selectize.css" />
+
 <div class="app-main__inner">
     <div class="app-page-title">
         <div class="page-title-wrapper">
@@ -19,29 +20,29 @@
                 <div class="main-card mb-3 card">
                     <div class="card-body">
 
-                        <form class="">
+                        <form class="" method="POST" action="/projeto/novo">
                             <h5 class="card-title">Dados do projeto</h5>
                             <div class="form-row">
                                 <div class="col-md-2">
                                     <div class="position-relative form-group">
-                                        <label for="txtPrefixo" class="">Prefixo</label>
-                                        <input name="txtPrefixo" id="txtPrefixo" placeholder="Ex.: LCA"
+                                        <label for="prefixo" class="">Prefixo</label>
+                                        <input name="prefixo" id="prefixo" placeholder="Ex.: LCA"
                                             class="form-control">
                                     </div>
                                 </div>
 
                                 <div class="col-md-8">
                                     <div class="position-relative form-group">
-                                        <label for="txtNome" class="">Nome</label>
-                                        <input name="txtNome" id="txtNome" placeholder="Ex.: Lista de Compras no App"
+                                        <label for="nome" class="">Nome</label>
+                                        <input name="nome" id="nome" placeholder="Ex.: Lista de Compras no App"
                                             class="form-control">
                                     </div>
                                 </div>
 
                                 <div class="col-md-2">
                                     <div class="position-relative form-group">
-                                        <label for="txtDataInicio" class="">Data Início</label>
-                                        <input name="txtDataInicio" id="txtDataInicio" type="date" class="form-control">
+                                        <label for="dataInicioSprint" class="">Data Início</label>
+                                        <input name="dataInicioSprint" id="dataInicioSprint" type="date" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -53,10 +54,10 @@
                             <div class="form-row">
                                 <div class="col-md-8">
                                     <div class="position-relative form-group">
-                                        <label for="txtCodQuadro" class="">Código do quadro do Trello -
+                                        <label for="idBoard" class="">Código do quadro do Trello -
                                             (https://trello.com/b/<span
                                                 style="color: magenta">ctc37b0n</span>/mateus-app)</label>
-                                        <input name="txtCodQuadro" id="txtCodQuadro" placeholder="Ex.: ctc37b0n"
+                                        <input name="idBoard" id="idBoard" placeholder="Ex.: ctc37b0n"
                                             type="text" class="form-control">
                                     </div>
                                 </div>
@@ -64,7 +65,7 @@
                             <br />
 
                             <br />
-                            <h5 class="card-title">Listas de execução </h5>
+                            <h5 class="card-title">Listas do Trello</h5>
                             <!-- <div class="position-relative row form-group">
                                 <div for="txtBacklog" class="col-sm-2 col-form-label">
                                     <strong>Tipo</strong>
@@ -130,6 +131,17 @@
 
 
                             </div>
+                            <br />
+                            <br />
+                            <button type="submit" id="btnNovoProjeto" type="button"
+                                class="btn-shadow mr-3 btn btn-info float-right">
+                                <i class="fa fa-document"></i>
+
+                                <span class="btn-icon-wrapper pr-2 ">
+                                    <i class="fa fa-save "></i>
+                                </span>
+                                Salvar
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -137,11 +149,12 @@
         </div>
     </div>
 </div>
-</div>
+
 <script type="text/javascript" src="../../public/assets/scripts/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="../../public/selectizejs/js/standalone/selectize.min.js"></script>
 <script type="text/javascript">
 
+    var salvou = '{{sucess}}'
     const limiteListas = 6
     let lastListId = 0
     let membros = []
@@ -151,6 +164,15 @@
         $('#btnNovaListaExecucao').click(addFormListaExecucao)
         $('#btnNovoMembro').click(addFormMembro)
         $('#selMembros').selectize()
+        addFormListaExecucao('Backlog', '0.0')
+        addFormListaExecucao('Planejado', '0.0')
+        addFormListaExecucao('Fazendo', '0.0')
+        addFormListaExecucao('Homologando', '1.0')
+        addFormListaExecucao('Concluído', '0.5')
+        if (salvou){
+            alert('Projeto Salvo com sucesso')
+            window.location = '/'
+        }
 
         // $('select').selectize();
     })
@@ -159,27 +181,28 @@
         $('#rngExec1').val(e.target.value)
     }
 
-    function htmlFormLista(listId) {
+    function htmlFormLista(listId, name = '', value = '0.0') {
         return htmlLista = `
+        <div style="background-color: #f4f4f4; margin: 10px; padding: 10px; border-radius: 6px;">
             <div class="form-row" id="list-${listId}">
                 <div class="col-md-8">
                     <div class="position-relative form-group">
-                        <label for="txtTituloLista" class="">Título</label>
-                        <input name="txtTituloLista" placeholder="Título"
-                            class="form-control">
+                        <label for="titulosListas" class="">Título</label>
+                        <input name="titulosListas" placeholder="Título"
+                            class="form-control" value="${name}">
                     </div>
                 </div>
 
                 <div class="col-md-2">
                     <div class="position-relative form-group">
-                        <label for="txtExecLista" class="">Percent. Execução</label>
-                        <input name="txtExecLista" placeholder="0.0" type="number"
-                            step="0.1" value="0.0" class="form-control">
+                        <label for="execucaoListas" class="">Percent. Execução</label>
+                        <input name="execucaoListas" placeholder="0.0" type="number"
+                            step="0.1" class="form-control" value="${value}">
                     </div>
                 </div>
                 <div class="col-md-1">
                     <div class="position-relative form-group">
-                        <label for="txtTituloLista" class="">Rem.</label>
+                        <label for="btnRemLista" class="">Rem.</label>
                         <button id="btnRemLista-${listId}" type="button" class="btn-shadow mr-3 btn btn-danger form-control">
                             <span class="btn-icon-wrapper pr-2 ">
                                 <i class="fa fa-trash-alt "></i>
@@ -188,10 +211,11 @@
                     </div>
                 </div>
             </div>
+        </div>
         `
     }
 
-    function addFormListaExecucao() {
+    function addFormListaExecucao(name = '', value = '0.0') {
 
         if (listas.length >= limiteListas) {
             alert(`A quantidade limite de listas é ${limiteListas}`)
@@ -201,7 +225,7 @@
         lastListId += 1
         const nextId = lastListId
 
-        $('#listasExecucao').append(htmlFormLista(nextId))
+        $('#listasExecucao').append(htmlFormLista(nextId, name, value))
         $(`#btnRemLista-${nextId}`).click(() => remList(`${nextId}`))
 
         listas.push(nextId)
@@ -210,39 +234,41 @@
 
     function htmlFormMembro(idMembro, nome) {
         return htmlMembro = `
-            <div class="form-row" name='membro' id="membro-${idMembro}">
-                
+        <div style="background-color: #f4f4f4; margin: 10px; padding: 10px; border-radius: 6px;">
+            <div class="form-row" name='membro' id="membro-${idMembro}" >
+                <input type="hidden" name="idsParticipantes" value="${idMembro}" />
                 <div class="col-md-5">
                     <div class="position-relative form-group">
-                        <label for="txtTituloLista" class="">Nome</label>
-                        <input name="txtNome" class="form-control" value="${nome}" readonly>
+                        <label for="txtNomeMembro" class="">Nome</label>
+                        <input name="txtNomeMembro" class="form-control" value="${nome}" readonly>
                     </div>
                 </div>
 
                 <div class="col-md-5">
                     <div class="position-relative form-group">
-                        <label for="txtExecLista" class="">Percentual Esperado</label>
-                        <input name="rngExec-${idMembro}" id="rngExec-${idMembro}" type="range" min="5" max="100" list="tickmarks"
+                        <label for="rngExecMembros" class="">Percentual Esperado</label>
+                        <input id="rngExec-${idMembro}" name="rngExecMembros" type="range" min="5" max="100" list="tickmarks"
                             step="5" class="form-control" value="80">
                     </div>
                 </div>
                 <div class="col-md-1">
                     <div class="position-relative form-group">
-                        <label for="txtExec-${idMembro}" class="">%</label>
-                        <input type="text" readonly  id="txtExec-${idMembro}" 
+                        <label for="esperadoParticipantes" class="">%</label>
+                        <input type="text" readonly id="txtExec-${idMembro}" name="esperadoParticipantes" 
                         style="font-weight:bold;" value="80" class="form-control"></input>
                     </div>
                 </div>
                 <div class="col-md-1">
                     <div class="position-relative form-group">
-                        <label for="txtTituloLista" class="">Rem.</label>
-                        <button id="btnRemMembro-${idMembro}" type="button" class="btn-shadow mr-3 btn btn-danger form-control">
+                        <label for="btnRemMembro-${idMembro}" class="">Rem.</label>
+                        <button name="btnRemMembro-${idMembro}" type="button" class="btn-shadow mr-3 btn btn-danger form-control">
                             <span class="btn-icon-wrapper pr-2 ">
                                 <i class="fa fa-trash-alt "></i>
                             </span>
                         </button>
                     </div>
                 </div>
+            </div>
             </div>
         `
     }
@@ -258,7 +284,7 @@
         }
 
         $('#listaMembros').append(htmlFormMembro(idMembro, nome))
-
+        $(`#rngExec-${idMembro}`);
         $(`#rngExec-${idMembro}`).on('input', function (e) {
             $(`#txtExec-${idMembro}`).val(e.target.value);
         });
@@ -272,14 +298,14 @@
     }
 
     function remMembro(idMembro) {
-        
+
         const index = membros.findIndex(m => m == idMembro)
 
         if (index >= 0) {
             membros.splice(index, 1);
-            
+
             const htmlMembro = $(`#membro-${idMembro}`)
-            
+
             if (htmlMembro.length > 0) {
                 htmlMembro.remove()
             }
@@ -287,20 +313,20 @@
     }
 
     function remList(listId) {
-        
+
         const index = listas.findIndex(l => l == listId)
-        
+
         if (index >= 0) {
             listas.splice(index, 1);
-            
+
             const htmlList = $(`#list-${listId}`)
-            
+
             if (htmlList.length > 0) {
                 htmlList.remove()
             }
         }
     }
-    
+
 </script>
 
 {{>shared/project_layout/footer}}

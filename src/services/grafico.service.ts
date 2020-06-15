@@ -1,4 +1,4 @@
-
+import { Projeto, ListaProjeto, Participante } from "../types";
 
 var _ = require('lodash')
 var moment = require('moment')
@@ -9,6 +9,16 @@ var trello = new Trello("4d302f3977e0313c3d7ae1f27d3500e2", "3a8b8c79d7862f3f586
 
 
 namespace GraficoService {
+    
+    const cargaHorariaSemanal: any = {
+        '1': 0,
+        '2': 7,
+        '3': 7,
+        '4': 7,
+        '5': 7,
+        '6': 7,
+        '7': 0,
+    }
 
     export async function imprimirMembrosDoQuadro(idQuadro: string) {
 
@@ -27,19 +37,15 @@ namespace GraficoService {
         }
     }
 
-    export async function associarInfoListaProjeto(listasTrello: Array<any>, listasProjeto: Array<any>) {
-        let dadosListasProjeto = []
+    export async function associarInfoListaProjeto(listasQuadro: Array<any>, listasProjeto: Array<ListaProjeto>) {
+        let dadosListasProjeto: Array<ListaProjeto> = []
 
         // identificar id's das listas dos boards
-        for (let listaTrello of listasTrello) {
-            for (let nomeListaProjeto of Object.values(listasProjeto)) {
-                if (listaTrello.name == nomeListaProjeto) {
-                    dadosListasProjeto.push({
-                        ...listaTrello,
-                        tipoLista: (_.invert(listasProjeto))[nomeListaProjeto]
-                    })
+        for (const listaQuadro of listasQuadro) {
+            for (const listaProjeto of listasProjeto) {
+                if (listaQuadro.name == listaProjeto.titulo) {
+                    dadosListasProjeto.push({ ...listaProjeto, listaQuadro: listaQuadro })
                 }
-
             }
         }
 
@@ -72,7 +78,7 @@ namespace GraficoService {
         return dadosCards
     }
 
-    export async function recuperarMovimentacoesExecucao(cards: Array<any>, listasExecucao: Array<any>) {
+    export async function recuperarMovimentacoesExecucao(cards: Array<any>, listasExecucao: Array<ListaProjeto>) {
 
         let movimentacoesExecucao = []
 
@@ -95,18 +101,14 @@ namespace GraficoService {
 
 
 
-            for (var lista of listasExecucao) {
+            for (var listaProjeto of listasExecucao) {
                 for (var movimentacao of movimentacoes) {
-                    if (lista.id == movimentacao.data.listAfter.id) {
+                    if (listaProjeto.listaQuadro.id == movimentacao.data.listAfter.id) {
                         movimentacoesExecucao.push({
                             idMovi: movimentacao.id,
                             dateMovi: movimentacao.date,
                             moviListAfter: movimentacao.data.listAfter,
-                            lista: {
-                                id: lista.id,
-                                name: lista.name,
-                                tipoLista: lista.tipoLista
-                            },
+                            lista: listaProjeto,
                             card: {
                                 id: card.id,
                                 dateLastActivity: card.dateLastActivity,
@@ -125,7 +127,7 @@ namespace GraficoService {
         return movimentacoesExecucao
     }
 
-    export async function calculaEsforcoTotalEstimado(infoCards: any, configuracaoExecucao: any) {
+    export async function calculaEsforcoTotalEstimado(infoCards: any, listasProjeto: Array<ListaProjeto>) {
 
         let tempoBase = moment('00:00:00', 'HH:mm:ss')
         let tempoEstimado = tempoBase.clone()
@@ -137,11 +139,11 @@ namespace GraficoService {
 
         }
 
-        let fatorExecucao = _.sum(Object.values(configuracaoExecucao))
+        let totalFatorExecucao = _.sum(listasProjeto.map(l => l.valorExecucao))
 
         let minutos = tempoEstimado.diff(tempoBase, 'minutes')
 
-        return (minutos / 60) * fatorExecucao
+        return (minutos / 60) * totalFatorExecucao
     }
 
     export function converterTempoNumero(tempo: any) {
@@ -177,7 +179,7 @@ namespace GraficoService {
 
     }
 
-    export async function calcularTempoExecutadoDia(dia: any, movimentacoesExecuxao: any, configuracaoCalculoTempoExecucao: any, totalDiasAnteriores: number = 0) {
+    export async function calcularTempoExecutadoDia(dia: any, movimentacoesExecuxao: any, totalDiasAnteriores: number = 0) {
 
         let tempoExecutadoDia = totalDiasAnteriores
 
@@ -186,7 +188,7 @@ namespace GraficoService {
 
             if (movi.dateMovi
                 && moment(movi.dateMovi).format('YYYY-MM-DD') == moment(dia).format('YYYY-MM-DD')) {
-                let tempoExecutadoCard = converterTempoNumero(movi.card.tempoEstimado) * configuracaoCalculoTempoExecucao[movi.lista.tipoLista]
+                let tempoExecutadoCard = converterTempoNumero(movi.card.tempoEstimado) * movi.lista.valorExecucao //configuracaoCalculoTempoExecucao[movi.lista.tipoLista]
                 tempoExecutadoDia += tempoExecutadoCard
             }
         }
@@ -213,13 +215,13 @@ namespace GraficoService {
         return listasExecucao
     }
 
-    export async function filtrarCardsExecucao(cards: any, listasExecucao: any) {
+    export async function filtrarCardsExecucao(cards: any, listasExecucao: Array<ListaProjeto>) {
         let cardsExecucao = []
 
         for (var lista of listasExecucao) {
             for (var card of cards) {
-                if (card.idList == lista.id) {
-                    cardsExecucao.push({ ...card, tipoLista: lista.tipoLista })
+                if (card.idList == lista.listaQuadro.id) {
+                    cardsExecucao.push({ ...card, lista: lista })
                 }
             }
         }
@@ -227,7 +229,7 @@ namespace GraficoService {
         return cardsExecucao
     }
 
-    export async function calculaHorasEsperadasDiaSemana(dia: any, equipeProgramadores: any) {
+    export async function calculaHorasEsperadasDiaSemana(dia: any, participantes: Array<Participante>) {
 
         let eh_feriado = _feriados[dia.format('DD/MM/YYYY')]
         if (eh_feriado) return 0
@@ -237,68 +239,39 @@ namespace GraficoService {
 
         let qtdeHorasEsperadasDia = 0
 
-        for (let membro of equipeProgramadores) {
-            if (membro && membro.cargo && membro.cargo.cargaHorariaSemanal && membro.cargo.fatorEsperadoCargaHorariaSemanal) {
-                let cargaDia = membro.cargo.cargaHorariaSemanal[diaSemana]
-                let percentProdutivoEsperadoDia = membro.cargo.fatorEsperadoCargaHorariaSemanal[diaSemana]
-
-                let tempoEstimadoAtividadesExtrasDiarias = 0
-                if (membro.tempoAtividadesExtrasDiarias) {
-                    const tempoAtividadesExtrasDiarias: Array<number> = Object.values(membro.tempoAtividadesExtrasDiarias)
-                    for (let valorHoras of tempoAtividadesExtrasDiarias) {
-                        tempoEstimadoAtividadesExtrasDiarias += valorHoras
-                    }
-                }
-
-                qtdeHorasEsperadasDia += (cargaDia * percentProdutivoEsperadoDia) - (tempoEstimadoAtividadesExtrasDiarias * percentProdutivoEsperadoDia)
+        for (let participante of participantes) {
+            if (participante) {
+                let cargaDia = cargaHorariaSemanal[diaSemana]
+                let percentProdutivoEsperadoDia = participante.percentualDiarioEsperado
+                qtdeHorasEsperadasDia += (cargaDia * percentProdutivoEsperadoDia)
             }
         }
 
         return qtdeHorasEsperadasDia
     }
 
-    export function obtemFatorDiaSemana(dia: any, equipeProgramadores: any) {
-
-        // let eh_feriado = _feriados[dia.format('DD/MM/YYYY')]
-        // if (eh_feriado) return 0
-
-        // let diaSemana = dia.day() + 1
-
-        // let qtdeRelativaDia = 1 // se for de segunda a sexta
-
-        // if (diaSemana == 1) { // se for domingo
-        //     qtdeRelativaDia = 0
-        // }
-        // else if (diaSemana == 7) { // se for sábado
-        //     qtdeRelativaDia = 0.375
-        // }
-        // return qtdeRelativaDia
-
+    export function obtemFatorDiaSemana(dia: any, participantes: Array<Participante>) {
 
         let eh_feriado = _feriados[dia.format('DD/MM/YYYY')]
         if (eh_feriado) return 0
 
         // obtem o dia da semana
-        let diaSemana = dia.day() + 1
+        let diaSemana: number = parseInt(dia.day() + 1)
 
         let fatorEsperadoEquipeDia = 0
         let qtdeMembrosAtivosDia = 0
 
-        for (let membro of equipeProgramadores) {
-            if (membro && membro.cargo && membro.cargo.cargaHorariaSemanal && membro.cargo.fatorEsperadoCargaHorariaSemanal && membro.cargo.cargaHorariaDia && membro.cargo.maxFatorEsperadoDia) {
-                let cargaDia = membro.cargo.cargaHorariaSemanal[diaSemana]
-                let percentProdutivoEsperadoDia = membro.cargo.fatorEsperadoCargaHorariaSemanal[diaSemana]
-
-                fatorEsperadoEquipeDia += (cargaDia / membro.cargo.cargaHorariaDia) * (percentProdutivoEsperadoDia / membro.cargo.maxFatorEsperadoDia)
-
-                qtdeMembrosAtivosDia += (percentProdutivoEsperadoDia > 0 ? 1 : 0)
+        for (let participante of participantes) {
+            if (participante) {
+                fatorEsperadoEquipeDia += 1
+                qtdeMembrosAtivosDia += (participante.percentualDiarioEsperado > 0 ? 1 : 0)
             }
         }
 
         return qtdeMembrosAtivosDia > 0 ? fatorEsperadoEquipeDia / qtdeMembrosAtivosDia : 0
     }
 
-    export async function gerarBurningDown(projeto: any) {
+    export async function gerarBurningDown(projeto: Projeto) {
 
         let dataInicioSprint, dataFimSprint, dataFimRitmo = null, dataFimTendencia = null
         // recuperar todos os cards do board 
@@ -309,12 +282,15 @@ namespace GraficoService {
 
         cardsProcessados = _.filter(cardsProcessados, (card: any) => _.startsWith(card.prefixo, projeto.prefixo))
 
-        const tempoEsforcoTotalEstimado = await calculaEsforcoTotalEstimado(cardsProcessados, projeto.configuracaoCalculoTempoExecucao)
+        const tempoEsforcoTotalEstimado = await calculaEsforcoTotalEstimado(cardsProcessados, projeto.listasProjeto)
 
         // recuperar listas do board
-        const listas = await trello.getListsOnBoard(projeto.idBoard)
-        const dadosListasProjeto = await associarInfoListaProjeto(listas, projeto.nomesListas)
-        const listasExecucao = await filtrarListasExecucao(dadosListasProjeto, projeto.nomesListas, Object.keys(projeto.configuracaoCalculoTempoExecucao))
+        const listasQuadro = await trello.getListsOnBoard(projeto.idBoard)
+
+        const dadosListasProjeto = await associarInfoListaProjeto(listasQuadro, projeto.listasProjeto)
+
+        // const listasExecucao = await filtrarListasExecucao(dadosListasProjeto, projeto.nomesListas, Object.keys(projeto.configuracaoCalculoTempoExecucao))
+        const listasExecucao = dadosListasProjeto.filter(lista => lista.valorExecucao > 0)
 
         // recuperar cards de execucao
         const cardsExecucao = await filtrarCardsExecucao(cardsProcessados, listasExecucao)
@@ -335,13 +311,13 @@ namespace GraficoService {
 
         for (var dia of diasSprint) {
 
-            let totalExecutadoDia = await calcularTempoExecutadoDia(dia, movimentacoesExecuxao, projeto.configuracaoCalculoTempoExecucao, totalJaExecutadoSprint)
+            let totalExecutadoDia = await calcularTempoExecutadoDia(dia, movimentacoesExecuxao, totalJaExecutadoSprint)
 
             totalJaExecutadoSprint = totalExecutadoDia
             restante.push({ t: dia, y: tempoEsforcoTotalEstimado - totalExecutadoDia })
             executado.push({ t: dia, y: totalExecutadoDia })
 
-            let fatorDiaSemana = obtemFatorDiaSemana(dia, projeto.equipeProgramadores)
+            let fatorDiaSemana = obtemFatorDiaSemana(dia, projeto.participantes)
             qtdeRelativaDiasTrabalhadosSprint += fatorDiaSemana
         }
 
@@ -361,13 +337,13 @@ namespace GraficoService {
 
         let totalRestanteTendencia = tempoEsforcoTotalEstimado - totalJaExecutadoSprint
 
-        while ((totalRestanteTendencia > -10 || tempoRestanteRitmo > -10) && (diaRitmo.diff(ontem, 'days') < 60)) {
+        while ((totalRestanteTendencia > -10 || tempoRestanteRitmo > -10) && (diaRitmo.diff(ontem, 'days') < 45)) {
 
             meta.push({ t: diaRitmo, y: tempoEsforcoTotalEstimado })
 
-            let fatorDiaSemana = obtemFatorDiaSemana(diaRitmo, projeto.equipeProgramadores)
+            let fatorDiaSemana = obtemFatorDiaSemana(diaRitmo, projeto.participantes)
 
-            let qtdeHorasEsperadasDia = await calculaHorasEsperadasDiaSemana(diaRitmo, projeto.equipeProgramadores)
+            let qtdeHorasEsperadasDia = await calculaHorasEsperadasDiaSemana(diaRitmo, projeto.participantes)
 
             tempoRestanteRitmo -= qtdeHorasEsperadasDia * fatorDiaSemana
 
@@ -379,9 +355,7 @@ namespace GraficoService {
             else if (diaRitmo > ontem) {
                 totalRestanteTendencia -= mediaExecutadoDiaSprint * fatorDiaSemana
                 tendencia.push({ t: diaRitmo.clone(), y: totalRestanteTendencia })
-                restante.push({ t: diaRitmo, y: null })
-                executado.push({ t: diaRitmo, y: null })
-
+                ritmo
             } else {
                 tendencia.push({ t: diaRitmo.clone(), y: null })
             }
