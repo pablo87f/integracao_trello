@@ -19,6 +19,15 @@ Repositorio.Entities = {
     'ResultadoManutencao': 'ResultadoManutencao',
 }
 
+Repositorio.getItem = (entityName) => {
+    return localStorage.getItem(entityName)[0] || undefined
+}
+
+Repositorio.setItem = (entityName, data) => {
+    localStorage.setItem(entityName, data);
+    return true
+}
+
 Repositorio.getAll = (entityName) => {
     return localStorage.getItem(entityName) || []
 }
