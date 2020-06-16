@@ -9,7 +9,7 @@ var trello = new Trello("4d302f3977e0313c3d7ae1f27d3500e2", "3a8b8c79d7862f3f586
 
 
 namespace GraficoService {
-    
+
     const cargaHorariaSemanal: any = {
         '1': 0,
         '2': 7,
@@ -259,16 +259,14 @@ namespace GraficoService {
         let diaSemana: number = parseInt(dia.day() + 1)
 
         let fatorEsperadoEquipeDia = 0
-        let qtdeMembrosAtivosDia = 0
 
         for (let participante of participantes) {
             if (participante) {
-                fatorEsperadoEquipeDia += 1
-                qtdeMembrosAtivosDia += (participante.percentualDiarioEsperado > 0 ? 1 : 0)
+                fatorEsperadoEquipeDia += (cargaHorariaSemanal[diaSemana] > 0 ? 1 : 0)
             }
         }
 
-        return qtdeMembrosAtivosDia > 0 ? fatorEsperadoEquipeDia / qtdeMembrosAtivosDia : 0
+        return participantes.length > 0 ? fatorEsperadoEquipeDia / participantes.length : 0
     }
 
     export async function gerarBurningDown(projeto: Projeto) {
