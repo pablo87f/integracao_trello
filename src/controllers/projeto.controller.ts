@@ -111,7 +111,7 @@ namespace ProjetoController {
     export async function update(req: express.Request, res: express.Response) {
 
         const { id: idProjeto } = req.params
-        console.warn('update projeto', idProjeto)
+        // console.warn('update projeto', idProjeto)
 
         const nomeArquivo = `projeto.${idProjeto}.json`
 

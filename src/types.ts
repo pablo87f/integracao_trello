@@ -105,8 +105,9 @@ export interface Projeto {
     listasProjeto: Array<ListaProjeto>
     diasDuracaoSprint: number
     participantes: Array<Participante>
-    status: StatusProjeto,
+    status: StatusProjeto
     versao:string
+    dadosGrafico?: any
 }
 
 
