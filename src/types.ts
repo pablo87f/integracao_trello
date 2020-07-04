@@ -34,7 +34,7 @@ export interface CargaHorariaSemanal {
 export interface Pessoa {
     id: number
     nome: string
-    user: string 
+    user: string
 }
 
 export interface Cargo {
@@ -68,8 +68,8 @@ export interface AtividadeExtraDiaria {
 // { id: 1, nome: 'ativo', cor: 'green', classeEstilo: 'primary' }
 export interface StatusProjeto {
     id: number,
-    nome: string 
-    cor: string 
+    nome: string
+    cor: string
     classeEstilo: string
 }
 
@@ -106,8 +106,16 @@ export interface Projeto {
     diasDuracaoSprint: number
     participantes: Array<Participante>
     status: StatusProjeto
-    versao:string
+    versao: string
     dadosGrafico?: any
+}
+
+
+export interface QuadroManutencao {
+    id: number
+    nome: string
+    idBoard: string
+    nomeListaConclusao?: string;
 }
 
 

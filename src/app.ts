@@ -12,9 +12,10 @@ import GraficoController from './controllers/grafico.controller';
 import repo from './repositorio';
 import { ProjetoController, FuncionalidadesController } from "./controllers";
 import ViewsProjetoController from "./controllers/views-projeto.controller";
-import MaintenanceController from "./controllers/maintenance.controlle";
+import MaintenanceController from "./controllers/maintenance.controller";
 
 const app = express();
+
 var publicPath = path.join(__dirname, './public');
 app.use('/public', express.static(publicPath));
 
@@ -31,17 +32,16 @@ app.use(bodyParser.urlencoded({
 app.get('/home', ProjetoController.index);
 app.get('/', ProjetoController.index);
 
-app.get('/projeto/novo', ViewsProjetoController.create);
+app.get('/projeto/new', ViewsProjetoController.create);
 
 app.get('/projeto/:id', ProjetoController.show);
-app.post('/projeto/novo', ProjetoController.store);
+app.post('/projeto/new', ProjetoController.store);
 app.put('/projeto/:id', ProjetoController.update);
 
 app.get('/projeto/:id/funcionalidades', FuncionalidadesController.index);
 app.post('/projeto/:id/funcionalidade/criar', FuncionalidadesController.store);
 
 app.get('/maintenance', MaintenanceController.index);
-
 
 
 // AJAX -------------------------------------------------------------

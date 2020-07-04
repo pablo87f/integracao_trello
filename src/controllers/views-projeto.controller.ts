@@ -9,7 +9,7 @@ namespace ViewsProjetoController {
     
     export function create(req: express.Request, res: express.Response) {
         const membros = Object.values(pessoas)
-        return res.render('./projeto/novo.html', {
+        return res.render('./projeto/new.html', {
             membros
         })
     }

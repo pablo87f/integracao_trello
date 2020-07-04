@@ -102,7 +102,7 @@ namespace ProjetoController {
         Repositorio.setItem('index.projetos.json', indexProjetos)
 
         const membros = Object.values(pessoas)
-        return res.render('./projeto/novo.html', {
+        return res.render('./projeto/new.html', {
             membros,
             sucess:true
         })
