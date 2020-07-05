@@ -42,6 +42,7 @@ app.get('/projeto/:id/funcionalidades', FuncionalidadesController.index);
 app.post('/projeto/:id/funcionalidade/criar', FuncionalidadesController.store);
 
 app.get('/maintenance', MaintenanceController.index);
+app.get('/maintenance/:id', MaintenanceController.show)
 
 
 // AJAX -------------------------------------------------------------
