@@ -115,7 +115,8 @@ export interface QuadroManutencao {
     id: number
     nome: string
     idBoard: string
-    nomeListaConclusao?: string;
+    idListaConclusao?: string;
+    dadosManutencao?: any;
 }
 
 
