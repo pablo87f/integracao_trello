@@ -60,7 +60,7 @@
             <div class="col-md-12">
                 <div class="main-card mb-3 card">
                     <div class="card-header">
-                        GRÁFICO DE ACOMPANHAMENTO
+                        GRÁFICOS
                     </div>
                     <div class="table-responsive" style="height: 50%;">
                         <br />
@@ -68,43 +68,81 @@
 
                             <div class='row'>
                                 <div class='col' style="font-weight: bold;">
+                                    N. semana:
+                                </div>
+                                <div class='col'>
+                                    <span id='numSemana'>--</span>
+                                </div>
+                                <div class='col' style="font-weight: bold;">
                                     Data Inicio:
                                 </div>
                                 <div class='col'>
                                     <span id='dataInicio'>--/--/--</span>
                                 </div>
                                 <div class='col' style="font-weight: bold;">
-                                    Valor médio horas dia:
+                                    Data Fim:
                                 </div>
                                 <div class='col'>
-                                    <span id='mediaExecutadoDiaSprint'>--,--</span>
+                                    <span id='dataFim'>--/--/--</span>
                                 </div>
                             </div>
-                            <div class='row'>
+                            <!-- <div class='row'>
                                 <div class='col' style="font-weight: bold;">
                                     Data Fim Ritmo Estimado:
                                 </div>
                                 <div class='col'>
                                     <span id='dataFimRitmoEstimado'>--/--/--</span>
                                 </div>
-                                <div class='col' style="font-weight: bold;">
-                                    Data Fim Tendencia:
-                                </div>
-                                <div class='col'>
-                                    <span id='dataFimTendencia'>--/--/--</span>
-                                </div>
-                            </div>
+                            </div> -->
 
                             <br />
-                            <div id="chartContainer" class='container' style="width: 90%; height: 50%;">
-                                <img src="../../public/assets/images/ajax-loader-blue.gif" />
+                            <div class="row">
+                                <div id="chartContainerImportancia" class='col-md-4 col-sm-10'>
+
+                                </div>
+                                <div id="chartContainerTipo" class='col-md-4 col-sm-10'>
+
+                                </div>
+                                <div id="chartContainerListas" class='col-md-4 col-sm-10'>
+
+                                </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="d-block text-center card-footer">
+
+                    </div>
+                </div>
+                <div class="main-card mb-3 card">
+                    <div class="card-header">Cards
+                        <div class="btn-actions-pane-right">
+                            <div role="group" class="btn-group-sm btn-group">
+                                <!-- <button class="active btn btn-focus">Last Week</button>
+                                <button class="btn btn-focus">All Month</button> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="align-middle mb-0 table table-borderless table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <!-- <th class="text-center">Nome</th> -->
+                                    <th>Nome</th>
+                                    <th class="text-center">Lista</th>
+                                    <th class="text-center">Etiquetas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaCards">
+
+                            </tbody>
+                        </table>
                     </div>
                     <div class="d-block text-center card-footer">
 
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -115,10 +153,33 @@
 </div>
 
 <script type="text/javascript">
-    var $chart;
+    var $chartImportancia;
+    var $chartTipo;
 
-    let status = '{{ projeto.status.nome }}'
-    let id_projeto = parseInt('{{ projeto.id }}')
+    const bluePalette = [
+        '#9C27B0',
+        '#673AB7',
+        '#3F51B5',
+        '#2196F3',
+        '#00BCD4',
+        '#009688',
+        '#4CAF50',
+        '#FFC107',
+        '#FF9800',
+        '#795548',
+    ]
+
+    const defaultPieOptions = {
+        responsive: true,
+        align: 'start',
+        legend: {
+            position: 'bottom',
+            
+            fullWidth: false
+        },
+    }
+
+    let id_quadro = parseInt('{{ quadro_manutencao.id }}')
 
     $body = $("body");
 
@@ -129,7 +190,7 @@
 
     $(document).ready(function () {
 
-        // montarGraficoProjeto()
+        montarGraficosManutencao()
 
         // if (status == 'ativo') {
         //     $('#btn-entregar').removeClass('mb-2 mr-2 btn btn-secondary')
@@ -143,155 +204,87 @@
         // }
     });
 
-
-    function getUrlParameter(sParam) {
-        var sPageURL = window.location.search.substring(1),
-            sURLVariables = sPageURL.split('&'),
-            sParameterName,
-            i;
-
-        for (i = 0; i < sURLVariables.length; i++) {
-            sParameterName = sURLVariables[i].split('=');
-
-            if (sParameterName[0] === sParam) {
-                return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-            }
-        }
-    };
-
     function converterData(strData) {
         return moment(strData, 'YYYY-MM-DD')
     }
 
-    function montarConfigGrafico(dados) {
-        var tempoTotalEstimado = dados.meta
-        var tempoExecutado = dados.executado
-        var tendencia = dados.tendencia
+    function obtemCoresEtiquetasPorNomes(nomes, etiquetas) {
+        return nomes.map((nome) => {
+            const etiqueta = etiquetas.find((etiqueta) => {
+                return etiqueta.name === nome
+            })
+            return etiqueta ? etiqueta.color : undefined
+        })
+    }
+
+    function montarConfigGraficoImportancia(dados) {
+
+        const { qtdsCardsEtiquetasImportancia, etiquetas } = dados
+
+        const nomesImportancia = Object.keys(qtdsCardsEtiquetasImportancia)
+        const valoresImportancia = Object.values(qtdsCardsEtiquetasImportancia)
 
         var cfg = {
-
+            type: 'pie',
             data: {
-                datasets: [
-                    // {
-                    //     label: 'Fim Ritmo',
-                    //     backgroundColor: 'lightblue',
-                    //     borderColor: 'lightblue',
-                    //     data: [{ t: dados.dataFimRitmo, y: 0 }],
-                    //     type: 'line',
-                    //     fill: false,
-                    //     lineTension: 0,
-                    //     borderWidth: 2,
-                    //     backgroundColor: '#0000DD50',
-                    //     borderColor: 'lighblue',
-                    //     pointStyle: 'rectRot',
-                    //     pointRadius: 10,
-                    //     pointHoverRadius: 10,
-                    //     pointBorderColor: 'rgb(0, 0, 0)',
-                    //     showL<div class="modal"><!-- Place at bottom of page --></div>ine: false
-                    // },
-                    {
-                        label: 'Restante',
-                        backgroundColor: 'red',
-                        borderColor: 'red',
-                        data: dados.restante,
-                        type: 'line',
-                        fill: false,
-                        lineTension: 0,
-                    },
-                    {
-                        label: 'Executado',
-                        backgroundColor: 'blue',
-                        borderColor: 'blue',
-                        data: dados.executado,
-                        type: 'line',
-                        fill: false,
-                        lineTension: 0,
-                    },
-                    {
-                        label: 'Tendência',
-                        backgroundColor: 'lightgreen',
-                        borderColor: 'lightgreen',
-                        data: dados.tendencia,
-                        type: 'line',
-                        fill: false,
-                        lineTension: 0,
-                    },
-                    {
-                        label: 'Ritmo Esperado',
-                        backgroundColor: 'lightblue',
-                        borderColor: 'lightblue',
-                        data: dados.ritmo,
-                        type: 'line',
-                        fill: false,
-                        lineTension: 0,
-                    },
-                    {
-                        label: 'Total Estimado',
-                        backgroundColor: 'yellow',
-                        borderColor: 'yellow',
-                        data: dados.meta,
-                        type: 'line',
-                        fill: false,
-                        lineTension: 0,
-                    },
-                    {
-                        label: 'Ontem',
-                        backgroundColor: 'orange',
-                        borderColor: 'orange',
-                        data: dados.linhaOntem,
-                        type: 'line',
-                        fill: false,
-                        lineTension: 0,
-                        borderWidth: 2,
-                        pointRadius: 0,
-                    },
-                ],
+                datasets: [{
+                    data: valoresImportancia,
+                    backgroundColor: obtemCoresEtiquetasPorNomes(nomesImportancia, etiquetas)
+                }],
+                labels: nomesImportancia
             },
             options: {
-                scales: {
-                    xAxes: [{
-                        type: "time",
-                        time: {
-                            displayFormats: {
-                                day: 'DD/MM'
-                            },
-                            tooltipFormat: 'DD/MM/YYYY',
-                            unit: 'day',
-                            stepSize: 1,
-                            minUnit: 'day'
-                        },
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Dia Sprint'
-                        },
+                ...defaultPieOptions
+            }
+        };
 
-                    }],
-                    yAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Horas Sprint'
-                        },
-                        gridLines: {
-                            zeroLineWidth: 2,
-                        },
-                    }]
-                },
-                tooltips: {
-                    mode: 'index',
-                    intersect: true
-                    // callbacks: {
-                    //     label: function (tooltipItem, myData) {
-                    //         var label = myData.datasets[tooltipItem.datasetIndex].label || '';
-                    //         if (label) {
-                    //             label += ': ';
-                    //         }
-                    //         label += parseFloat(tooltipItem.value).toFixed(2);
-                    //         return label;
-                    //     }
-                    // }
-                },
+        return cfg
+    }
+
+
+    function montarConfigGraficoTipo(dados) {
+
+        const { qtdsCardsEtiquetasTipo, etiquetas } = dados
+
+        const nomesTipo = Object.keys(qtdsCardsEtiquetasTipo)
+        const valoresTipo = Object.values(qtdsCardsEtiquetasTipo)
+
+        var cfg = {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: valoresTipo,
+                    backgroundColor: obtemCoresEtiquetasPorNomes(nomesTipo, etiquetas)
+                }],
+                labels: nomesTipo,
+            },
+            options: {
+                ...defaultPieOptions
+            }
+        };
+
+        return cfg
+    }
+
+
+    function montarConfigGraficoListas(dados) {
+
+        const { qtdsCardsListas } = dados
+
+        const nomesTipo = Object.keys(qtdsCardsListas)
+        const valoresTipo = Object.values(qtdsCardsListas)
+
+        var cfg = {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: valoresTipo,
+                    backgroundColor: bluePalette
+                }],
+                labels: nomesTipo,
+            },
+            options: {
+                ...defaultPieOptions
             }
         };
 
@@ -316,12 +309,11 @@
         }
     }
 
-    function montarDatasProjeto(data) {
+    function montarDatasManutencao(data) {
         if (data) {
-            $('#dataInicio').html(moment(data.dataInicioSprint).format('DD/MM/YYYY'))
-            $('#dataFim').html(moment(data.dataFimSprint).format('DD/MM/YYYY'))
-            $('#dataFimRitmoEstimado').html(moment(data.dataFimRitmo).format('DD/MM/YYYY'))
-            $('#dataFimTendencia').html(moment(data.dataFimTendencia).format('DD/MM/YYYY'))
+            $('#dataInicio').html(moment(data.dtInicio).format('DD/MM/YYYY'))
+            $('#dataFim').html(moment(data.dtFim).format('DD/MM/YYYY'))
+            $('#numSemana').html(data.numSemana)
         }
     }
 
@@ -331,68 +323,65 @@
         }
     }
 
-    function montarGraficoProjeto() {
+    function montarGraficosManutencao() {
 
-        if (id_projeto) {
-            let url = "/dados_grafico_projeto/" + id_projeto
+        if (id_quadro) {
+            let url = "/dados_grafico_manutencao/" + id_quadro
             $.get(url, carregarDadosGrafico)
         }
     }
 
     function carregarDadosGrafico(data) {
 
+        const { qtdsCardsEtiquetasImportancia, qtdsCardsEtiquetasTipo, qtdsCardsListas } = data
+
         console.warn('dados grafico', data)
 
-        calcularPorcentagemProgressoProjeto(data)
+        montarDatasManutencao(data)
 
-        montarDatasProjeto(data)
+        montarGraficoImportancia(data)
 
-        montarInfoProjeto(data)
+        montarGraficoTipo(data)
 
-        $('#chartContainer').empty();
+        montarGraficoListas(data)
 
-        $('#chartContainer').html('<canvas id="canvas" width="90%" height="50%"></canvas>'); // then load chart.
+    }
 
-        var ctx = document.getElementById('canvas').getContext('2d');
+    function montarGraficoImportancia(data) {
+        $('#chartContainerImportancia').empty();
 
-        if (typeof $chart !== "undefined") {
+        $('#chartContainerImportancia').html('<canvas id="canvasImportancia" width="90%" height="200px"></canvas>'); // then load chart.
+        var ctxImportancia = document.getElementById('canvasImportancia').getContext('2d');
+
+        if (typeof $chartImportancia !== "undefined") {
             $chart.destroy();
         }
-
-        $chart = new Chart(ctx, montarConfigGrafico(data));
-        $chart.update()
-
+        $chartImportancia = new Chart(ctxImportancia, montarConfigGraficoImportancia(data));
+        $chartImportancia.update()
     }
-    function confirmarEntregaProjeto() {
-        let confirmou = confirm("Deseja realmente entregar esse Projeto?\nEssa ação não pode ser desfeita!")
 
-        if (confirmou) {
-            entregarProjeto()
+    function montarGraficoTipo(data) {
+        $('#chartContainerTipo').html('<canvas id="canvasTipo" width="90%" height="200px"></canvas>'); // then load chart.
+        var ctxTipo = document.getElementById('canvasTipo').getContext('2d');
+
+        if (typeof $chartTipo !== "undefined") {
+            $chartTipo.destroy();
         }
+        $chartTipo = new Chart(ctxTipo, montarConfigGraficoTipo(data));
+        $chartTipo.update()
     }
 
-    function entregarProjeto() {
+    function montarGraficoListas(data) {
+        $('#chartContainerListas').html('<canvas id="canvasListas" width="90%" height="200px"></canvas>'); // then load chart.
+        var ctxListas = document.getElementById('canvasListas').getContext('2d');
 
-        if (id_projeto) {
-
-            $('#div_projetos').append(htmlForLoading())
-
-            let url = "/projeto/" + id_projeto
-
-            $.ajax({
-                type: 'PUT',
-                url: url,
-                contentType: 'application/json',
-                data: JSON.stringify({ status: 'entregue' }),
-            }).done(function () {
-                alert('Projeto entrege!')
-            }).fail(function (msg) {
-                alert('Falha ao entregar o projeto!')
-            }).always(function (msg) {
-                location.reload();
-            });
+        if (typeof $chartListas !== "undefined") {
+            $chartListas.destroy();
         }
+        $chartListas = new Chart(ctxListas, montarConfigGraficoListas(data));
+        $chartListas.update()
     }
+
 
     function htmlForLoading() {
         return `
@@ -403,6 +392,38 @@
         `
     }
 
+    function htmlForCardRow(card) {
+        const { id, name, shortUrl, lista } = card
+        return `
+            <tr>
+                <td>
+                    <div class="widget-content p-0">
+                        <div class="widget-content-wrapper">
+                            <a href="${shortUrl}">
+                                <div class="widget-content-left flex2">
+                                    <div class="widget-heading">${name}
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </td>
+                <td class="text-center">
+                    ${lista}
+                </td>
+                <td class="text-center">
+                    ${htmlForLabelsTrello(labels)}
+                </td>
+            </tr>
+        `
+    }
+
+    function htmlForLabelsTrello(labes) {
+        const htmlsLabels = labels.map((label) => {
+            return `<span style='color: ${label.color}'> ${label.name} </span>`
+        })
+        return htmlsLabels.join("<br/> ")
+    }
 
 </script>
 

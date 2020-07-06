@@ -51,7 +51,9 @@ app.get('/listar_projetos', ProjetoController.index);
 
 app.get('/grafico', GraficoController.mostrar);
 
-app.get('/dados_grafico_projeto/:id_projeto', GraficoController.gerarGrafico);
+app.get('/dados_grafico_projeto/:id_projeto', GraficoController.gerarGraficoProjeto);
+
+app.get('/dados_grafico_manutencao/:id_quadro', GraficoController.gerarGraficoManutencao);
 
 // -------------------------------------------------------------
 app.use('/public', express.static('public'))

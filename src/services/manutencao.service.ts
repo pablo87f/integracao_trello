@@ -66,6 +66,8 @@ namespace ManutencaoService {
         })
 
         console.log('dadosSemana', dadosSemana, qtdsCardsEtiquetasImportancia, qtdsCardsEtiquetasTipo, qtdsCardsListas)
+        return { ...dadosSemana, qtdsCardsEtiquetasImportancia, qtdsCardsEtiquetasTipo, qtdsCardsListas }
+
         // salvar dados de manutencao
 
     }
@@ -104,7 +106,7 @@ namespace ManutencaoService {
         const dtInicio = moment().day("Sunday").week(numSemana).toDate();
         const dtFim = moment().day("Sunday").week(numSemana).add(6, 'days').toDate();
 
-        return { numSemana, dtInicio, dtFim, cartoes, listas }
+        return { numSemana, dtInicio, dtFim, cartoes, listas, etiquetas }
         // filtrar os cards por listas
         // marcar os cards que foram criados na semana - novos cards
         // calcular quantidade de cards que foram concluidos

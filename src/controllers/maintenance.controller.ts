@@ -41,7 +41,6 @@ namespace MaintenanceController {
 
         if (!quadroManutencao) res.sendStatus(404)
         
-        ManutencaoService.processarDadosManutencao(quadroManutencao)
         res.render('maintenance/detalhes/index.html', { 'quadro_manutencao': quadroManutencao })
     }
 
