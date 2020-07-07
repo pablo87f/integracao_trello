@@ -57,6 +57,7 @@ namespace ManutencaoService {
         const dadosSemana = await extrairDadosManutencao(quadroManutencao)
 
         let qtdsCardsEtiquetasImportancia = {}
+
         etiquetasImportancia.map((e) => {
             const cards = _.filter(dadosSemana.cartoes, (cartao: any) => {
                 return _.find(cartao.labels, { id: e.id })
@@ -80,8 +81,16 @@ namespace ManutencaoService {
             qtdsCardsListas = { ...qtdsCardsListas, [list.name]: cards.length }
         })
 
-        console.log('dadosSemana', dadosSemana, qtdsCardsEtiquetasImportancia, qtdsCardsEtiquetasTipo, qtdsCardsListas)
-        return { ...dadosSemana, qtdsCardsEtiquetasImportancia, qtdsCardsEtiquetasTipo, qtdsCardsListas }
+        // console.log('dadosSemana', dadosSemana, qtdsCardsEtiquetasImportancia, qtdsCardsEtiquetasTipo, qtdsCardsListas)
+        return {
+            ...dadosSemana,
+            qtdsCardsEtiquetasImportancia,
+            qtdsCardsEtiquetasTipo, 
+            qtdsCardsListas, 
+            etiquetasImportancia, 
+            etiquetasTipo,
+            semanas:Array.from(Array(dadosSemana.numSemana), (_, i) => i + 1)
+        }
 
         // salvar dados de manutencao
 

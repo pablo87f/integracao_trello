@@ -1,4 +1,6 @@
 {{>shared/maintenance_layout/header}}
+<link rel="stylesheet" type="text/css" href="../../../public/selectizejs/css/selectize.css" />
+
 <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
@@ -11,7 +13,7 @@
 
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
 <script src="https://unpkg.com/moment"></script>
-<script src="../public/chartjs/Chart.min.js"></script>
+<script src="../../../public/chartjs/Chart.min.js"></script>
 
 <style>
     /* Start by setting display:none to make this hidden.
@@ -27,7 +29,11 @@
         left: 0;
         height: 100%;
         width: 100%;
-        background: rgba(255, 255, 255, .8) url('../../public/assets/images/ajax-loader-blue.gif') 50% 50% no-repeat;
+        background: rgba(255, 255, 255, .8) url('../../../public/assets/images/ajax-loader-blue.gif') 50% 50% no-repeat;
+    }
+
+    .selectize-dropdown {
+        z-index: 10000 !important;
     }
 
     /* When the body has the loading class, we turn
@@ -58,6 +64,66 @@
     <div id='div_projetos'>
         <div class="row">
             <div class="col-md-12">
+                <!-- filtros -->
+                <div class="main-card mb-3 card">
+                    <div class="card-header">Filtros
+                        <div class="btn-actions-pane-right">
+                            <div role="group" class="btn-group-sm btn-group">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive" style="height: 50%;">
+                        <br />
+                        <div class='col'>
+                            <div class='row'>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Semana Início:
+                                </div>
+                                <div class='col-md-2 col-sm-6'>
+                                    <select id="selSemanaInicio" placeholder="Início"></select>
+                                </div>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Semana Fim:
+                                </div>
+                                <div class='col-md-2 col-sm-6'>
+                                    <select id="selSemanaFim" placeholder="Fim"></select>
+                                </div>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Lista:
+                                </div>
+                                <div class='col-md-2 col-sm-6'>
+                                    <select id="selListas" placeholder="Lista"></select>
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Importância:
+                                </div>
+                                <div class='col-md-2 col-sm-6'>
+                                    <select id="selEtiquetasImportancia" placeholder="Importância"></select>
+                                </div>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Tipo:
+                                </div>
+                                <div class='col-md-2 col-sm-6'>
+                                    <select id="selEtiquetasTipo" placeholder="Tipo"></select>
+                                </div>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Novos Cards:
+                                </div>
+                                <div class='col-md-2 col-sm-6'>
+                                    <input type="checkbox" name="chkNovosCards" id="chkNovosCards" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-block text-center card-footer">
+
+                    </div>
+                </div>
+                <!-- fim filtros -->
+                <!-- graficos -->
                 <div class="main-card mb-3 card">
                     <div class="card-header">
                         GRÁFICOS
@@ -68,7 +134,7 @@
 
                             <div class='row'>
                                 <div class='col' style="font-weight: bold;">
-                                    N. semana:
+                                    Intervalo semanas:
                                 </div>
                                 <div class='col'>
                                     <span id='numSemana'>--</span>
@@ -86,14 +152,6 @@
                                     <span id='dataFim'>--/--/--</span>
                                 </div>
                             </div>
-                            <!-- <div class='row'>
-                                <div class='col' style="font-weight: bold;">
-                                    Data Fim Ritmo Estimado:
-                                </div>
-                                <div class='col'>
-                                    <span id='dataFimRitmoEstimado'>--/--/--</span>
-                                </div>
-                            </div> -->
 
                             <br />
                             <div class="row">
@@ -114,6 +172,8 @@
 
                     </div>
                 </div>
+                <!-- fim graficos -->
+                <!-- cards -->
                 <div class="main-card mb-3 card">
                     <div class="card-header">Cards
                         <div class="btn-actions-pane-right">
@@ -142,6 +202,7 @@
 
                     </div>
                 </div>
+                <!-- fim cards -->
 
             </div>
         </div>
@@ -151,6 +212,8 @@
 <div class="modal">
 
 </div>
+<!-- <script type="text/javascript" src="../../../public/assets/scripts/jquery-3.4.1.min.js"></script> -->
+<script type="text/javascript" src="../../../public/selectizejs/js/standalone/selectize.min.js"></script>
 
 <script type="text/javascript">
     var $chartImportancia;
@@ -174,7 +237,7 @@
         align: 'start',
         legend: {
             position: 'bottom',
-            
+
             fullWidth: false
         },
     }
@@ -327,15 +390,16 @@
 
         if (id_quadro) {
             let url = "/dados_grafico_manutencao/" + id_quadro
-            $.get(url, carregarDadosGrafico)
+            $.get(url, carregarDados)
         }
     }
 
-    function carregarDadosGrafico(data) {
+    function carregarDados(data) {
 
-        const { qtdsCardsEtiquetasImportancia, qtdsCardsEtiquetasTipo, qtdsCardsListas } = data
 
         console.warn('dados grafico', data)
+
+        montarFiltros(data)
 
         montarDatasManutencao(data)
 
@@ -347,10 +411,60 @@
 
     }
 
+    function montarFiltros(data) {
+        const {
+            semanas,
+            etiquetasImportancia,
+            etiquetasTipo,
+            listas
+        } = data
+
+        $('#selSemanaInicio').selectize({
+            valueField: 'id',
+            labelField: 'title',
+            searchField: ['title'],
+            options: semanas.map((s, i) => { return { id: i, title: s } }),
+            dropdownParent: 'body'
+        })
+
+        $('#selSemanaFim').selectize({
+            valueField: 'id',
+            labelField: 'title',
+            searchField: ['title'],
+            options: semanas.map((s, i) => { return { id: i, title: s } }),
+            dropdownParent: 'body'
+        })
+
+        $('#selEtiquetasImportancia').selectize({
+            valueField: 'id',
+            labelField: 'name',
+            searchField: ['name'],
+            options: etiquetasImportancia,
+            dropdownParent: 'body'
+        })
+
+        $('#selEtiquetasTipo').selectize({
+            valueField: 'id',
+            labelField: 'name',
+            searchField: ['name'],
+            options: etiquetasTipo,
+            dropdownParent: 'body'
+        })
+
+        $('#selListas').selectize({
+            valueField: 'id',
+            labelField: 'name',
+            searchField: ['name'],
+            options: listas,
+            dropdownParent: 'body'
+        })
+
+    }
+
     function montarGraficoImportancia(data) {
         $('#chartContainerImportancia').empty();
 
-        $('#chartContainerImportancia').html('<canvas id="canvasImportancia" width="90%" height="200px"></canvas>'); // then load chart.
+        $('#chartContainerImportancia').html('<canvas id="canvasImportancia" width="90%" height="auto"></canvas>'); // then load chart.
         var ctxImportancia = document.getElementById('canvasImportancia').getContext('2d');
 
         if (typeof $chartImportancia !== "undefined") {
@@ -361,7 +475,7 @@
     }
 
     function montarGraficoTipo(data) {
-        $('#chartContainerTipo').html('<canvas id="canvasTipo" width="90%" height="200px"></canvas>'); // then load chart.
+        $('#chartContainerTipo').html('<canvas id="canvasTipo" width="90%" height="auto"></canvas>'); // then load chart.
         var ctxTipo = document.getElementById('canvasTipo').getContext('2d');
 
         if (typeof $chartTipo !== "undefined") {
@@ -372,7 +486,7 @@
     }
 
     function montarGraficoListas(data) {
-        $('#chartContainerListas').html('<canvas id="canvasListas" width="90%" height="200px"></canvas>'); // then load chart.
+        $('#chartContainerListas').html('<canvas id="canvasListas" width="90%" height="auto"></canvas>'); // then load chart.
         var ctxListas = document.getElementById('canvasListas').getContext('2d');
 
         if (typeof $chartListas !== "undefined") {
