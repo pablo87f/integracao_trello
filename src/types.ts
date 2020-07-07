@@ -127,3 +127,10 @@ export interface ProjetoManutencao {
     idBoard: string
     status: StatusProjeto
 }
+
+export interface TrelloLabel {
+    color?: String;
+    id: string;
+    idBoard: string
+    name: string
+}

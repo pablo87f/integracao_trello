@@ -1,4 +1,4 @@
-import { Projeto, ListaProjeto, Participante, QuadroManutencao } from "../types";
+import { Projeto, ListaProjeto, Participante, QuadroManutencao, TrelloLabel } from "../types";
 import { listas } from "../dados/_padrao";
 
 var _ = require('lodash')
@@ -25,6 +25,21 @@ const idsCardsPadrao = [
     "5eea67bcbc3a6f1eaf2befb8",
     "5eea1f7acd50f25486b082ea"
 ]
+
+const trelloLabelsPalette: any = {
+    'green': '#61bd4f',
+    'yellow': '#f2d600',
+    'red': '#eb5a46',
+    'purple': '#c377e0',
+    'blue': '#0079bf',
+    'sky': '#87CEEB',
+    'black': '#344563',
+    'pink': '#ff78cb',
+    'lime': '#51e898',
+    'orange': '#ff9f1a',
+    'grey': '#b3bac5'
+}
+
 namespace ManutencaoService {
 
 
@@ -81,7 +96,11 @@ namespace ManutencaoService {
         const listas = await trello.getListsOnBoard(idBoard)
 
         // obter os labels
-        const etiquetas = await trello.getLabelsForBoard(idBoard)
+        const etiquetasTrello = await trello.getLabelsForBoard(idBoard)
+        const etiquetas = etiquetasTrello.map((e: TrelloLabel) => {
+            const nomeCor: any = e.color
+            return { ...e, color: trelloLabelsPalette[nomeCor] }
+        })
 
         // separar dados dos cards (id, titulo, descricao, data_criacao, data_conclusao, labels, lista)
         const cards = await trello.getCardsOnBoardWithExtraParams(idBoard)
