@@ -8,16 +8,16 @@ var trello = new Trello("87dc9de469e75e93dc71170012c930eb", "bebf362640978bcd8ca
 // var trello = new Trello("4d302f3977e0313c3d7ae1f27d3500e2", "3a8b8c79d7862f3f586939068c14abecea1cb8a26a1dc61261233831455b22a7");
 
 const etiquetasImportancia = [
-    { "id": "5d482237af988c41f27650da", "idBoard": "5d4822377c118d0890031f75", "name": "IMPORTANTE", "color": "yellow" },
-    { "id": "5d482237af988c41f27650db", "idBoard": "5d4822377c118d0890031f75", "name": "DESEJADO", "color": "green" },
-    { "id": "5d482237af988c41f27650dd", "idBoard": "5d4822377c118d0890031f75", "name": "IMPRESCINDÍVEL", "color": "red" },
+    { "id": "5d482237af988c41f27650da", "idBoard": "5d4822377c118d0890031f75", "name": "IMPORTANTE", "color": '#f2d600', },
+    { "id": "5d482237af988c41f27650db", "idBoard": "5d4822377c118d0890031f75", "name": "DESEJADO", "color": '#61bd4f', },
+    { "id": "5d482237af988c41f27650dd", "idBoard": "5d4822377c118d0890031f75", "name": "IMPRESCINDÍVEL", "color": '#eb5a46', },
 ]
 
 const etiquetasTipo = [
-    { "id": "5dfcdfebd52fa642425498fb", "idBoard": "5d4822377c118d0890031f75", "name": "SUPORTE", "color": "sky" },
-    { "id": "5dfcc37e92f912388124a893", "idBoard": "5d4822377c118d0890031f75", "name": "MELHORIA", "color": "purple" },
-    { "id": "5dfa16184b1a1478cb987b0e", "idBoard": "5d4822377c118d0890031f75", "name": "BUG", "color": "black" },
-    { "id": "5e56aaca1731398179dab35b", "idBoard": "5d4822377c118d0890031f75", "name": "ANÁLISE", "color": "blue" }
+    { "id": "5dfcdfebd52fa642425498fb", "idBoard": "5d4822377c118d0890031f75", "name": "SUPORTE", "color": '#87CEEB' },
+    { "id": "5dfcc37e92f912388124a893", "idBoard": "5d4822377c118d0890031f75", "name": "MELHORIA", "color": '#c377e0', },
+    { "id": "5dfa16184b1a1478cb987b0e", "idBoard": "5d4822377c118d0890031f75", "name": "BUG", "color": '#344563', },
+    { "id": "5e56aaca1731398179dab35b", "idBoard": "5d4822377c118d0890031f75", "name": "ANÁLISE", "color": '#0079bf', }
 ]
 
 const idsCardsPadrao = [
@@ -32,7 +32,7 @@ const trelloLabelsPalette: any = {
     'red': '#eb5a46',
     'purple': '#c377e0',
     'blue': '#0079bf',
-    'sky': '#87CEEB',
+    'sky': '#00c2e0',
     'black': '#344563',
     'pink': '#ff78cb',
     'lime': '#51e898',
@@ -81,19 +81,33 @@ namespace ManutencaoService {
             qtdsCardsListas = { ...qtdsCardsListas, [list.name]: cards.length }
         })
 
+        const numerosSemanas = Array.from(Array(dadosSemana.numSemanaAtual), (_, i) => i + 1)
+
+        const semanas = numerosSemanas.reverse().map((numSemana) => {
+            const inicio = moment().day("Sunday").week(numSemana).format('DD/MM/YY');
+            const fim = moment().day("Sunday").week(numSemana).add(6, 'days').format('DD/MM/YY');
+            return { numero: numSemana, inicio, fim, desc: `${numSemana} - (${inicio} - ${fim})` }
+        })
+
         // console.log('dadosSemana', dadosSemana, qtdsCardsEtiquetasImportancia, qtdsCardsEtiquetasTipo, qtdsCardsListas)
         return {
             ...dadosSemana,
             qtdsCardsEtiquetasImportancia,
-            qtdsCardsEtiquetasTipo, 
-            qtdsCardsListas, 
-            etiquetasImportancia, 
+            qtdsCardsEtiquetasTipo,
+            qtdsCardsListas,
+            etiquetasImportancia,
             etiquetasTipo,
-            semanas:Array.from(Array(dadosSemana.numSemana), (_, i) => i + 1)
+            semanas,
         }
 
         // salvar dados de manutencao
 
+    }
+
+    export function horasEntreDatas(fim: Date, inicio: Date) {
+        const ms = moment(fim, "DD/MM/YYYY HH:mm:ss").diff(moment(inicio, "DD/MM/YYYY HH:mm:ss"));
+        const d = moment.duration(ms);
+        return Math.floor(d.asHours()) + moment.utc(ms).format(":mm");
     }
 
 
@@ -123,18 +137,27 @@ namespace ManutencaoService {
 
         const cartoes = cartoesDemandas.map((c: any) => {
             // pegando dados básicos dos cards
-            const { id, name, idList, shortUrl, labels, dateLastActivity } = c
+            const { id, name, idList, shortUrl, dateLastActivity } = c
             const list = _.find(listas, { id: idList })
             const dataCriacao = new Date(1000 * parseInt(id.substring(0, 8), 16))
-            const dataConclusao = list.id === idListaConclusao ? new Date(dateLastActivity) : undefined
-            return { id, name, list, shortUrl, labels, dataCriacao, dataConclusao }
+            const dataConclusao = new Date(dateLastActivity)
+            const tempoResolucao = horasEntreDatas(dataConclusao, dataCriacao)
+            const concluido = list.id === idListaConclusao 
+
+
+
+            const labels = c.labels.map((label: TrelloLabel) => {
+                const colorName: any = label.color ? label.color : 'grey'
+                return { ...label, color: trelloLabelsPalette[colorName] }
+            })
+            return { id, name, list, shortUrl, labels, dataCriacao, dataConclusao, tempoResolucao, concluido }
         })
 
-        const numSemana = moment().week();
-        const dtInicio = moment().day("Sunday").week(numSemana).toDate();
-        const dtFim = moment().day("Sunday").week(numSemana).add(6, 'days').toDate();
+        const numSemanaAtual = moment().week();
+        const dtInicio = moment().day("Sunday").week(numSemanaAtual).toDate();
+        const dtFim = moment().day("Sunday").week(numSemanaAtual).add(6, 'days').toDate();
 
-        return { numSemana, dtInicio, dtFim, cartoes, listas, etiquetas }
+        return { numSemanaAtual, dtInicio, dtFim, cartoes, listas, etiquetas }
         // filtrar os cards por listas
         // marcar os cards que foram criados na semana - novos cards
         // calcular quantidade de cards que foram concluidos

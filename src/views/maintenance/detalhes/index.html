@@ -1,5 +1,6 @@
 {{>shared/maintenance_layout/header}}
 <link rel="stylesheet" type="text/css" href="../../../public/selectizejs/css/selectize.css" />
+<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
 
 <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
 
@@ -79,39 +80,42 @@
                                 <div class='col-md-2 col-sm-6' style="font-weight: bold;">
                                     Semana Início:
                                 </div>
-                                <div class='col-md-2 col-sm-6'>
+                                <div class='col-md-4 col-sm-6'>
                                     <select id="selSemanaInicio" placeholder="Início"></select>
                                 </div>
                                 <div class='col-md-2 col-sm-6' style="font-weight: bold;">
                                     Semana Fim:
                                 </div>
-                                <div class='col-md-2 col-sm-6'>
+                                <div class='col-md-4 col-sm-6'>
                                     <select id="selSemanaFim" placeholder="Fim"></select>
                                 </div>
-                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
-                                    Lista:
-                                </div>
-                                <div class='col-md-2 col-sm-6'>
-                                    <select id="selListas" placeholder="Lista"></select>
-                                </div>
+
                             </div>
                             <div class='row'>
                                 <div class='col-md-2 col-sm-6' style="font-weight: bold;">
                                     Importância:
                                 </div>
-                                <div class='col-md-2 col-sm-6'>
+                                <div class='col-md-4 col-sm-6'>
                                     <select id="selEtiquetasImportancia" placeholder="Importância"></select>
                                 </div>
                                 <div class='col-md-2 col-sm-6' style="font-weight: bold;">
                                     Tipo:
                                 </div>
-                                <div class='col-md-2 col-sm-6'>
+                                <div class='col-md-4 col-sm-6'>
                                     <select id="selEtiquetasTipo" placeholder="Tipo"></select>
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Lista:
+                                </div>
+                                <div class='col-md-4 col-sm-6'>
+                                    <select id="selListas" placeholder="Lista"></select>
                                 </div>
                                 <div class='col-md-2 col-sm-6' style="font-weight: bold;">
                                     Novos Cards:
                                 </div>
-                                <div class='col-md-2 col-sm-6'>
+                                <div class='col-md-4 col-sm-6'>
                                     <input type="checkbox" name="chkNovosCards" id="chkNovosCards" />
                                 </div>
                             </div>
@@ -131,24 +135,23 @@
                     <div class="table-responsive" style="height: 50%;">
                         <br />
                         <div class='col'>
-
                             <div class='row'>
-                                <div class='col' style="font-weight: bold;">
+                                <div class='col-md-2 col-sm-12 text-center ' style="font-weight: bold;">
                                     Intervalo semanas:
                                 </div>
-                                <div class='col'>
+                                <div class='col-md-2 col-sm-12 text-center '>
                                     <span id='numSemana'>--</span>
                                 </div>
-                                <div class='col' style="font-weight: bold;">
+                                <div class='col-md-2 col-sm-12 text-center ' style="font-weight: bold;">
                                     Data Inicio:
                                 </div>
-                                <div class='col'>
+                                <div class='col-md-2 col-sm-12 text-center '>
                                     <span id='dataInicio'>--/--/--</span>
                                 </div>
-                                <div class='col' style="font-weight: bold;">
+                                <div class='col-md-2 col-sm-12 text-center ' style="font-weight: bold;">
                                     Data Fim:
                                 </div>
-                                <div class='col'>
+                                <div class='col-md-2 col-sm-12 text-center '>
                                     <span id='dataFim'>--/--/--</span>
                                 </div>
                             </div>
@@ -184,16 +187,19 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="align-middle mb-0 table table-borderless table-striped table-hover">
+                        <table class="align-middle mb-0 table table-borderless table-striped table-hover"
+                            id="tabelaCards">
                             <thead>
                                 <tr>
                                     <!-- <th class="text-center">Nome</th> -->
                                     <th>Nome</th>
                                     <th class="text-center">Lista</th>
                                     <th class="text-center">Etiquetas</th>
+                                    <th class="text-center">Criado em</th>
+                                    <th class="text-center">Duração</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabelaCards">
+                            <tbody id="corpoTabelaCards">
 
                             </tbody>
                         </table>
@@ -214,6 +220,8 @@
 </div>
 <!-- <script type="text/javascript" src="../../../public/assets/scripts/jquery-3.4.1.min.js"></script> -->
 <script type="text/javascript" src="../../../public/selectizejs/js/standalone/selectize.min.js"></script>
+<script type="text/javascript" src="http://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
 
 <script type="text/javascript">
     var $chartImportancia;
@@ -269,6 +277,10 @@
 
     function converterData(strData) {
         return moment(strData, 'YYYY-MM-DD')
+    }
+
+    function formataData(strData) {
+        return moment(strData).format('DD/MM/YY HH:mm')
     }
 
     function obtemCoresEtiquetasPorNomes(nomes, etiquetas) {
@@ -409,7 +421,41 @@
 
         montarGraficoListas(data)
 
+        montarTabelaCards(data)
+
     }
+
+    function montarTabelaCards(data) {
+        const { cartoes } = data
+
+        if (cartoes.length && cartoes.length > 0) {
+            $('#corpoTabelaCards').html(
+                cartoes.map((c) => htmlForCardRow(c)).join('\n')
+            )
+            $('#tabelaCards').DataTable({
+                "pageLength": 10,
+                responsive: true,
+                columnDefs: [
+                    {
+                        type: 'date-br',
+                        targets: 4
+                    }
+                ],
+            });
+        } else {
+            $('#corpoTabelaCards').html('<div class="row"><div class="col">Sem dados</div></div>')
+        }
+    }
+
+    function selectAll(sel) {
+        sel.setValue(Object.keys(sel.options));
+    }
+
+    Selectize.prototype.selectall = function () {
+        var self = this;
+        self.setValue(Object.keys(self.options));
+        self.focus();
+    };
 
     function montarFiltros(data) {
         const {
@@ -420,46 +466,54 @@
         } = data
 
         $('#selSemanaInicio').selectize({
-            valueField: 'id',
-            labelField: 'title',
-            searchField: ['title'],
-            options: semanas.map((s, i) => { return { id: i, title: s } }),
+            valueField: 'numero',
+            labelField: 'desc',
+            searchField: ['desc'],
+            options: semanas,
             dropdownParent: 'body'
         })
 
         $('#selSemanaFim').selectize({
-            valueField: 'id',
-            labelField: 'title',
-            searchField: ['title'],
-            options: semanas.map((s, i) => { return { id: i, title: s } }),
+            valueField: 'numero',
+            labelField: 'desc',
+            searchField: ['desc'],
+            options: semanas,
             dropdownParent: 'body'
         })
 
-        $('#selEtiquetasImportancia').selectize({
+        const selEtiquetasImportancia = $('#selEtiquetasImportancia').selectize({
             valueField: 'id',
             labelField: 'name',
             searchField: ['name'],
             options: etiquetasImportancia,
-            dropdownParent: 'body'
+            dropdownParent: 'body',
+            persist: false,
+            maxItems: null,
         })
 
-        $('#selEtiquetasTipo').selectize({
+        const selEtiquetasTipo = $('#selEtiquetasTipo').selectize({
             valueField: 'id',
             labelField: 'name',
             searchField: ['name'],
             options: etiquetasTipo,
-            dropdownParent: 'body'
+            dropdownParent: 'body',
+            persist: false,
+            maxItems: null,
         })
 
-        $('#selListas').selectize({
+        const selListas = $('#selListas').selectize({
             valueField: 'id',
             labelField: 'name',
             searchField: ['name'],
             options: listas,
-            dropdownParent: 'body'
+            dropdownParent: 'body',
+            persist: false,
+            maxItems: null,
         })
 
     }
+
+
 
     function montarGraficoImportancia(data) {
         $('#chartContainerImportancia').empty();
@@ -507,13 +561,13 @@
     }
 
     function htmlForCardRow(card) {
-        const { id, name, shortUrl, lista } = card
+        const { id, name, shortUrl, list, labels } = card
         return `
             <tr>
                 <td>
                     <div class="widget-content p-0">
                         <div class="widget-content-wrapper">
-                            <a href="${shortUrl}">
+                            <a href="${shortUrl}" target="_blank">
                                 <div class="widget-content-left flex2">
                                     <div class="widget-heading">${name}
                                     </div>
@@ -522,19 +576,25 @@
                         </div>
                     </div>
                 </td>
-                <td class="text-center">
-                    ${lista}
+                <td class="text-center" style='font-weight:"bold"'>
+                    ${list.name}
                 </td>
                 <td class="text-center">
                     ${htmlForLabelsTrello(labels)}
+                </td>
+                <td class="text-center">
+                    ${formataData(card.dataCriacao)}
+                </td>
+                <td class="text-center">
+                    ${card.tempoResolucao}
                 </td>
             </tr>
         `
     }
 
-    function htmlForLabelsTrello(labes) {
+    function htmlForLabelsTrello(labels) {
         const htmlsLabels = labels.map((label) => {
-            return `<span style='color: ${label.color}'> ${label.name} </span>`
+            return `<div style='color: white; background-color: ${label.color};  border-radius: 4px;font-weight: "bold"'> ${label.name} </div>`
         })
         return htmlsLabels.join("<br/> ")
     }
