@@ -2,7 +2,7 @@ import _ from "lodash";
 import express from 'express';
 import repo from '../repositorio';
 
-import projetos from '../dados/projetos';
+// import projetos from '../dados/projetos';
 
 namespace FuncionalidadeController {
     export function store(req: express.Request, res: express.Response) {
@@ -33,24 +33,24 @@ namespace FuncionalidadeController {
 
     export function index(req: express.Request, res: express.Response) {
 
-        if (!req.params.id) res.sendStatus(401);
+        // if (!req.params.id) res.sendStatus(401);
 
-        let idProjeto: number = 0
+        // let idProjeto: number = 0
 
-        try {
-            idProjeto = parseInt(req.params.id);
-        }
-        catch (e) {
-            res.sendStatus(401);
-        }
+        // try {
+        //     idProjeto = parseInt(req.params.id);
+        // }
+        // catch (e) {
+        //     res.sendStatus(401);
+        // }
 
-        let projeto = _.find(projetos, { id: idProjeto })
+        // let projeto = _.find(projetos, { id: idProjeto })
 
-        if (!projeto) res.sendStatus(404)
+        // if (!projeto) res.sendStatus(404)
 
-        const funcionalidades = repo.getAll(repo.Entities.Funcionalidades) || []
+        // const funcionalidades = repo.getAll(repo.Entities.Funcionalidades) || []
 
-        res.render('projeto/funcionalidades.html', { 'projeto': projeto, 'funcionalidades': _.orderBy(funcionalidades, ['id'], ['desc']) })
+        // res.render('projeto/funcionalidades.html', { 'projeto': projeto, 'funcionalidades': _.orderBy(funcionalidades, ['id'], ['desc']) })
     }
 }
 

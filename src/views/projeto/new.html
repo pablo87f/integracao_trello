@@ -26,8 +26,7 @@
                                 <div class="col-md-2">
                                     <div class="position-relative form-group">
                                         <label for="prefixo" class="">Prefixo</label>
-                                        <input name="prefixo" id="prefixo" placeholder="Ex.: LCA"
-                                            class="form-control">
+                                        <input name="prefixo" id="prefixo" placeholder="Ex.: LCA" class="form-control">
                                     </div>
                                 </div>
 
@@ -42,7 +41,8 @@
                                 <div class="col-md-2">
                                     <div class="position-relative form-group">
                                         <label for="dataInicioSprint" class="">Data Início</label>
-                                        <input name="dataInicioSprint" id="dataInicioSprint" type="date" class="form-control">
+                                        <input name="dataInicioSprint" id="dataInicioSprint" type="date"
+                                            class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -57,8 +57,8 @@
                                         <label for="idBoard" class="">Código do quadro do Trello -
                                             (https://trello.com/b/<span
                                                 style="color: magenta">ctc37b0n</span>/mateus-app)</label>
-                                        <input name="idBoard" id="idBoard" placeholder="Ex.: ctc37b0n"
-                                            type="text" class="form-control">
+                                        <input name="idBoard" id="idBoard" placeholder="Ex.: ctc37b0n" type="text"
+                                            class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -87,17 +87,13 @@
                             <br />
 
                             <br />
-                            <h5 class="card-title">Equipe </h5>
+                            <h5 class="card-title">Participantes </h5>
                             <div class="form-row">
                                 <div class="col-md-6">
                                     <!-- {{#membros}}
                                     <p value="{{username}}">{{nome}}</p>
                                     {{/membros}} -->
-                                    <select id="selMembros" placeholder="Nome do Membro">
-                                        {{#membros}}
-                                        <option value="{{id}}">{{nome}}</option>
-                                        {{/membros}}
-                                    </select>
+                                    <select id="selMembros" placeholder="Nome do Membro"></select>
                                 </div>
                                 <div class="col-md-2">
                                     <button id="btnNovoMembro" type="button">Add Membro</button>
@@ -160,16 +156,51 @@
     let membros = []
     let listas = []
 
+
     $('document').ready(function () {
         $('#btnNovaListaExecucao').click(addFormListaExecucao)
         $('#btnNovoMembro').click(addFormMembro)
-        $('#selMembros').selectize()
+        // $('#selMembros').selectize()
+
+        let urlPessoas = "/pessoas"
+        $.get(urlPessoas, function (data) {
+
+            console.warn('pessoas', data)
+
+            const pessoas = data.pessoas
+            const times = data.times
+
+            $('#selMembros').selectize({
+                options: pessoas,
+                optgroups: times,
+                optgroupField: 'nomeTime',
+                optgroupLabelField: 'nome',
+                optgroupValueField: 'id',
+                valueField: 'id',
+                labelField: 'nome',
+                searchField: ['nome', 'nomeTime'],
+                searchConjunction: 'and', 
+                optgroup_header: 'nomeTime',
+                dropdownParent: 'body',
+                onInitialize: function() {
+                    var s = this,
+                    children = this.revertSettings.$children;
+                    if (children.first().is('optgroup')) {
+                        children = children.find('option');
+                    }
+                    children.each(function() {
+                        $.extend(s.options[this.value], $(this).data());
+                    });
+                }
+            });
+        })
+
         addFormListaExecucao('Backlog', '0.0')
         addFormListaExecucao('Planejado', '0.0')
         addFormListaExecucao('Fazendo', '0.0')
         addFormListaExecucao('Homologando', '1.0')
         addFormListaExecucao('Concluído', '0.5')
-        if (salvou){
+        if (salvou) {
             alert('Projeto Salvo com sucesso')
             window.location = '/'
         }
@@ -183,8 +214,8 @@
 
     function htmlFormLista(listId, name = '', value = '0.0') {
         return htmlLista = `
-        <div style="background-color: #f4f4f4; margin: 10px; padding: 10px; border-radius: 6px;">
-            <div class="form-row" id="list-${listId}">
+        <div id="list-${listId}" style="background-color: #f4f4f4; margin: 10px; padding: 10px; border-radius: 6px;">
+            <div class="form-row" >
                 <div class="col-md-8">
                     <div class="position-relative form-group">
                         <label for="titulosListas" class="">Título</label>
@@ -234,50 +265,51 @@
 
     function htmlFormMembro(idMembro, nome) {
         return htmlMembro = `
-        <div style="background-color: #f4f4f4; margin: 10px; padding: 10px; border-radius: 6px;">
-            <div class="form-row" name='membro' id="membro-${idMembro}" >
-                <input type="hidden" name="idsParticipantes" value="${idMembro}" />
-                <div class="col-md-5">
-                    <div class="position-relative form-group">
-                        <label for="txtNomeMembro" class="">Nome</label>
-                        <input name="txtNomeMembro" class="form-control" value="${nome}" readonly>
+            <div id="membro-${idMembro}" style="background-color: #f4f4f4; margin: 10px; padding: 10px; border-radius: 6px;">
+                <div class="form-row" name='membro' >
+                    <input type="hidden" name="idsParticipantes" value="${idMembro}" />
+                    <div class="col-md-5">
+                        <div class="position-relative form-group">
+                            <label for="txtNomeMembro" class="">Nome</label>
+                            <input name="txtNomeMembro" class="form-control" value="${nome}" readonly>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-5">
-                    <div class="position-relative form-group">
-                        <label for="rngExecMembros" class="">Percentual Esperado</label>
-                        <input id="rngExec-${idMembro}" name="rngExecMembros" type="range" min="5" max="100" list="tickmarks"
-                            step="5" class="form-control" value="80">
+                    <div class="col-md-5">
+                        <div class="position-relative form-group">
+                            <label for="rngExecMembros" class="">Percentual Esperado</label>
+                            <input id="rngExec-${idMembro}" name="rngExecMembros" type="range" min="5" max="100" list="tickmarks"
+                                step="5" class="form-control" value="80">
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="position-relative form-group">
+                            <label for="esperadoParticipantes" class="">%</label>
+                            <input type="text" readonly id="txtExec-${idMembro}" name="esperadoParticipantes" 
+                            style="font-weight:bold;" value="80" class="form-control"></input>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="position-relative form-group">
+                            <label for="btnRemMembro-${idMembro}" class="">Rem.</label>
+                            <button name="btnRemMembro-${idMembro}" id="btnRemMembro-${idMembro}" type="button" class="btn-shadow mr-3 btn btn-danger form-control">
+                                <span class="btn-icon-wrapper pr-2 ">
+                                    <i class="fa fa-trash-alt "></i>
+                                </span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-1">
-                    <div class="position-relative form-group">
-                        <label for="esperadoParticipantes" class="">%</label>
-                        <input type="text" readonly id="txtExec-${idMembro}" name="esperadoParticipantes" 
-                        style="font-weight:bold;" value="80" class="form-control"></input>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="position-relative form-group">
-                        <label for="btnRemMembro-${idMembro}" class="">Rem.</label>
-                        <button name="btnRemMembro-${idMembro}" type="button" class="btn-shadow mr-3 btn btn-danger form-control">
-                            <span class="btn-icon-wrapper pr-2 ">
-                                <i class="fa fa-trash-alt "></i>
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
             </div>
         `
     }
 
     function addFormMembro() {
-        
+
         const idMembro = $('#selMembros').val()
         const nome = $("#selMembros option:selected").html();
 
+        console.warn('membro', idMembro, nome)
         if (membros.find(id => id == idMembro)) {
             alert('Membro já inserido');
             return false

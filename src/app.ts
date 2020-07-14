@@ -6,13 +6,12 @@ import mustache from 'mustache';
 import path from 'path';
 import bodyParser from 'body-parser'
 
-import projetos from './dados/projetos';
 import GraficoController from './controllers/grafico.controller';
 
-import repo from './repositorio';
 import { ProjetoController, FuncionalidadesController } from "./controllers";
 import ViewsProjetoController from "./controllers/views-projeto.controller";
 import MaintenanceController from "./controllers/maintenance.controller";
+import PessoasController from "./controllers/pessoas.controller";
 
 const app = express();
 
@@ -44,6 +43,8 @@ app.post('/projeto/:id/funcionalidade/criar', FuncionalidadesController.store);
 app.get('/maintenance', MaintenanceController.index);
 app.get('/maintenance/:id', MaintenanceController.show)
 
+
+app.get('/pessoas', PessoasController.index);
 
 // AJAX -------------------------------------------------------------
 

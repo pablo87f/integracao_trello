@@ -5,7 +5,7 @@ import _ from "lodash";
 
 var _feriados = require('../dados/_feriados')
 
-import projetos from '../dados/projetos';
+// import projetos from '../dados/projetos';
 import path from 'path';
 import { GraficoService } from "../services";
 import Repositorio from '../repositorio';

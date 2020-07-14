@@ -14,7 +14,7 @@
             },
             "console": "internalConsole",
             "name": "Debug",
-            "outFiles": ["${workspaceRoot}/build/**/*.js"],
+            "outFiles": ["${workspaceRoot}/build/**/*"],
             "preLaunchTask": "build",
             "request": "launch",
             "sourceMaps": true,
