@@ -9,7 +9,8 @@
     "start:dev": "nodemon",
     "build": "tsc",
     "start": "npm run build && node build/app.js",
-    "postbuild": "cpy '**/*' '!**/*.ts' ../build/ --cwd=src/ --no-overwrite --parents"
+    "postbuild": "cpy '**/*' '!**/*.ts' ../build/ --cwd=src/ --no-overwrite --parents",
+    "import:projects": "npm run build && node build/importacao_projetos.js"
   },
   "author": "Pablo Fernandes",
   "license": "ISC",
@@ -32,11 +33,11 @@
     "@types/mustache-express": "^1.2.1",
     "@types/node": "^12.12.17",
     "@types/node-localstorage": "^1.3.0",
+    "cpy-cli": "^2.0.0",
+    "del-cli": "^3.0.0",
     "nodemon": "^2.0.1",
     "rimraf": "^3.0.0",
     "ts-node": "^8.5.4",
-    "typescript": "^3.7.3",
-    "cpy-cli": "^2.0.0",
-    "del-cli": "^3.0.0"
+    "typescript": "^3.7.3"
   }
 }

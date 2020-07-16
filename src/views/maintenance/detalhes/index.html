@@ -1,0 +1,606 @@
+{{>shared/maintenance_layout/header}}
+<link rel="stylesheet" type="text/css" href="../../../public/selectizejs/css/selectize.css" />
+<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
+
+<script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+<script src="https://unpkg.com/moment"></script>
+<script src="../../../public/chartjs/Chart.min.js"></script>
+
+<style>
+    /* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba(255, 255, 255, .8) url('../../../public/assets/images/ajax-loader-blue.gif') 50% 50% no-repeat;
+    }
+
+    .selectize-dropdown {
+        z-index: 10000 !important;
+    }
+
+    /* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+    body.loading .modal {
+        overflow: hidden;
+    }
+
+    /* Anytime the body has the loading class, our
+   modal element will be visible */
+    body.loading .modal {
+        display: block;
+    }
+</style>
+
+<div class="app-main__inner">
+    <div class="app-page-title">
+        <div class="page-title-wrapper">
+            <div class="page-title-heading">
+                <div class="page-title-icon">
+                    <i class="pe-7s-portfolio icon-gradient bg-mean-fruit">
+                    </i>
+                </div>
+                <div>{{quadro_manutencao.id}} - {{quadro_manutencao.nome}}</div>
+            </div>
+        </div>
+    </div>
+    <div id='div_projetos'>
+        <div class="row">
+            <div class="col-md-12">
+                <!-- filtros -->
+                <div class="main-card mb-3 card">
+                    <div class="card-header">Filtros
+                        <div class="btn-actions-pane-right">
+                            <div role="group" class="btn-group-sm btn-group">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive" style="height: 50%;">
+                        <br />
+                        <div class='col'>
+                            <div class='row'>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Semana Início:
+                                </div>
+                                <div class='col-md-4 col-sm-6'>
+                                    <select id="selSemanaInicio" placeholder="Início"></select>
+                                </div>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Semana Fim:
+                                </div>
+                                <div class='col-md-4 col-sm-6'>
+                                    <select id="selSemanaFim" placeholder="Fim"></select>
+                                </div>
+
+                            </div>
+                            <div class='row'>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Importância:
+                                </div>
+                                <div class='col-md-4 col-sm-6'>
+                                    <select id="selEtiquetasImportancia" placeholder="Importância"></select>
+                                </div>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Tipo:
+                                </div>
+                                <div class='col-md-4 col-sm-6'>
+                                    <select id="selEtiquetasTipo" placeholder="Tipo"></select>
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Lista:
+                                </div>
+                                <div class='col-md-4 col-sm-6'>
+                                    <select id="selListas" placeholder="Lista"></select>
+                                </div>
+                                <div class='col-md-2 col-sm-6' style="font-weight: bold;">
+                                    Novos Cards:
+                                </div>
+                                <div class='col-md-4 col-sm-6'>
+                                    <input type="checkbox" name="chkNovosCards" id="chkNovosCards" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-block text-center card-footer">
+
+                    </div>
+                </div>
+                <!-- fim filtros -->
+                <!-- graficos -->
+                <div class="main-card mb-3 card">
+                    <div class="card-header">
+                        GRÁFICOS
+                    </div>
+                    <div class="table-responsive" style="height: 50%;">
+                        <br />
+                        <div class='col'>
+                            <div class='row'>
+                                <div class='col-md-2 col-sm-12 text-center ' style="font-weight: bold;">
+                                    Intervalo semanas:
+                                </div>
+                                <div class='col-md-2 col-sm-12 text-center '>
+                                    <span id='numSemana'>--</span>
+                                </div>
+                                <div class='col-md-2 col-sm-12 text-center ' style="font-weight: bold;">
+                                    Data Inicio:
+                                </div>
+                                <div class='col-md-2 col-sm-12 text-center '>
+                                    <span id='dataInicio'>--/--/--</span>
+                                </div>
+                                <div class='col-md-2 col-sm-12 text-center ' style="font-weight: bold;">
+                                    Data Fim:
+                                </div>
+                                <div class='col-md-2 col-sm-12 text-center '>
+                                    <span id='dataFim'>--/--/--</span>
+                                </div>
+                            </div>
+
+                            <br />
+                            <div class="row">
+                                <div id="chartContainerImportancia" class='col-md-4 col-sm-10'>
+
+                                </div>
+                                <div id="chartContainerTipo" class='col-md-4 col-sm-10'>
+
+                                </div>
+                                <div id="chartContainerListas" class='col-md-4 col-sm-10'>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-block text-center card-footer">
+
+                    </div>
+                </div>
+                <!-- fim graficos -->
+                <!-- cards -->
+                <div class="main-card mb-3 card">
+                    <div class="card-header">Cards
+                        <div class="btn-actions-pane-right">
+                            <div role="group" class="btn-group-sm btn-group">
+                                <!-- <button class="active btn btn-focus">Last Week</button>
+                                <button class="btn btn-focus">All Month</button> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="align-middle mb-0 table table-borderless table-striped table-hover"
+                            id="tabelaCards">
+                            <thead>
+                                <tr>
+                                    <!-- <th class="text-center">Nome</th> -->
+                                    <th>Nome</th>
+                                    <th class="text-center">Lista</th>
+                                    <th class="text-center">Etiquetas</th>
+                                    <th class="text-center">Criado em</th>
+                                    <th class="text-center">Duração</th>
+                                </tr>
+                            </thead>
+                            <tbody id="corpoTabelaCards">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-block text-center card-footer">
+
+                    </div>
+                </div>
+                <!-- fim cards -->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal">
+
+</div>
+<!-- <script type="text/javascript" src="../../../public/assets/scripts/jquery-3.4.1.min.js"></script> -->
+<script type="text/javascript" src="../../../public/selectizejs/js/standalone/selectize.min.js"></script>
+<script type="text/javascript" src="http://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+
+<script type="text/javascript">
+    var $chartImportancia;
+    var $chartTipo;
+
+    const bluePalette = [
+        '#9C27B0',
+        '#673AB7',
+        '#3F51B5',
+        '#2196F3',
+        '#00BCD4',
+        '#009688',
+        '#4CAF50',
+        '#FFC107',
+        '#FF9800',
+        '#795548',
+    ]
+
+    const defaultPieOptions = {
+        responsive: true,
+        align: 'start',
+        legend: {
+            position: 'bottom',
+
+            fullWidth: false
+        },
+    }
+
+    let id_quadro = parseInt('{{ quadro_manutencao.id }}')
+
+    $body = $("body");
+
+    $(document).on({
+        ajaxStart: function () { $body.addClass("loading"); },
+        ajaxStop: function () { $body.removeClass("loading"); }
+    });
+
+    $(document).ready(function () {
+
+        montarGraficosManutencao()
+
+        // if (status == 'ativo') {
+        //     $('#btn-entregar').removeClass('mb-2 mr-2 btn btn-secondary')
+        //     $('#btn-entregar').addClass('mb-2 mr-2 btn btn-success')
+        //     $('#btn-entregar').prop('disabled', false);
+        //     $('#btn-entregar').click(confirmarEntregaProjeto)
+
+        // }
+        // else if (status == 'entregue') {
+
+        // }
+    });
+
+    function converterData(strData) {
+        return moment(strData, 'YYYY-MM-DD')
+    }
+
+    function formataData(strData) {
+        return moment(strData).format('DD/MM/YY HH:mm')
+    }
+
+    function obtemCoresEtiquetasPorNomes(nomes, etiquetas) {
+        return nomes.map((nome) => {
+            const etiqueta = etiquetas.find((etiqueta) => {
+                return etiqueta.name === nome
+            })
+            return etiqueta ? etiqueta.color : undefined
+        })
+    }
+
+    function montarConfigGraficoImportancia(dados) {
+
+        const { qtdsCardsEtiquetasImportancia, etiquetas } = dados
+
+        const nomesImportancia = Object.keys(qtdsCardsEtiquetasImportancia)
+        const valoresImportancia = Object.values(qtdsCardsEtiquetasImportancia)
+
+        var cfg = {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: valoresImportancia,
+                    backgroundColor: obtemCoresEtiquetasPorNomes(nomesImportancia, etiquetas)
+                }],
+                labels: nomesImportancia
+            },
+            options: {
+                ...defaultPieOptions
+            }
+        };
+
+        return cfg
+    }
+
+
+    function montarConfigGraficoTipo(dados) {
+
+        const { qtdsCardsEtiquetasTipo, etiquetas } = dados
+
+        const nomesTipo = Object.keys(qtdsCardsEtiquetasTipo)
+        const valoresTipo = Object.values(qtdsCardsEtiquetasTipo)
+
+        var cfg = {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: valoresTipo,
+                    backgroundColor: obtemCoresEtiquetasPorNomes(nomesTipo, etiquetas)
+                }],
+                labels: nomesTipo,
+            },
+            options: {
+                ...defaultPieOptions
+            }
+        };
+
+        return cfg
+    }
+
+
+    function montarConfigGraficoListas(dados) {
+
+        const { qtdsCardsListas } = dados
+
+        const nomesTipo = Object.keys(qtdsCardsListas)
+        const valoresTipo = Object.values(qtdsCardsListas)
+
+        var cfg = {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: valoresTipo,
+                    backgroundColor: bluePalette
+                }],
+                labels: nomesTipo,
+            },
+            options: {
+                ...defaultPieOptions
+            }
+        };
+
+        return cfg
+    }
+
+    function calcularPorcentagemProgressoProjeto(data) {
+        if (data && data.tempoEsforcoTotalEstimado && data.totalJaExecutadoSprint) {
+
+            var percentualFeito = data.tempoEsforcoTotalEstimado > 0 && data.totalJaExecutadoSprint > 0
+                ? Math.round((100 * data.totalJaExecutadoSprint) / data.tempoEsforcoTotalEstimado)
+                : 0
+
+            console.warn('percentual:', percentualFeito)
+            $('#progresso-projeto').empty();
+            $('#progresso-projeto').html(`
+                <div class="progress-bar" role="progressbar" aria-valuenow="${percentualFeito}" aria-valuemin="0" 
+                aria-valuemax="100" style="width: ${percentualFeito}%;">
+                    ${percentualFeito}%
+                </div>
+            `)
+        }
+    }
+
+    function montarDatasManutencao(data) {
+        if (data) {
+            $('#dataInicio').html(moment(data.dtInicio).format('DD/MM/YYYY'))
+            $('#dataFim').html(moment(data.dtFim).format('DD/MM/YYYY'))
+            $('#numSemana').html(data.numSemana)
+        }
+    }
+
+    function montarInfoProjeto(data) {
+        if (data) {
+            $('#mediaExecutadoDiaSprint').html(data.mediaExecutadoDiaSprint)
+        }
+    }
+
+    function montarGraficosManutencao() {
+
+        if (id_quadro) {
+            let url = "/dados_grafico_manutencao/" + id_quadro
+            $.get(url, carregarDados)
+        }
+    }
+
+    function carregarDados(data) {
+
+
+        console.warn('dados grafico', data)
+
+        montarFiltros(data)
+
+        montarDatasManutencao(data)
+
+        montarGraficoImportancia(data)
+
+        montarGraficoTipo(data)
+
+        montarGraficoListas(data)
+
+        montarTabelaCards(data)
+
+    }
+
+    function montarTabelaCards(data) {
+        const { cartoes } = data
+
+        if (cartoes.length && cartoes.length > 0) {
+            $('#corpoTabelaCards').html(
+                cartoes.map((c) => htmlForCardRow(c)).join('\n')
+            )
+            $('#tabelaCards').DataTable({
+                "pageLength": 10,
+                responsive: true,
+                columnDefs: [
+                    {
+                        type: 'date-br',
+                        targets: 4
+                    }
+                ],
+            });
+        } else {
+            $('#corpoTabelaCards').html('<div class="row"><div class="col">Sem dados</div></div>')
+        }
+    }
+
+    function selectAll(sel) {
+        sel.setValue(Object.keys(sel.options));
+    }
+
+    Selectize.prototype.selectall = function () {
+        var self = this;
+        self.setValue(Object.keys(self.options));
+        self.focus();
+    };
+
+    function montarFiltros(data) {
+        const {
+            semanas,
+            etiquetasImportancia,
+            etiquetasTipo,
+            listas
+        } = data
+
+        $('#selSemanaInicio').selectize({
+            valueField: 'numero',
+            labelField: 'desc',
+            searchField: ['desc'],
+            options: semanas,
+            dropdownParent: 'body'
+        })
+
+        $('#selSemanaFim').selectize({
+            valueField: 'numero',
+            labelField: 'desc',
+            searchField: ['desc'],
+            options: semanas,
+            dropdownParent: 'body'
+        })
+
+        const selEtiquetasImportancia = $('#selEtiquetasImportancia').selectize({
+            valueField: 'id',
+            labelField: 'name',
+            searchField: ['name'],
+            options: etiquetasImportancia,
+            dropdownParent: 'body',
+            persist: false,
+            maxItems: null,
+        })
+
+        const selEtiquetasTipo = $('#selEtiquetasTipo').selectize({
+            valueField: 'id',
+            labelField: 'name',
+            searchField: ['name'],
+            options: etiquetasTipo,
+            dropdownParent: 'body',
+            persist: false,
+            maxItems: null,
+        })
+
+        const selListas = $('#selListas').selectize({
+            valueField: 'id',
+            labelField: 'name',
+            searchField: ['name'],
+            options: listas,
+            dropdownParent: 'body',
+            persist: false,
+            maxItems: null,
+        })
+
+    }
+
+
+
+    function montarGraficoImportancia(data) {
+        $('#chartContainerImportancia').empty();
+
+        $('#chartContainerImportancia').html('<canvas id="canvasImportancia" width="90%" height="auto"></canvas>'); // then load chart.
+        var ctxImportancia = document.getElementById('canvasImportancia').getContext('2d');
+
+        if (typeof $chartImportancia !== "undefined") {
+            $chart.destroy();
+        }
+        $chartImportancia = new Chart(ctxImportancia, montarConfigGraficoImportancia(data));
+        $chartImportancia.update()
+    }
+
+    function montarGraficoTipo(data) {
+        $('#chartContainerTipo').html('<canvas id="canvasTipo" width="90%" height="auto"></canvas>'); // then load chart.
+        var ctxTipo = document.getElementById('canvasTipo').getContext('2d');
+
+        if (typeof $chartTipo !== "undefined") {
+            $chartTipo.destroy();
+        }
+        $chartTipo = new Chart(ctxTipo, montarConfigGraficoTipo(data));
+        $chartTipo.update()
+    }
+
+    function montarGraficoListas(data) {
+        $('#chartContainerListas').html('<canvas id="canvasListas" width="90%" height="auto"></canvas>'); // then load chart.
+        var ctxListas = document.getElementById('canvasListas').getContext('2d');
+
+        if (typeof $chartListas !== "undefined") {
+            $chartListas.destroy();
+        }
+        $chartListas = new Chart(ctxListas, montarConfigGraficoListas(data));
+        $chartListas.update()
+    }
+
+
+    function htmlForLoading() {
+        return `
+            <div
+                style="widows: 100%; align-items: center; align-self: center; flex: 1; position: absolute;">
+                <img src="../../public/assets/images/ajax-loader-blue.gif" />
+            </div>
+        `
+    }
+
+    function htmlForCardRow(card) {
+        const { id, name, shortUrl, list, labels } = card
+        return `
+            <tr>
+                <td>
+                    <div class="widget-content p-0">
+                        <div class="widget-content-wrapper">
+                            <a href="${shortUrl}" target="_blank">
+                                <div class="widget-content-left flex2">
+                                    <div class="widget-heading">${name}
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </td>
+                <td class="text-center" style='font-weight:"bold"'>
+                    ${list.name}
+                </td>
+                <td class="text-center">
+                    ${htmlForLabelsTrello(labels)}
+                </td>
+                <td class="text-center">
+                    ${formataData(card.dataCriacao)}
+                </td>
+                <td class="text-center">
+                    ${card.tempoDuracao}
+                </td>
+            </tr>
+        `
+    }
+
+    function htmlForLabelsTrello(labels) {
+        const htmlsLabels = labels.map((label) => {
+            return `<div style='color: white; background-color: ${label.color};  border-radius: 4px;font-weight: "bold"'> ${label.name} </div>`
+        })
+        return htmlsLabels.join("<br/> ")
+    }
+
+</script>
+
+
+
+{{>shared/maintenance_layout/footer}}

@@ -6,13 +6,15 @@ import mustache from 'mustache';
 import path from 'path';
 import bodyParser from 'body-parser'
 
-import projetos from './dados/projetos';
 import GraficoController from './controllers/grafico.controller';
 
-import repo from './repositorio';
-import { ProjetoController, FuncionalidadeController } from "./controllers";
+import { ProjetoController, FuncionalidadesController } from "./controllers";
+import ViewsProjetoController from "./controllers/views-projeto.controller";
+import MaintenanceController from "./controllers/maintenance.controller";
+import PessoasController from "./controllers/pessoas.controller";
 
 const app = express();
+
 var publicPath = path.join(__dirname, './public');
 app.use('/public', express.static(publicPath));
 
@@ -26,26 +28,33 @@ app.use(bodyParser.urlencoded({
 }))
 
 // ROUTES -----------------------------------------
-app.get('/', ProjetoController.listar);
+app.get('/home', ProjetoController.index);
+app.get('/', ProjetoController.index);
 
-app.get('/home', ProjetoController.listar2);
+app.get('/projeto/new', ViewsProjetoController.create);
 
-app.get('/projeto/:id', ProjetoController.detalheProjeto);
+app.get('/projeto/:id', ProjetoController.show);
+app.post('/projeto/new', ProjetoController.store);
+app.put('/projeto/:id', ProjetoController.update);
 
-app.post('/projeto/criar', ProjetoController.criar);
+app.get('/projeto/:id/funcionalidades', FuncionalidadesController.index);
+app.post('/projeto/:id/funcionalidade/criar', FuncionalidadesController.store);
 
-app.get('/projeto/:id/funcionalidades', ProjetoController.listarFuncionalidades);
+app.get('/maintenance', MaintenanceController.index);
+app.get('/maintenance/:id', MaintenanceController.show)
 
-app.post('/projeto/:id/funcionalidade/criar', FuncionalidadeController.criar);
 
+app.get('/pessoas', PessoasController.index);
 
 // AJAX -------------------------------------------------------------
 
-app.get('/listar_projetos', ProjetoController.recuperarProjetos);
+app.get('/listar_projetos', ProjetoController.index);
 
 app.get('/grafico', GraficoController.mostrar);
 
-app.get('/dados_grafico_projeto/:id_projeto', GraficoController.gerarGrafico);
+app.get('/dados_grafico_projeto/:id_projeto', GraficoController.gerarGraficoProjeto);
+
+app.get('/dados_grafico_manutencao/:id_quadro', GraficoController.gerarGraficoManutencao);
 
 // -------------------------------------------------------------
 app.use('/public', express.static('public'))

@@ -33,6 +33,20 @@ const cargo = {
     },
     desenvolvedorInicialSabadoEstudos: {
         cargaHorariaDia: 8,
+        maxFatorEsperadoDia: 0.3,
+        cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
+        fatorEsperadoCargaHorariaSemanal: {
+            '1': 0,
+            '2': 0.3,
+            '3': 0.3,
+            '4': 0.3,
+            '5': 0.3,
+            '6': 0.3,
+            '7': 0,
+        }
+    },
+    desenvolvedorNivel2_SabadoEstudos: {
+        cargaHorariaDia: 8,
         maxFatorEsperadoDia: 0.5,
         cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
         fatorEsperadoCargaHorariaSemanal: {
@@ -78,7 +92,37 @@ const cargo = {
         maxFatorEsperadoDia: 0.8,
         cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
         fatorEsperadoCargaHorariaSemanal: _padrao.fatorEsperadoCargaHorariaSemanal
-    }
+    },
+    desenvolvedorInicialVendas: {
+        cargaHorariaDia: 8,
+        maxFatorEsperadoDia: 0.5,
+        cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
+        fatorEsperadoCargaHorariaSemanal: {
+            '1': 0,
+            '2': 0.4,
+            '3': 0.4,
+            '4': 0.4,
+            '5': 0.4,
+            '6': 0.4,
+            '7': 0,
+        }
+    },
+    desenvolvedorDevOps: {
+        cargaHorariaDia: 8,
+        maxFatorEsperadoDia: 0.8,
+        cargaHorariaSemanal: _padrao.cargaHorariaSemanal,
+        fatorEsperadoCargaHorariaSemanal: {
+            '1': 0,
+            '2': 0.7,
+            '3': 0.7,
+            '4': 0.7,
+            '5': 0.7,
+            '6': 0.7,
+            '7': 0,
+        }
+    },
 }
 
 module.exports = cargo
+
+

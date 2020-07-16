@@ -1,34 +1,45 @@
 import _ from "lodash";
-import { LocalStorage } from 'node-localstorage'
+import { JSONStorage } from 'node-localstorage'
 let Repositorio = {}
 
 let localStorage = null
 
 if (typeof localStorage === "undefined" || localStorage === null) {
-    localStorage = new LocalStorage('./repositorio');
+    localStorage = new JSONStorage('./repositorio');
 }
 
 // -----------------------------------------
 
 Repositorio.Entities = {
-    'Projetos': 'projetos',
+    'Projetos': 'Projetos.json',
     'Pessoas': 'Pessoas',
     'Cargos': 'Cargos',
     'Funcionalidades': 'Funcionalidades',
+    'Manutencao': 'Manutencao',
+    'ResultadoManutencao': 'ResultadoManutencao',
+}
+
+Repositorio.getItem = (entityName) => {
+    return localStorage.getItem(entityName) || undefined
+}
+
+Repositorio.setItem = (entityName, data) => {
+    localStorage.setItem(entityName, data);
+    return true
 }
 
 Repositorio.getAll = (entityName) => {
-    return JSON.parse(localStorage.getItem(entityName))
+    return localStorage.getItem(entityName) || []
 }
 
 Repositorio.setAll = (entityName, data) => {
-    localStorage.setItem(entityName, JSON.stringify(data));
+    localStorage.setItem(entityName, data);
     return true
 }
 
 Repositorio.findById = (entityName, id) => {
     let allData = Repositorio.getAll(entityName)
-    return _.find(allData, { id: id })
+    return _.find(allData, { id: parseInt(id) })
 }
 
 Repositorio.findByField = async (entityName, filedName, valueToFind) => {
@@ -40,22 +51,27 @@ Repositorio.insert = async (entityName, data) => {
     let allData = Repositorio.getAll(entityName)
     if (!allData) { allData = [] }
 
-    let projetoExistente = _.find(allData, { id: data.id })
-    if (projetoExistente) { throw Error('Já existe um projeto com o mesmo id') }
+    if (data.id) {
+        let projetoExistente = _.find(allData, { id: data.id })
+        if (projetoExistente) { throw Error('Já existe um projeto com o mesmo id') }
+    }
+    else {
+        let idsExistentes = allData.length > 0 ? allData.map((item) => item.id) : [0]
+        data.id = Math.max.apply(Math, idsExistentes) + 1
+    }
 
-    let idsExistentes = allData.length > 0 ? allData.map((item) => item.id) : [0]
-    let nextId = Math.max.apply(Math, idsExistentes) + 1
-
-    allData.push({ ...data, id: nextId })
+    allData.push({ ...data })
 
     Repositorio.setAll(entityName, allData)
+
+    return data
 }
 
 Repositorio.updateById = async (entityName, id, newData) => {
     let allData = Repositorio.getAll(entityName)
-    let indexRegister = _.findIndex(allData, { id: id })
+    let indexRegister = _.findIndex(allData, { id: parseInt(id) })
     allData[indexRegister] = newData
-    Repositorio.setAll(allData)
+    Repositorio.setAll(entityName, allData)
 }
 
 Repositorio.deleteById = async (entityName, id) => {

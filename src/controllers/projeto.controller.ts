@@ -1,23 +1,33 @@
 import _ from "lodash";
 import express from 'express';
-import repo from '../repositorio';
 
-import projetos from '../dados/projetos';
+// import projetos from '../dados/projetos';
+import Repositorio from "../repositorio";
+import StatusProjetos from "../dados/status-projeto";
+import { GraficoService } from "../services";
+import { Projeto, ListaProjeto, Participante, Pessoa } from "../types";
+
+// import pessoas from "../dados/pessoa";
 
 namespace ProjetoController {
 
-    export function listar(req: express.Request, res: express.Response) {
-        res.render('./home/index.html', {
-            'projetosSalvos': _.orderBy(repo.getAll(repo.Entities.Projetos), ['status.id', 'id'], ['asc', 'desc']),
-            'projetos': _.orderBy(projetos, ['status.id', 'id'], ['asc', 'desc'])
+    export async function index(req: express.Request, res: express.Response) {
+        const indexProjetos = Repositorio.getAll('index.projetos.json')
+        const projetosPromisses = Object.values(indexProjetos).map((arquivoProjeto) => {
+            return Repositorio.getItem(arquivoProjeto)
+        })
+
+        const projetos = await Promise.all(projetosPromisses)
+
+        const projetosOrdenados = _.orderBy(projetos, ['status.id', 'id'], ['asc', 'desc'])
+
+        return res.render('./home/index.html', {
+            'projetos': projetosOrdenados,
+            'projetos_selecionado': "mm-active"
         })
     }
 
-    export function listar2(req: express.Request, res: express.Response) {
-        res.render('home/index.html', { 'projetosSalvos': _.orderBy(repo.getAll(repo.Entities.Projetos), ['status.id', 'id'], ['asc', 'desc']), 'projetos': _.orderBy(projetos, ['status.id', 'id'], ['asc', 'desc']) })
-    }
-
-    export function detalheProjeto(req: express.Request, res: express.Response) {
+    export function show(req: express.Request, res: express.Response) {
         if (!req.params.id) res.sendStatus(401);
 
         let idProjeto: number = 0
@@ -29,55 +39,95 @@ namespace ProjetoController {
             res.sendStatus(401);
         }
 
-        let projeto = _.find(projetos, { id: idProjeto })
+        const nomeArquivo = `projeto.${idProjeto}.json`
+
+        const projeto = Repositorio.getItem(nomeArquivo)
 
         if (!projeto) res.sendStatus(404)
 
         res.render('projeto/index.html', { 'projeto': projeto })
     }
 
-    export function criar(req: express.Request, res: express.Response) {
+    export function store(req: express.Request, res: express.Response) {
 
         if (!req.body) res.status(400).send({ sucess: false, message: 'Não foi possível recuperar corpo da requisição' })
 
-        if (!req.body.nome) res.status(400).send({ sucess: false, message: "Campo 'nome' é obrigatório" })
+        const { prefixo, nome, dataInicioSprint, idBoard, idsParticipantes, titulosListas, esperadoParticipantes, execucaoListas } = req.body
 
-        if (!req.body.codigoQuadroTrello) res.status(400).send({ sucess: false, message: "Campo 'codigoQuadroTrello' é obrigatório" })
+        if (!prefixo) return res.status(400).send({ sucess: false, message: "Campo 'prefíxo' é obrigatório" })
+        if (!nome) return res.status(400).send({ sucess: false, message: "Campo 'nome' é obrigatório" })
+        if (!dataInicioSprint) return res.status(400).send({ sucess: false, message: "Campo 'dataInicioSprint' é obrigatório" })
+        if (!idBoard) return res.status(400).send({ sucess: false, message: "Campo 'idBoard' é obrigatório" })
+        if (!idsParticipantes || idsParticipantes.lenght <= 0) return res.status(400).send({ sucess: false, message: "Campo 'idsParticipantes' é obrigatório" })
+        if (!titulosListas || titulosListas.lenght <= 0) return res.status(400).send({ sucess: false, message: "Campo 'titulosListas' é obrigatório" })
 
-        let projeto = {
-            nome: req.body.nome,
-            idBoard: req.body.codigoQuadroTrello
+        let indexProjetos = Repositorio.getAll('index.projetos.json')
+
+        const idsExistentes = Object.keys(indexProjetos).map(id => parseInt(id))
+
+        const proximoId = Math.max.apply(Math, idsExistentes) + 1
+
+        // monta as listas informadas no formulário
+        const listasTrello: Array<ListaProjeto> = titulosListas.map((tituloLista: string, index: number) => {
+            return <ListaProjeto>{ titulo: tituloLista, valorExecucao: parseFloat(execucaoListas[index]) }
+        })
+        const pessoas = Repositorio.getAll('pessoas.json')
+
+        const equipeCompleta: Array<Pessoa> = pessoas
+
+        const participantes: Array<Participante> = idsParticipantes.map((id: string, index: number) => {
+            const pessoa = _.find(equipeCompleta, { id: parseInt(id) })
+            if (pessoa) { return <Participante>{ pessoa, percentualDiarioEsperado: esperadoParticipantes[index] / 100 } }
+            throw new Error('Participante não encontrada dentros dos membros cadastrados')
+        })
+
+        let projeto: Projeto = {
+            id: proximoId,
+            prefixo,
+            nome,
+            dataInicioSprint,
+            // dataEntregaSprint, 
+            idBoard,
+            listasProjeto: listasTrello,  // Array < ListaTrello >
+            diasDuracaoSprint: 15,
+            participantes: participantes,  // Array < ConfiguracaoFuncionario >
+            status: StatusProjetos.ativo,
+            versao: '2.0'
         }
 
-        repo.insert(repo.Entities.Projetos, projeto)
+        const nomeArquivoProjeto = `projeto.${projeto.id}.json`
 
-        res.send({ sucess: true })
+        indexProjetos = { ...indexProjetos, [projeto.id]: nomeArquivoProjeto }
+
+        Repositorio.setItem(nomeArquivoProjeto, projeto)
+        Repositorio.setItem('index.projetos.json', indexProjetos)
+
+        const membros = pessoas
+        return res.render('./projeto/new.html', {
+            membros,
+            sucess: true
+        })
     }
 
-    export function listarFuncionalidades(req: express.Request, res: express.Response) {
+    export async function update(req: express.Request, res: express.Response) {
 
-        if (!req.params.id) res.sendStatus(401);
-    
-        let idProjeto: number = 0
-    
-        try {
-            idProjeto = parseInt(req.params.id);
-        }
-        catch (e) {
-            res.sendStatus(401);
-        }
-    
-        let projeto = _.find(projetos, { id: idProjeto })
-    
-        if (!projeto) res.sendStatus(404)
-    
-        const funcionalidades = repo.getAll(repo.Entities.Funcionalidades) || []
-    
-        res.render('projeto/funcionalidades.html', { 'projeto': projeto, 'funcionalidades': _.orderBy(funcionalidades, ['id'], ['desc']) })
-    }
+        const { id: idProjeto } = req.params
+        // console.warn('update projeto', idProjeto)
 
-    export function recuperarProjetos(req: express.Request, res: express.Response) {
-        res.send(projetos)
+        const nomeArquivo = `projeto.${idProjeto}.json`
+
+        const projeto = Repositorio.getItem(nomeArquivo)
+
+        if (!projeto) return res.status(401).send({ error: 'Projeto não encontrado' })
+
+        projeto.status = StatusProjetos.finalizado
+        projeto.dataEntregaSprint = new Date()
+        projeto.dadosGrafico = await GraficoService.gerarBurningDown(projeto)
+
+        await Repositorio.setItem(nomeArquivo, projeto)
+
+        return res.send({ idProjeto })
+
     }
 }
 

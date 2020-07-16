@@ -13,8 +13,8 @@
                     <i class="pe-7s-portfolio icon-gradient bg-mean-fruit">
                     </i>
                 </div>
-                <div>Projetos
-                    <div class="page-title-subheading">Aqui você consegue ver todos os projetos que está envolvido
+                <div>Quadros de Manutenção
+                    <div class="page-title-subheading">Aqui você consegue ver todos os quadros de manutenção
                     </div>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                     <span class="btn-icon-wrapper pr-2 ">
                         <i class="fa fa-plus "></i>
                     </span>
-                    Novo Projeto
+                    Novo Quadro
                 </button>
             </div>
         </div>
@@ -34,11 +34,11 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="main-card mb-3 card">
-                    <div class="card-header">PROJETOS
+                    <div class="card-header">Quadros de manutenção
                         <div class="btn-actions-pane-right">
                             <div role="group" class="btn-group-sm btn-group">
-                                <button class="active btn btn-focus">Last Week</button>
-                                <button class="btn btn-focus">All Month</button>
+                                <!-- <button class="active btn btn-focus">Last Week</button>
+                                <button class="btn btn-focus">All Month</button> -->
                             </div>
                         </div>
                     </div>
@@ -47,23 +47,18 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">#ID</th>
-                                    <th class="text-center">Prefixo</th>
                                     <th>Nome</th>
                                     <th class="text-center">Quadro Trello</th>
-                                    <th class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {{#projetos}}
+                                {{#manutencoes}}
                                 <tr>
                                     <td class="text-center text-muted">#{{id}}</td>
-                                    <td class="text-center">
-                                        {{prefixo}}
-                                    </td>
                                     <td>
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
-                                                <a href="/projeto/{{id}}">
+                                                <a href="/maintenance/{{id}}">
                                                     <div class="widget-content-left flex2">
                                                         <div class="widget-heading">{{nome}}</div>
                                                     </div>
@@ -78,12 +73,9 @@
                                             Ir para Trello
                                         </a>
                                     </td>
-                                    <td class="text-center">
-                                        <div class="badge badge-{{status.classeEstilo}}">{{status.nome}}</div>
-                                    </td>
-
+                                    
                                 </tr>
-                                {{/projetos}}
+                                {{/manutencoes}}
                             </tbody>
                         </table>
                     </div>
@@ -95,60 +87,7 @@
             </div>
         </div>
     </div>
-    <div id='div_projetos'>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="main-card mb-3 card">
-                    <div class="card-header">PROJETOS
-                        <div class="btn-actions-pane-right">
-                            <div role="group" class="btn-group-sm btn-group">
-                                <button class="active btn btn-focus">Last Week</button>
-                                <button class="btn btn-focus">All Month</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="align-middle mb-0 table table-borderless table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">#ID</th>
-                                    <th>Nome</th>
-                                    <th class="text-center">Quadro Trello</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#projetosSalvos}}
-                                <tr>
-                                    <td class="text-center text-muted">#{{id}}</td>
-                                    <td>
-                                        <div class="widget-content p-0">
-                                            <div class="widget-content-wrapper">
-                                                <a href="/projeto/{{id}}">
-                                                    <div class="widget-content-left flex2">
-                                                        <div class="widget-heading">{{nome}}</div>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <a target="_blank" rel="noopener noreferrer"
-                                            href='https://trello.com/b/{{idBoard}}'>
-                                            <i class="fa fa-trello pr-2" aria-hidden="true"></i>
-                                            Ir para Trello
-                                        </a>
-                                    </td>
 
-                                </tr>
-                                {{/projetosSalvos}}
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
 
 </div>
 
