@@ -31,10 +31,24 @@ export interface CargaHorariaSemanal {
 }
 
 // { apelido: 'Pablo', user: 'pablofernandes4', nome: 'Pablo Fernandes' }
+export interface Time {
+    id: number
+    nome: string
+}
+
+export interface Equipe {
+    id: number
+    nome: string
+    idTime: number
+}
+
 export interface Pessoa {
     id: number
     nome: string
     user: string
+    ativo: boolean
+    time?: Time
+    equipe?: Equipe
 }
 
 export interface Cargo {
@@ -109,16 +123,37 @@ export interface Projeto {
     versao: string
     dadosGrafico?: any
 }
+export interface DadosGeraisManutencao {
+    cartoes: Array<any>
+    listas: Array<any>
+    etiquetas: Array<any>
+}
 
+export interface DadosProcessadosManutencao {
+    qtdsCardsEtiquetasImportancia: any
+    qtdsCardsEtiquetasTipo: any
+    qtdsCardsListas: any
+    etiquetasImportancia: Array<any>
+    etiquetasTipo: Array<any>
+}
+
+
+export interface DadosQuadroManutencaoIntervalo {
+    dtInicio: Date
+    dtFim: Date
+    numSemana: number
+    dadosGerais: DadosGeraisManutencao
+    dadosProcessados: DadosProcessadosManutencao
+}
 
 export interface QuadroManutencao {
     id: number
     nome: string
     idBoard: string
     idListaConclusao?: string;
-    dadosManutencao?: any;
+    dataUltimoProcessamento?: Date
+    dadosManutencao: Array<DadosQuadroManutencaoIntervalo>;
 }
-
 
 export interface ProjetoManutencao {
     id: number

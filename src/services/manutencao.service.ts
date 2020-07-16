@@ -1,5 +1,6 @@
-import { Projeto, ListaProjeto, Participante, QuadroManutencao, TrelloLabel } from "../types";
+import { Projeto, ListaProjeto, Participante, QuadroManutencao, TrelloLabel, DadosGeraisManutencao, DadosProcessadosManutencao, DadosQuadroManutencaoIntervalo } from "../types";
 import { listas } from "../dados/_padrao";
+import Repositorio from "../repositorio";
 
 var _ = require('lodash')
 var moment = require('moment')
@@ -9,17 +10,21 @@ var Trello = require("trello")
 var trello = new Trello("87dc9de469e75e93dc71170012c930eb", "bebf362640978bcd8cab62b0121bcbf038dfab966cef8a1cb6cb2cb07c686407");
 // var trello = new Trello("4d302f3977e0313c3d7ae1f27d3500e2", "3a8b8c79d7862f3f586939068c14abecea1cb8a26a1dc61261233831455b22a7");
 
+const etiquetaIndefinida = { "name": "INDEFINIDO", "color": '#b3bac5', }
+
 const etiquetasImportancia = [
-    { "id": "5d482237af988c41f27650da", "idBoard": "5d4822377c118d0890031f75", "name": "IMPORTANTE", "color": '#f2d600', },
-    { "id": "5d482237af988c41f27650db", "idBoard": "5d4822377c118d0890031f75", "name": "DESEJADO", "color": '#61bd4f', },
-    { "id": "5d482237af988c41f27650dd", "idBoard": "5d4822377c118d0890031f75", "name": "IMPRESCINDÍVEL", "color": '#eb5a46', },
+    { "name": "IMPORTANTE", "color": '#f2d600', },
+    { "name": "DESEJADO", "color": '#61bd4f', },
+    { "name": "IMPRESCINDÍVEL", "color": '#eb5a46', },
+    { "name": "INDEFINIDO", "color": '#b3bac5', },
 ]
 
 const etiquetasTipo = [
-    { "id": "5dfcdfebd52fa642425498fb", "idBoard": "5d4822377c118d0890031f75", "name": "SUPORTE", "color": '#87CEEB' },
-    { "id": "5dfcc37e92f912388124a893", "idBoard": "5d4822377c118d0890031f75", "name": "MELHORIA", "color": '#c377e0', },
-    { "id": "5dfa16184b1a1478cb987b0e", "idBoard": "5d4822377c118d0890031f75", "name": "BUG", "color": '#344563', },
-    { "id": "5e56aaca1731398179dab35b", "idBoard": "5d4822377c118d0890031f75", "name": "ANÁLISE", "color": '#0079bf', }
+    { "name": "SUPORTE", "color": '#87CEEB' },
+    { "name": "MELHORIA", "color": '#c377e0', },
+    { "name": "BUG", "color": '#344563', },
+    { "name": "ANÁLISE", "color": '#0079bf', },
+    { "name": "INDEFINIDO", "color": '#b3bac5', },
 ]
 
 const idsCardsPadrao = [
@@ -55,55 +60,93 @@ namespace ManutencaoService {
     }
 
 
-    export async function processarDadosManutencao(quadroManutencao: QuadroManutencao) {
-        const dadosSemana = await extrairDadosManutencao(quadroManutencao)
+    export async function processarDadosManutencao(dadosGerais: DadosGeraisManutencao): Promise<DadosProcessadosManutencao> {
 
         let qtdsCardsEtiquetasImportancia = {}
 
         etiquetasImportancia.map((e) => {
-            const cards = _.filter(dadosSemana.cartoes, (cartao: any) => {
-                return _.find(cartao.labels, { id: e.id })
+            const cards = _.filter(dadosGerais.cartoes, (cartao: any) => {
+                return cartao.importancia.name === e.name
             })
             qtdsCardsEtiquetasImportancia = { ...qtdsCardsEtiquetasImportancia, [e.name]: cards.length }
         })
 
         let qtdsCardsEtiquetasTipo = {}
         etiquetasTipo.map((e) => {
-            const cards = _.filter(dadosSemana.cartoes, (cartao: any) => {
-                return _.find(cartao.labels, { id: e.id })
+            const cards = _.filter(dadosGerais.cartoes, (cartao: any) => {
+                return cartao.tipo.name === e.name
             })
             qtdsCardsEtiquetasTipo = { ...qtdsCardsEtiquetasTipo, [e.name]: cards.length }
         })
 
         let qtdsCardsListas = {}
-        dadosSemana.listas.map((list: any) => {
-            const cards = _.filter(dadosSemana.cartoes, (cartao: any) => {
+        dadosGerais.listas.map((list: any) => {
+            const cards = _.filter(dadosGerais.cartoes, (cartao: any) => {
                 return cartao.list.id === list.id
             })
             qtdsCardsListas = { ...qtdsCardsListas, [list.name]: cards.length }
         })
 
-        const numerosSemanas = Array.from(Array(dadosSemana.numSemanaAtual), (_, i) => i + 1)
-
-        const semanas = numerosSemanas.reverse().map((numSemana) => {
-            const inicio = moment().day("Sunday").week(numSemana).format('DD/MM/YY');
-            const fim = moment().day("Sunday").week(numSemana).add(6, 'days').format('DD/MM/YY');
-            return { numero: numSemana, inicio, fim, desc: `${numSemana} - (${inicio} - ${fim})` }
-        })
-
-        // console.log('dadosSemana', dadosSemana, qtdsCardsEtiquetasImportancia, qtdsCardsEtiquetasTipo, qtdsCardsListas)
         return {
-            ...dadosSemana,
             qtdsCardsEtiquetasImportancia,
             qtdsCardsEtiquetasTipo,
             qtdsCardsListas,
             etiquetasImportancia,
-            etiquetasTipo,
-            semanas,
+            etiquetasTipo
         }
 
-        // salvar dados de manutencao
+    }
 
+    export function salvarDadosSemanaisQuadroManutencao(dadosGerais: DadosGeraisManutencao, dadosProcessados: DadosProcessadosManutencao, idQuadro: number) {
+
+        const { numSemana, dtInicio, dtFim } = obtemInfoSemanaAtual()
+
+        const dadosManutencaoIntervalo: DadosQuadroManutencaoIntervalo = {
+            numSemana,
+            dtInicio,
+            dtFim,
+            dadosGerais,
+            dadosProcessados
+        }
+
+        const quadro: QuadroManutencao = Repositorio.getItem(`quadro-manutencao.${idQuadro}.json`)
+
+        const indexSemanaExistente = quadro.dadosManutencao.findIndex(dados => dados.numSemana === numSemana)
+
+        if (indexSemanaExistente < 0) {
+            quadro.dadosManutencao.push(dadosManutencaoIntervalo)
+        } 
+        else {
+            quadro.dadosManutencao[indexSemanaExistente] = dadosManutencaoIntervalo
+        }
+
+        Repositorio.setItem(`quadro-manutencao.${idQuadro}.json`, quadro)
+
+    }
+
+    export function obtemInfoSemanaAtual() {
+
+        const numSemana = moment().week();
+        const dtInicio = moment().day("Sunday").week(numSemana).toDate();
+        const dtFim = moment().day("Sunday").week(numSemana).add(6, 'days').toDate();
+
+        return {
+            numSemana,
+            dtInicio,
+            dtFim
+        }
+    }
+
+    export function obtemInfoSemanasIntervalo(numSemanaInicio: number, numSemanaFim: number) {
+
+        let semanas: Array<any> = []
+        for (let i = numSemanaInicio; i <= numSemanaFim; i++) {
+            const inicio = moment().day("Sunday").week(i).format('DD/MM/YY');
+            const fim = moment().day("Sunday").week(i).add(6, 'days').format('DD/MM/YY');
+            semanas.push({ numero: i, inicio, fim, desc: `${i} - (${inicio} - ${fim})` })
+
+        }
+        return semanas
     }
 
     export function horasEntreDatas(fim: Date, inicio: Date) {
@@ -112,8 +155,41 @@ namespace ManutencaoService {
         return Math.floor(d.asHours()) + moment.utc(ms).format(":mm");
     }
 
+    export function extrairDadosCardsManutencao(cartoes: Array<any>, idListaConclusaoQuadro: string | undefined, listas: Array<any>) {
+        return cartoes.map((c: any) => {
+            // pegando dados básicos dos cards
+            const { id, name, idList, shortUrl, dateLastActivity } = c
+            const list = _.find(listas, { id: idList })
+            const dataCriacao = new Date(1000 * parseInt(id.substring(0, 8), 16))
+            const dataConclusao = new Date(dateLastActivity)
 
-    export async function extrairDadosManutencao(quadroManutencao: QuadroManutencao) {
+            const resolution = moment.duration(moment(dataConclusao).diff(moment(dataCriacao)));
+            const tempoResolucao = moment.utc(resolution.as('milliseconds')).format('HH:mm')
+
+            const duration = moment.duration(moment().diff(moment(dataCriacao)));
+            const tempoDuracao = duration.humanize()
+
+            const concluido = list.id === idListaConclusaoQuadro
+
+            let importancia = etiquetaIndefinida
+            let tipo = etiquetaIndefinida
+
+            const labels = c.labels.map((label: TrelloLabel) => {
+                const colorName: any = label.color ? label.color : 'grey'
+                const etiqueta = { ...label, color: trelloLabelsPalette[colorName] }
+                if (etiquetasImportancia.some(e => e.name === etiqueta.name)) {
+                    importancia = etiqueta
+                }
+                else if (etiquetasTipo.some(e => e.name === etiqueta.name)) {
+                    tipo = etiqueta
+                }
+                return etiqueta
+            })
+            return { id, name, list, shortUrl, labels, dataCriacao, dataConclusao, tempoResolucao, tempoDuracao, concluido, importancia, tipo }
+        })
+    }
+
+    export async function extrairDadosGeraisManutencao(quadroManutencao: QuadroManutencao): Promise<DadosGeraisManutencao> {
 
         const { idBoard, idListaConclusao } = quadroManutencao
 
@@ -137,36 +213,10 @@ namespace ManutencaoService {
             })
         })
 
-        const cartoes = cartoesDemandas.map((c: any) => {
-            // pegando dados básicos dos cards
-            const { id, name, idList, shortUrl, dateLastActivity } = c
-            const list = _.find(listas, { id: idList })
-            const dataCriacao = new Date(1000 * parseInt(id.substring(0, 8), 16))
-            const dataConclusao = new Date(dateLastActivity)
+        const cartoes = extrairDadosCardsManutencao(cartoesDemandas, idListaConclusao, listas)
 
-            const resolution = moment.duration(moment(dataConclusao).diff(moment(dataCriacao)));
-            const tempoResolucao = moment.utc(resolution.as('milliseconds')).format('HH:mm')
-
-            const duration = moment.duration(moment().diff(moment(dataCriacao)));
-            const tempoDuracao = duration.humanize()
-            
-            const concluido = list.id === idListaConclusao 
-
-
-
-
-            const labels = c.labels.map((label: TrelloLabel) => {
-                const colorName: any = label.color ? label.color : 'grey'
-                return { ...label, color: trelloLabelsPalette[colorName] }
-            })
-            return { id, name, list, shortUrl, labels, dataCriacao, dataConclusao, tempoResolucao, tempoDuracao, concluido }
-        })
-
-        const numSemanaAtual = moment().week();
-        const dtInicio = moment().day("Sunday").week(numSemanaAtual).toDate();
-        const dtFim = moment().day("Sunday").week(numSemanaAtual).add(6, 'days').toDate();
-
-        return { numSemanaAtual, dtInicio, dtFim, cartoes, listas, etiquetas }
+        const dados: DadosGeraisManutencao = { cartoes, listas, etiquetas }
+        return dados
         // filtrar os cards por listas
         // marcar os cards que foram criados na semana - novos cards
         // calcular quantidade de cards que foram concluidos

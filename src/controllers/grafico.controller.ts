@@ -11,6 +11,7 @@ import { GraficoService } from "../services";
 import Repositorio from '../repositorio';
 import DadosGrafico from '../grafico';
 import ManutencaoService from '../services/manutencao.service';
+import { QuadroManutencao } from '../types';
 
 namespace GraficoController {
 
@@ -51,17 +52,26 @@ namespace GraficoController {
 
         let idQuadro = req.params.id_quadro
 
-        const nomeArquivo = `manutencao.${idQuadro}.json`
+        const nomeArquivo = `quadro-manutencao.${idQuadro}.json`
 
-        const manutencao = Repositorio.getItem(nomeArquivo)
+        const quadro: QuadroManutencao = Repositorio.getItem(nomeArquivo)
 
-        if (!manutencao) return res.status(401).send({ error: 'Projeto não encontrado' })
+        if (!quadro) return res.status(401).send({ error: 'Projeto não encontrado' })
 
         try {
 
-            const dadosGrafico = await ManutencaoService.processarDadosManutencao(manutencao)
+            // recuperar do quadro
+            const dadosGrafico = quadro.dadosManutencao[0]
+            if(dadosGrafico){
+                const { dadosGerais, dadosProcessados, dtInicio, dtFim, numSemana } = dadosGrafico
+                const semanaAtual = ManutencaoService.obtemInfoSemanaAtual()
+                const semanas = ManutencaoService.obtemInfoSemanasIntervalo(1, semanaAtual.numSemana)
 
-            return res.send(dadosGrafico)
+                return res.send({  dtInicio, dtFim, numSemana , ...dadosGerais, ...dadosProcessados, semanas })
+
+            }
+            return res.send({ message: "Sem dados processados" })
+
 
         } catch (e) {
             console.warn('erro:', e, e.message)

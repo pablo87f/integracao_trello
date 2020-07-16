@@ -194,7 +194,8 @@
                                     <!-- <th class="text-center">Nome</th> -->
                                     <th>Nome</th>
                                     <th class="text-center">Lista</th>
-                                    <th class="text-center">Etiquetas</th>
+                                    <th class="text-center">Importância</th>
+                                    <th class="text-center">Tipo</th>
                                     <th class="text-center">Criado em</th>
                                     <th class="text-center">Duração</th>
                                 </tr>
@@ -245,7 +246,6 @@
         align: 'start',
         legend: {
             position: 'bottom',
-
             fullWidth: false
         },
     }
@@ -408,6 +408,10 @@
 
     function carregarDados(data) {
 
+        if(data.message){
+            alert(data.message)
+            return
+        }
 
         console.warn('dados grafico', data)
 
@@ -482,7 +486,7 @@
         })
 
         const selEtiquetasImportancia = $('#selEtiquetasImportancia').selectize({
-            valueField: 'id',
+            valueField: 'name',
             labelField: 'name',
             searchField: ['name'],
             options: etiquetasImportancia,
@@ -492,13 +496,28 @@
         })
 
         const selEtiquetasTipo = $('#selEtiquetasTipo').selectize({
-            valueField: 'id',
+            valueField: 'name',
             labelField: 'name',
             searchField: ['name'],
             options: etiquetasTipo,
             dropdownParent: 'body',
             persist: false,
             maxItems: null,
+            render: {
+                item: (data, escape) => {
+                    var texto = escape(data.name)
+
+                    var etiqueta = etiquetasTipo.find(e => e.name === texto)
+                    var cor = 'red'
+
+                    return `
+                        <div class="item" data-value="${texto}" 
+                            style="background-color: '${cor}';">
+                            ${texto}
+                        </div>
+                    `
+                }
+            }
         })
 
         const selListas = $('#selListas').selectize({
@@ -561,7 +580,7 @@
     }
 
     function htmlForCardRow(card) {
-        const { id, name, shortUrl, list, labels } = card
+        const { id, name, shortUrl, list, labels, importancia, tipo } = card
         return `
             <tr>
                 <td>
@@ -580,7 +599,10 @@
                     ${list.name}
                 </td>
                 <td class="text-center">
-                    ${htmlForLabelsTrello(labels)}
+                    ${htmlForLabelsTrello([importancia])}
+                </td>
+                <td class="text-center">
+                    ${htmlForLabelsTrello([tipo])}
                 </td>
                 <td class="text-center">
                     ${formataData(card.dataCriacao)}

@@ -7,7 +7,7 @@ namespace MaintenanceController {
 
     export async function index(req: express.Request, res: express.Response) {
 
-        const indexManutencoes = Repositorio.getAll('index.manutencoes.json')
+        const indexManutencoes = Repositorio.getAll('index.quadros-manutencao.json')
         const projetosPromisses = Object.values(indexManutencoes).map((nomeArquivoManutencao) => {
             return Repositorio.getItem(nomeArquivoManutencao)
         })
@@ -35,7 +35,7 @@ namespace MaintenanceController {
             res.sendStatus(401);
         }
 
-        const nomeArquivo = `manutencao.${idQuadroManutencao}.json`
+        const nomeArquivo = `quadro-manutencao.${idQuadroManutencao}.json`
 
         const quadroManutencao = Repositorio.getItem(nomeArquivo)
 

@@ -12,6 +12,9 @@ import { ProjetoController, FuncionalidadesController } from "./controllers";
 import ViewsProjetoController from "./controllers/views-projeto.controller";
 import MaintenanceController from "./controllers/maintenance.controller";
 import PessoasController from "./controllers/pessoas.controller";
+import Jobs from "./jobs";
+
+var schedule = require('node-schedule');
 
 const app = express();
 
@@ -62,3 +65,13 @@ app.use('/public', express.static('public'))
 app.listen(process.env.port || 3000);
 
 console.log('Running at Port 3000');
+
+// var rule = new schedule.RecurrenceRule();
+// rule.second = 30;
+// const dataInicio = new Date()
+
+// var j = schedule.scheduleJob(rule, () => { 
+//     Jobs.ArquivarManutencaoJob(dataInicio) 
+// });
+
+// console.warn('j', j)
