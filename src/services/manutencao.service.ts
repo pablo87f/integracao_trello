@@ -47,6 +47,20 @@ const trelloLabelsPalette: any = {
     'grey': '#b3bac5'
 }
 
+
+const bluePalette = [
+    '#9C27B0',
+    '#673AB7',
+    '#3F51B5',
+    '#2196F3',
+    '#00BCD4',
+    '#009688',
+    '#4CAF50',
+    '#FFC107',
+    '#FF9800',
+    '#795548',
+]
+
 namespace ManutencaoService {
 
 
@@ -111,16 +125,26 @@ namespace ManutencaoService {
 
         const quadro: QuadroManutencao = Repositorio.getItem(`quadro-manutencao.${idQuadro}.json`)
 
-        const indexSemanaExistente = quadro.dadosManutencao.findIndex(dados => dados.numSemana === numSemana)
+        if (quadro) {
+            quadro.dadosManutencao = quadro.dadosManutencao || new Array<DadosQuadroManutencaoIntervalo>()
 
-        if (indexSemanaExistente < 0) {
-            quadro.dadosManutencao.push(dadosManutencaoIntervalo)
-        } 
-        else {
-            quadro.dadosManutencao[indexSemanaExistente] = dadosManutencaoIntervalo
+            const indexSemanaExistente = quadro.dadosManutencao.findIndex(dados => dados.numSemana === numSemana)
+
+            if (indexSemanaExistente < 0) {
+                quadro.dadosManutencao.push(dadosManutencaoIntervalo)
+            }
+            else {
+                quadro.dadosManutencao[indexSemanaExistente] = dadosManutencaoIntervalo
+            }
+
+            quadro.dataUltimoProcessamento = new Date()
+            
+            Repositorio.setItem(`quadro-manutencao.${idQuadro}.json`, quadro)
+
         }
-
-        Repositorio.setItem(`quadro-manutencao.${idQuadro}.json`, quadro)
+        else {
+            console.log(`"quadro-manutencao.${idQuadro}.json" não encontrado`)
+        }
 
     }
 
@@ -194,7 +218,7 @@ namespace ManutencaoService {
         const { idBoard, idListaConclusao } = quadroManutencao
 
         // obter as listas
-        const listas = await trello.getListsOnBoard(idBoard)
+        const listas = (await trello.getListsOnBoard(idBoard) || []).map((l: any, i: number) => { return { ...l, color: bluePalette[i] } })
 
         // obter os labels
         const etiquetasTrello = await trello.getLabelsForBoard(idBoard)
@@ -222,6 +246,10 @@ namespace ManutencaoService {
         // calcular quantidade de cards que foram concluidos
         // calcular tempo em horas de cada card em cada etapa 
         // calcular tempo total em horas de cada card entre criacão e conclusão -> quanto que o card foi movido pra concluido 
+
+    }
+
+    export async function arquivarCards(cards: Array<any>) {
 
     }
 

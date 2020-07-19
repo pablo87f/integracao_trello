@@ -65,11 +65,18 @@
     <div id='div_projetos'>
         <div class="row">
             <div class="col-md-12">
-                <!-- filtros -->
+                <!-- Busca -->
                 <div class="main-card mb-3 card">
-                    <div class="card-header">Filtros
+                    <div class="card-header">Campos de busca
                         <div class="btn-actions-pane-right">
                             <div role="group" class="btn-group-sm btn-group">
+                                <button id="btn-filtrar" type="button" aria-haspopup="true" aria-expanded="false"
+                                    class="mb-2 mr-2 btn btn-primary">
+                                    <span class="btn-icon-wrapper pr-2 opacity-7">
+                                        <i class="fa fa-search fa-w-20"></i>
+                                    </span>
+                                    Buscar
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -126,7 +133,7 @@
 
                     </div>
                 </div>
-                <!-- fim filtros -->
+                <!-- fim Busca -->
                 <!-- graficos -->
                 <div class="main-card mb-3 card">
                     <div class="card-header">
@@ -228,18 +235,20 @@
     var $chartImportancia;
     var $chartTipo;
 
-    const bluePalette = [
-        '#9C27B0',
-        '#673AB7',
-        '#3F51B5',
-        '#2196F3',
-        '#00BCD4',
-        '#009688',
-        '#4CAF50',
-        '#FFC107',
-        '#FF9800',
-        '#795548',
-    ]
+    let $dados;
+
+    // const bluePalette = [
+    //     '#9C27B0',
+    //     '#673AB7',
+    //     '#3F51B5',
+    //     '#2196F3',
+    //     '#00BCD4',
+    //     '#009688',
+    //     '#4CAF50',
+    //     '#FFC107',
+    //     '#FF9800',
+    //     '#795548',
+    // ]
 
     const defaultPieOptions = {
         responsive: true,
@@ -263,6 +272,8 @@
 
         montarGraficosManutencao()
 
+        $('#btn-filtrar').click(filtrarDados)
+
         // if (status == 'ativo') {
         //     $('#btn-entregar').removeClass('mb-2 mr-2 btn btn-secondary')
         //     $('#btn-entregar').addClass('mb-2 mr-2 btn btn-success')
@@ -274,6 +285,11 @@
 
         // }
     });
+
+    function filtrarDados(){
+        const filtros = capturarFiltros()
+
+    }
 
     function converterData(strData) {
         return moment(strData, 'YYYY-MM-DD')
@@ -289,6 +305,15 @@
                 return etiqueta.name === nome
             })
             return etiqueta ? etiqueta.color : undefined
+        })
+    }
+
+    function obtemCoresEtiquetasPorNomes(nomes, listas) {
+        return nomes.map((nome) => {
+            const lista = listas.find((lista) => {
+                return lista.name === nome
+            })
+            return lista ? lista.color : undefined
         })
     }
 
@@ -344,19 +369,19 @@
 
     function montarConfigGraficoListas(dados) {
 
-        const { qtdsCardsListas } = dados
+        const { qtdsCardsListas, listas } = dados
 
-        const nomesTipo = Object.keys(qtdsCardsListas)
-        const valoresTipo = Object.values(qtdsCardsListas)
+        const nomesListas = Object.keys(qtdsCardsListas)
+        const valoresListas = Object.values(qtdsCardsListas)
 
         var cfg = {
             type: 'pie',
             data: {
                 datasets: [{
-                    data: valoresTipo,
-                    backgroundColor: bluePalette
+                    data: valoresListas,
+                    backgroundColor: obtemCoresEtiquetasPorNomes(nomesListas, listas)
                 }],
-                labels: nomesTipo,
+                labels: nomesListas,
             },
             options: {
                 ...defaultPieOptions
@@ -408,10 +433,12 @@
 
     function carregarDados(data) {
 
-        if(data.message){
+        if (data.message) {
             alert(data.message)
             return
         }
+
+        $dados = data
 
         console.warn('dados grafico', data)
 
