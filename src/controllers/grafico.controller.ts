@@ -11,7 +11,7 @@ import { GraficoService } from "../services";
 import Repositorio from '../repositorio';
 import DadosGrafico from '../grafico';
 import ManutencaoService from '../services/manutencao.service';
-import { QuadroManutencao } from '../types';
+import { QuadroManutencao, DadosProcessadosManutencao } from '../types';
 
 namespace GraficoController {
 
@@ -60,14 +60,15 @@ namespace GraficoController {
 
         try {
 
-            // recuperar do quadro
-            const dadosGrafico = quadro.dadosManutencao[0]
-            if(dadosGrafico){
-                const { dadosGerais, dadosProcessados, dtInicio, dtFim, numSemana } = dadosGrafico
+            if (quadro && quadro.dadosManutencao && quadro.dadosManutencao.length > 0) {
+                const { dadosGerais, dtInicio, dtFim, numSemana } = quadro.dadosManutencao[quadro.dadosManutencao.length - 1]
+
+                const dadosProcessados: DadosProcessadosManutencao = await ManutencaoService.processarDadosManutencao(dadosGerais)
+
                 const semanaAtual = ManutencaoService.obtemInfoSemanaAtual()
                 const semanas = ManutencaoService.obtemInfoSemanasIntervalo(1, semanaAtual.numSemana)
 
-                return res.send({  dtInicio, dtFim, numSemana , ...dadosGerais, ...dadosProcessados, semanas })
+                return res.send({ dtInicio, dtFim, numSemana, ...dadosGerais, ...dadosProcessados, semanas })
 
             }
             return res.send({ message: "Sem dados processados" })

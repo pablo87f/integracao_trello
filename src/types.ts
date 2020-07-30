@@ -143,7 +143,6 @@ export interface DadosQuadroManutencaoIntervalo {
     dtFim: Date
     numSemana: number
     dadosGerais: DadosGeraisManutencao
-    dadosProcessados: DadosProcessadosManutencao
 }
 
 export interface QuadroManutencao {
@@ -166,6 +165,5 @@ export interface ProjetoManutencao {
 export interface TrelloLabel {
     color?: String;
     id: string;
-    idBoard: string
     name: string
 }

@@ -12,8 +12,8 @@ namespace Jobs {
             for (const nomeArquivoQuadro of nomesArquivosQuadros) {
                 const quadro: QuadroManutencao = Repositorio.getItem(nomeArquivoQuadro)
                 const dadosGerais = await ManutencaoService.extrairDadosGeraisManutencao(quadro)
-                const dadosProcessados = await ManutencaoService.processarDadosManutencao(dadosGerais)
-                ManutencaoService.salvarDadosSemanaisQuadroManutencao(dadosGerais, dadosProcessados, quadro.id)
+                
+                ManutencaoService.salvarDadosSemanaisQuadroManutencao(dadosGerais, quadro.id)
                 console.log('SalvarDadosManutencao: Sucesso')
                 return true
                 // ManutencaoService.

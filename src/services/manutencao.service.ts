@@ -111,7 +111,7 @@ namespace ManutencaoService {
 
     }
 
-    export function salvarDadosSemanaisQuadroManutencao(dadosGerais: DadosGeraisManutencao, dadosProcessados: DadosProcessadosManutencao, idQuadro: number) {
+    export function salvarDadosSemanaisQuadroManutencao(dadosGerais: DadosGeraisManutencao, idQuadro: number) {
 
         const { numSemana, dtInicio, dtFim } = obtemInfoSemanaAtual()
 
@@ -119,8 +119,7 @@ namespace ManutencaoService {
             numSemana,
             dtInicio,
             dtFim,
-            dadosGerais,
-            dadosProcessados
+            dadosGerais
         }
 
         const quadro: QuadroManutencao = Repositorio.getItem(`quadro-manutencao.${idQuadro}.json`)
@@ -218,13 +217,13 @@ namespace ManutencaoService {
         const { idBoard, idListaConclusao } = quadroManutencao
 
         // obter as listas
-        const listas = (await trello.getListsOnBoard(idBoard) || []).map((l: any, i: number) => { return { ...l, color: bluePalette[i] } })
+        const listas = (await trello.getListsOnBoard(idBoard) || []).map((l: any, i: number) => { return { id: l.id, name: l.name, color: bluePalette[i] } })
 
         // obter os labels
         const etiquetasTrello = await trello.getLabelsForBoard(idBoard)
         const etiquetas = etiquetasTrello.map((e: TrelloLabel) => {
             const nomeCor: any = e.color
-            return { ...e, color: trelloLabelsPalette[nomeCor] }
+            return { id: e.id, name: e.name, color: trelloLabelsPalette[nomeCor] }
         })
 
         // separar dados dos cards (id, titulo, descricao, data_criacao, data_conclusao, labels, lista)
