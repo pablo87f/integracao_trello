@@ -237,6 +237,8 @@
 
     let $dados;
 
+    let $mainTable;
+
     // const bluePalette = [
     //     '#9C27B0',
     //     '#673AB7',
@@ -286,8 +288,9 @@
         // }
     });
 
-    function filtrarDados(){
-        const filtros = capturarFiltros()
+    function filtrarDados() {
+        const filtros = montarFiltrosQuery()
+        montarGraficosManutencao(filtros)
 
     }
 
@@ -423,10 +426,42 @@
         }
     }
 
-    function montarGraficosManutencao() {
+    function montarFiltrosQuery() {
+
+        const semInicio = $('#selSemanaInicio').find(":selected").val();
+        const semFim = $('#selSemanaFim').find(":selected").val();
+        const importancia = $.map($("#selEtiquetasImportancia option:selected"), function (el, i) {
+            return $(el).text();
+        }).join(',')
+        const tipo = $.map($("#selEtiquetasTipo option:selected"), function (el, i) {
+            return $(el).text();
+        }).join(',')
+        const lista = $.map($("#selListas option:selected"), function (el, i) {
+            return $(el).text();
+        }).join(',')
+        const novosCards = $('#chkNovosCards').is(':checked')
+
+        console.warn('novosCards', novosCards)
+
+        const todosFiltros = {
+            semInicio: semInicio ? `semInicio=${semInicio}` : undefined,
+            semFim: semFim ? `semFim=${semFim}` : undefined,
+            importancia: importancia ? `importancia=${importancia}` : undefined,
+            tipo: tipo ? `tipo=${tipo}` : undefined,
+            lista: lista ? `lista=${lista}` : undefined,
+            novosCards: novosCards ? `novosCards=${novosCards}` : undefined
+        }
+
+
+        const chavesFiltrosAplicaveis = Object.keys(todosFiltros).filter(k => todosFiltros[k] != undefined)
+
+        return chavesFiltrosAplicaveis.map(k => todosFiltros[k]).join('&')
+    }
+
+    function montarGraficosManutencao(filtrosQuery = '') {
 
         if (id_quadro) {
-            let url = "/dados_grafico_manutencao/" + id_quadro
+            let url = filtrosQuery ? `/dados_grafico_manutencao/${id_quadro}?${filtrosQuery}` : `/dados_grafico_manutencao/${id_quadro}`
             $.get(url, carregarDados)
         }
     }
@@ -460,10 +495,18 @@
         const { cartoes } = data
 
         if (cartoes.length && cartoes.length > 0) {
+
+            if ($mainTable) {
+                $mainTable.destroy()
+                $('#corpoTabelaCards').html(' ')
+            }
+
             $('#corpoTabelaCards').html(
                 cartoes.map((c) => htmlForCardRow(c)).join('\n')
             )
-            $('#tabelaCards').DataTable({
+
+            $mainTable = $('#tabelaCards').DataTable({
+                retrieve: true,
                 "pageLength": 10,
                 responsive: true,
                 columnDefs: [
@@ -473,6 +516,7 @@
                     }
                 ],
             });
+
         } else {
             $('#corpoTabelaCards').html('<div class="row"><div class="col">Sem dados</div></div>')
         }
@@ -495,6 +539,7 @@
             etiquetasTipo,
             listas
         } = data
+        semanas.reverse()
 
         $('#selSemanaInicio').selectize({
             valueField: 'numero',
@@ -568,7 +613,7 @@
         var ctxImportancia = document.getElementById('canvasImportancia').getContext('2d');
 
         if (typeof $chartImportancia !== "undefined") {
-            $chart.destroy();
+            $chartImportancia.destroy();
         }
         $chartImportancia = new Chart(ctxImportancia, montarConfigGraficoImportancia(data));
         $chartImportancia.update()

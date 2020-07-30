@@ -11,7 +11,7 @@ import { GraficoService } from "../services";
 import Repositorio from '../repositorio';
 import DadosGrafico from '../grafico';
 import ManutencaoService from '../services/manutencao.service';
-import { QuadroManutencao, DadosProcessadosManutencao } from '../types';
+import { QuadroManutencao, DadosProcessadosManutencao, DadosGeraisManutencao } from '../types';
 
 namespace GraficoController {
 
@@ -47,10 +47,35 @@ namespace GraficoController {
             res.send('Falha ao executar')
         }
     }
+    function removeDuplicates(myArr: Array<any>, prop: any) {
+        return myArr.filter((obj, pos, arr) => {
+            return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
+        });
+    }
+    interface IFiltrosManutencao {
+        semInicio?: Number
+        semFim?: Number
+        importancia?: String
+        tipo?: String
+    }
 
     export async function gerarGraficoManutencao(req: express.Request, res: express.Response) {
 
         let idQuadro = req.params.id_quadro
+
+        const semanaAtual = ManutencaoService.obtemInfoSemanaAtual()
+        const filtros: IFiltrosManutencao = req.query
+
+        const {
+            semInicio = semanaAtual.numSemana,
+            semFim = semanaAtual.numSemana,
+            importancia,
+            tipo,
+            lista
+        } = filtros
+
+        let dtInicio = semanaAtual.dtInicio
+        let dtFim = semanaAtual.dtFim
 
         const nomeArquivo = `quadro-manutencao.${idQuadro}.json`
 
@@ -61,7 +86,53 @@ namespace GraficoController {
         try {
 
             if (quadro && quadro.dadosManutencao && quadro.dadosManutencao.length > 0) {
-                const { dadosGerais, dtInicio, dtFim, numSemana } = quadro.dadosManutencao[quadro.dadosManutencao.length - 1]
+
+                let dadosManutencao = quadro.dadosManutencao
+                if (semInicio) {
+                    dadosManutencao = dadosManutencao.filter(d => d.numSemana >= semInicio)
+                }
+
+                if (semFim) {
+                    dadosManutencao = dadosManutencao.filter(d => d.numSemana <= semFim)
+                }
+
+
+                let dadosGerais: DadosGeraisManutencao = { cartoes: [], listas: [], etiquetas: [] }
+
+                for (const dados of dadosManutencao) {
+
+                    dtInicio = dados.dtInicio < dtInicio ? dados.dtInicio : dtInicio
+                    dtFim = dados.dtFim < dtFim ? dados.dtFim : dtFim
+
+                    dadosGerais.cartoes = dadosGerais.cartoes.concat(
+                        dados.dadosGerais.cartoes.filter(c => {
+                            
+                            let deveIrImportancia = true
+                            let deveIrTipo = true
+
+                            if (importancia) {
+                                const importancias = importancia.split(',')
+                                deveIrImportancia = importancias.find(i => i === c.importancia.name) != undefined
+                            }
+                            if (tipo) {
+                                const tipos = tipo.split(',')
+                                deveIrTipo = tipos.find(t => t === c.tipo.name) != undefined
+                            }
+                            return deveIrImportancia && deveIrTipo
+                        })
+                    )
+
+                    dadosGerais.listas = dadosGerais.listas.concat(dados.dadosGerais.listas)
+                    dadosGerais.etiquetas = dadosGerais.etiquetas.concat(dados.dadosGerais.etiquetas)
+                }
+
+                dadosGerais.listas = removeDuplicates(dadosGerais.listas, 'name')
+                dadosGerais.etiquetas = removeDuplicates(dadosGerais.etiquetas, 'name')
+
+                const { numSemana } = quadro.dadosManutencao[quadro.dadosManutencao.length - 1]
+
+
+
 
                 const dadosProcessados: DadosProcessadosManutencao = await ManutencaoService.processarDadosManutencao(dadosGerais)
 

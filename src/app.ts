@@ -68,7 +68,7 @@ console.log('Running at Port 3000');
 
 
 // let ruleSalvar = new schedule.RecurrenceRule();
-// ruleSalvar.second = 30;
+// ruleSalvar.minute = 30;
 
 // let jSalvar = schedule.scheduleJob(ruleSalvar, () => { 
 //     console.warn(new Date().toUTCString(), 'SalvarDadosManutencao')
