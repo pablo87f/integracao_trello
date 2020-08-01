@@ -28,7 +28,23 @@ namespace Jobs {
     }
 
     export async function ArquivarDadosManutencao() {
-        console.log('ArquivarDadosManutencao: Sucesso')
+        //recupera a lista de ids quadros manutencao
+        const indexQuadrosManutencao = Repositorio.getItem('index.quadros-manutencao.json')
+        if (indexQuadrosManutencao) {
+            const nomesArquivosQuadros = Object.values(indexQuadrosManutencao)
+            // percorre os quadros um por um
+            for (const nomeArquivoQuadro of nomesArquivosQuadros) {
+
+                const quadro: QuadroManutencao = Repositorio.getItem(nomeArquivoQuadro)
+                if(quadro.idListaConclusao){
+                    ManutencaoService.arquivarCartoesIdLista(quadro.idListaConclusao)
+                }
+                console.log('ArquivarDadosManutencao: Sucesso')
+                return true
+                // ManutencaoService.
+
+            }
+        }
     }
 
 }

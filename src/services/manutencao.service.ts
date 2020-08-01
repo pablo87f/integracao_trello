@@ -273,8 +273,16 @@ namespace ManutencaoService {
 
     }
 
-    export async function arquivarCards(cards: Array<any>) {
+    export async function arquivarCartoes(cards: Array<any>) {
+        for (const c of cards) {
+            const res = await trello.makeRequest('PUT', `/1/cards/${c.id}`, { closed: true })
+            console.log('id', c.id, 'res', res.status)
+        }
+    }
 
+    export async function arquivarCartoesIdLista(idLista: String) {
+        const cards = await trello.getCardsOnList(idLista)
+        await arquivarCartoes(cards)
     }
 
     export function filtrarDadosManutencaoSemana(

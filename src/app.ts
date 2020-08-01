@@ -67,6 +67,7 @@ app.listen(process.env.port || 3000);
 console.log('Running at Port 3000');
 
 
+
 let ruleSalvar = new schedule.RecurrenceRule();
 ruleSalvar.minute = 30;
 
@@ -75,13 +76,12 @@ let jSalvar = schedule.scheduleJob(ruleSalvar, () => {
     Jobs.SalvarDadosManutencao()
 });
 
+let ruleArquivar = new schedule.RecurrenceRule();
+ruleArquivar.hour = 0;
+ruleArquivar.dayOfWeek = 0;
 
-// let ruleArquivar = new schedule.RecurrenceRule();
-// ruleArquivar.hour = 0;
-// ruleArquivar.dayOfWeek = 0;
-
-// let jArquivar = schedule.scheduleJob(ruleArquivar, () => { 
-//     console.warn(new Date().toUTCString(), 'SalvarDadosManutencao')
-//     Jobs.SalvarDadosManutencao()
-// });
+let jArquivar = schedule.scheduleJob(ruleArquivar, () => { 
+    console.warn(new Date().toUTCString(), 'ArquivarDadosManutencao')
+    Jobs.ArquivarDadosManutencao()
+});
 
