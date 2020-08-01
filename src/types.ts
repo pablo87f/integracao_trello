@@ -133,8 +133,6 @@ export interface DadosProcessadosManutencao {
     qtdsCardsEtiquetasImportancia: any
     qtdsCardsEtiquetasTipo: any
     qtdsCardsListas: any
-    etiquetasImportancia: Array<any>
-    etiquetasTipo: Array<any>
 }
 
 
@@ -166,4 +164,23 @@ export interface TrelloLabel {
     color?: String;
     id: string;
     name: string
+}
+
+export interface IFiltrosGraficoManutencao {
+    semInicio?: Number
+    semFim?: Number
+    importancia?: String
+    tipo?: String
+    lista?: String
+}
+
+export interface IFiltrosIntervaloManutencao {
+    semInicio?: Number
+    semFim?: Number
+}
+
+export interface IFiltrosDadosGeraisManutencao {
+    importancias?: String
+    tipos?: String
+    listas?: String
 }

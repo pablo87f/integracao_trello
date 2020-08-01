@@ -11,7 +11,8 @@ import { GraficoService } from "../services";
 import Repositorio from '../repositorio';
 import DadosGrafico from '../grafico';
 import ManutencaoService from '../services/manutencao.service';
-import { QuadroManutencao, DadosProcessadosManutencao, DadosGeraisManutencao } from '../types';
+import { QuadroManutencao, DadosProcessadosManutencao, DadosGeraisManutencao, IFiltrosGraficoManutencao, IFiltrosDadosGeraisManutencao, IFiltrosIntervaloManutencao } from '../types';
+import { ArrayUtil } from '../util/array.util';
 
 namespace GraficoController {
 
@@ -47,25 +48,13 @@ namespace GraficoController {
             res.send('Falha ao executar')
         }
     }
-    function removeDuplicates(myArr: Array<any>, prop: any) {
-        return myArr.filter((obj, pos, arr) => {
-            return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
-        });
-    }
-    interface IFiltrosManutencao {
-        semInicio?: Number
-        semFim?: Number
-        importancia?: String
-        tipo?: String
-        lista?: String
-    }
 
     export async function gerarGraficoManutencao(req: express.Request, res: express.Response) {
 
         let idQuadro = req.params.id_quadro
 
         const semanaAtual = ManutencaoService.obtemInfoSemanaAtual()
-        const filtros: IFiltrosManutencao = req.query
+        const filtros: IFiltrosGraficoManutencao = req.query
 
         const {
             semInicio = semanaAtual.numSemana,
@@ -75,8 +64,8 @@ namespace GraficoController {
             lista
         } = filtros
 
-        let dtInicio = semanaAtual.dtInicio
-        let dtFim = semanaAtual.dtFim
+        let dtInicioGeral = semanaAtual.dtInicio
+        let dtFimGeral = semanaAtual.dtFim
         let numSemanaMin = semanaAtual.numSemana
         let numSemanaMax = semanaAtual.numSemana
 
@@ -88,73 +77,125 @@ namespace GraficoController {
 
         try {
 
-            if (quadro && quadro.dadosManutencao && quadro.dadosManutencao.length > 0) {
+            // filtra os dados gerais do quadro para as semanas informadas
+            const dadosManutencaoSemanasFiltrados = ManutencaoService.filtrarDadosManutencaoSemana(quadro.dadosManutencao, {
+                semFim,
+                semInicio
+            })
 
-                let dadosManutencao = quadro.dadosManutencao
-                if (semInicio) {
-                    dadosManutencao = dadosManutencao.filter(d => d.numSemana >= semInicio)
-                }
+            if (dadosManutencaoSemanasFiltrados.length > 0) {
 
-                if (semFim) {
-                    dadosManutencao = dadosManutencao.filter(d => d.numSemana <= semFim)
-                }
-
-
+                // inicializa os objetos gerais de retorno 
                 let dadosGerais: DadosGeraisManutencao = { cartoes: [], listas: [], etiquetas: [] }
-                let qtdsCardsSemanas: any = {}
+                let dadosProcessados: DadosProcessadosManutencao = {
+                    qtdsCardsListas: {},
+                    qtdsCardsEtiquetasTipo: {},
+                    qtdsCardsEtiquetasImportancia: {},
+                }
 
-                for (const dadosSemana of dadosManutencao) {
+                // percorre os dados gerais filtrados 
+                const dadosManutencaoCartoesFiltrados = dadosManutencaoSemanasFiltrados.map((dadosSemana) => {
+                    const {
+                        dtInicio: dtInicioSemana,
+                        dtFim: dtFimSemana,
+                        numSemana
+                    } = dadosSemana
 
-                    dtInicio = dadosSemana.dtInicio < dtInicio ? dadosSemana.dtInicio : dtInicio
-                    dtFim = dadosSemana.dtFim < dtFim ? dadosSemana.dtFim : dtFim
-                    numSemanaMin = Math.min(numSemanaMin, dadosSemana.numSemana)
-                    numSemanaMax = Math.max(numSemanaMax, dadosSemana.numSemana)
+                    // logica para identificar intervalo de datas incial e final das semanas selecionadas
+                    dtInicioGeral = dtInicioSemana < dtInicioGeral ? dtInicioSemana : dtInicioGeral
+                    dtFimGeral = dtFimSemana > dtFimGeral ? dtFimSemana : dtFimGeral
+                    numSemanaMin = Math.min(numSemanaMin, numSemana)
+                    numSemanaMax = Math.max(numSemanaMax, numSemana)
 
-                    const cardsFiltradosSemana = dadosSemana.dadosGerais.cartoes.filter(c => {
-
-                        let deveIrImportancia = true
-                        let deveIrTipo = true
-                        let deveIrLista = true
-
-                        if (importancia) {
-                            const importancias = importancia.split(',')
-                            deveIrImportancia = importancias.find(i => i === c.importancia.name) != undefined
+                    // filtra os cartõe por impotancias, tipos e listas
+                    dadosSemana.dadosGerais.cartoes = ManutencaoService.filtrarCartoesDadosGeraisManutencao(
+                        dadosSemana.dadosGerais.cartoes,
+                        {
+                            importancias: importancia,
+                            tipos: tipo,
+                            listas: lista
                         }
-                        if (tipo) {
-                            const tipos = tipo.split(',')
-                            deveIrTipo = tipos.find(t => t === c.tipo.name) != undefined
-                        }
-                        if (lista) {
-                            const listas = lista.split(',')
-                            deveIrLista = listas.find(l => l === c.list.name) != undefined
-                        }
-                        return deveIrImportancia && deveIrTipo && deveIrLista
-                    })
+                    )
 
-                    qtdsCardsSemanas = { ...qtdsCardsSemanas, [dadosSemana.numSemana]: cardsFiltradosSemana.length }
-
-                    dadosGerais.cartoes = dadosGerais.cartoes.concat(cardsFiltradosSemana)
+                    // juntando os dados gerais de todas as semanas
+                    dadosGerais.cartoes = dadosGerais.cartoes.concat(dadosSemana.dadosGerais.cartoes)
                     dadosGerais.listas = dadosGerais.listas.concat(dadosSemana.dadosGerais.listas)
                     dadosGerais.etiquetas = dadosGerais.etiquetas.concat(dadosSemana.dadosGerais.etiquetas)
-                }
 
-                dadosGerais.listas = removeDuplicates(dadosGerais.listas, 'name')
-                dadosGerais.etiquetas = removeDuplicates(dadosGerais.etiquetas, 'name')
+                    // processando os dados 
+
+                    return dadosSemana
+                })
+
+                dadosGerais.listas = ArrayUtil.removeDuplicates(dadosGerais.listas, 'name')
+                dadosGerais.etiquetas = ArrayUtil.removeDuplicates(dadosGerais.etiquetas, 'name')
+
+                let semanasFiltradas: Array<any> = []
+                let qtdsSemanaCardsImportancia: any = {}
+                let qtdsSemanaCardsTipo: any = {}
+                let qtdsSemanaCardsLista: any = {}
+
+                const dadosProcessadoSemanas = dadosManutencaoCartoesFiltrados.map((dadosManutencao) => {
+                    const processadosSemana = ManutencaoService.processarDadosManutencao(dadosManutencao.dadosGerais)
+
+                    semanasFiltradas.push(dadosManutencao.numSemana)
+
+                    Object.keys(processadosSemana.qtdsCardsEtiquetasImportancia).map((k) => {
+                        const data: Array<Number> = qtdsSemanaCardsImportancia[k] || []
+                        return qtdsSemanaCardsImportancia[k] = data.concat(processadosSemana.qtdsCardsEtiquetasImportancia[k])
+                    })
+
+                    Object.keys(processadosSemana.qtdsCardsEtiquetasTipo).map((k) => {
+                        const data: Array<Number> = qtdsSemanaCardsTipo[k] || []
+                        return qtdsSemanaCardsTipo[k] = data.concat(processadosSemana.qtdsCardsEtiquetasTipo[k])
+                    })
+
+                    Object.keys(processadosSemana.qtdsCardsListas).map((k) => {
+                        const data: Array<Number> = qtdsSemanaCardsLista[k] || []
+                        return qtdsSemanaCardsLista[k] = data.concat(processadosSemana.qtdsCardsListas[k])
+                    })
+
+
+                    dadosProcessados.qtdsCardsEtiquetasImportancia = ManutencaoService.somarPorChaves(
+                        dadosProcessados.qtdsCardsEtiquetasImportancia,
+                        processadosSemana.qtdsCardsEtiquetasImportancia
+                    )
+
+                    dadosProcessados.qtdsCardsEtiquetasTipo = ManutencaoService.somarPorChaves(
+                        dadosProcessados.qtdsCardsEtiquetasTipo,
+                        processadosSemana.qtdsCardsEtiquetasTipo
+                    )
+
+                    dadosProcessados.qtdsCardsListas = ManutencaoService.somarPorChaves(
+                        dadosProcessados.qtdsCardsListas,
+                        processadosSemana.qtdsCardsListas
+                    )
+
+                    return processadosSemana
+                })
 
                 const numSemana = numSemanaMin != numSemanaMax ? `${numSemanaMin} - ${numSemanaMax}` : `${numSemanaMax}`
-
-                const dadosProcessados: DadosProcessadosManutencao = await ManutencaoService.processarDadosManutencao(dadosGerais)
 
                 const semanaAtual = ManutencaoService.obtemInfoSemanaAtual()
                 const semanas = ManutencaoService.obtemInfoSemanasIntervalo(1, semanaAtual.numSemana)
 
+                return res.send({
+                    dtInicio: dtInicioGeral, dtFim: dtFimGeral, numSemana,
+                    ...dadosGerais,
+                    ...dadosProcessados,
+                    qtdsSemanaCardsImportancia,
+                    qtdsSemanaCardsTipo,
+                    qtdsSemanaCardsLista,
+                    semanasFiltradas,
+                    semanas,
+                    etiquetasImportancia: ManutencaoService.etiquetasImportancia,
+                    etiquetasTipo: ManutencaoService.etiquetasTipo
+                })
 
+            } else {
 
-                return res.send({ dtInicio, dtFim, numSemana, ...dadosGerais, ...dadosProcessados, qtdsCardsSemanas, semanas })
-
+                return res.send({ message: "Sem dados processados" })
             }
-            return res.send({ message: "Sem dados processados" })
-
 
         } catch (e) {
             console.warn('erro:', e, e.message)

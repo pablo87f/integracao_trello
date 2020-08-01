@@ -1,6 +1,19 @@
-import { Projeto, ListaProjeto, Participante, QuadroManutencao, TrelloLabel, DadosGeraisManutencao, DadosProcessadosManutencao, DadosQuadroManutencaoIntervalo } from "../types";
+import {
+    Projeto,
+    ListaProjeto,
+    Participante,
+    QuadroManutencao,
+    TrelloLabel,
+    DadosGeraisManutencao,
+    DadosProcessadosManutencao,
+    DadosQuadroManutencaoIntervalo,
+    IFiltrosGraficoManutencao,
+    IFiltrosDadosGeraisManutencao as IFiltrosCartoesManutencao,
+    IFiltrosIntervaloManutencao
+} from "../types";
 import { listas } from "../dados/_padrao";
 import Repositorio from "../repositorio";
+import { ArrayUtil } from "../util/array.util";
 
 var _ = require('lodash')
 var moment = require('moment')
@@ -10,58 +23,58 @@ var Trello = require("trello")
 var trello = new Trello("87dc9de469e75e93dc71170012c930eb", "bebf362640978bcd8cab62b0121bcbf038dfab966cef8a1cb6cb2cb07c686407");
 // var trello = new Trello("4d302f3977e0313c3d7ae1f27d3500e2", "3a8b8c79d7862f3f586939068c14abecea1cb8a26a1dc61261233831455b22a7");
 
-const etiquetaIndefinida = { "name": "INDEFINIDO", "color": '#b3bac5', }
-
-const etiquetasImportancia = [
-    { "name": "IMPORTANTE", "color": '#f2d600', },
-    { "name": "DESEJADO", "color": '#61bd4f', },
-    { "name": "IMPRESCINDÍVEL", "color": '#eb5a46', },
-    { "name": "INDEFINIDO", "color": '#b3bac5', },
-]
-
-const etiquetasTipo = [
-    { "name": "SUPORTE", "color": '#87CEEB' },
-    { "name": "MELHORIA", "color": '#c377e0', },
-    { "name": "BUG", "color": '#344563', },
-    { "name": "ANÁLISE", "color": '#0079bf', },
-    { "name": "INDEFINIDO", "color": '#b3bac5', },
-]
-
-const idsCardsPadrao = [
-    "5dee8e267f5f5f03c197da65",
-    "5eea67bcbc3a6f1eaf2befb8",
-    "5eea1f7acd50f25486b082ea"
-]
-
-const trelloLabelsPalette: any = {
-    'green': '#61bd4f',
-    'yellow': '#f2d600',
-    'red': '#eb5a46',
-    'purple': '#c377e0',
-    'blue': '#0079bf',
-    'sky': '#00c2e0',
-    'black': '#344563',
-    'pink': '#ff78cb',
-    'lime': '#51e898',
-    'orange': '#ff9f1a',
-    'grey': '#b3bac5'
-}
-
-
-const bluePalette = [
-    '#9C27B0',
-    '#673AB7',
-    '#3F51B5',
-    '#2196F3',
-    '#00BCD4',
-    '#009688',
-    '#4CAF50',
-    '#FFC107',
-    '#FF9800',
-    '#795548',
-]
-
 namespace ManutencaoService {
+
+    export const etiquetaIndefinida = { "name": "INDEFINIDO", "color": '#b3bac5', }
+
+    export const etiquetasImportancia = [
+        { "name": "IMPORTANTE", "color": '#f2d600', },
+        { "name": "DESEJADO", "color": '#61bd4f', },
+        { "name": "IMPRESCINDÍVEL", "color": '#eb5a46', },
+        { "name": "INDEFINIDO", "color": '#b3bac5', },
+    ]
+
+    export const etiquetasTipo = [
+        { "name": "SUPORTE", "color": '#87CEEB' },
+        { "name": "MELHORIA", "color": '#c377e0', },
+        { "name": "BUG", "color": '#344563', },
+        { "name": "ANÁLISE", "color": '#0079bf', },
+        { "name": "INDEFINIDO", "color": '#b3bac5', },
+    ]
+
+    export const idsCardsPadrao = [
+        "5dee8e267f5f5f03c197da65",
+        "5eea67bcbc3a6f1eaf2befb8",
+        "5eea1f7acd50f25486b082ea"
+    ]
+
+    export const trelloLabelsPalette: any = {
+        'green': '#61bd4f',
+        'yellow': '#f2d600',
+        'red': '#eb5a46',
+        'purple': '#c377e0',
+        'blue': '#0079bf',
+        'sky': '#00c2e0',
+        'black': '#344563',
+        'pink': '#ff78cb',
+        'lime': '#51e898',
+        'orange': '#ff9f1a',
+        'grey': '#b3bac5'
+    }
+
+
+    export const bluePalette = [
+        '#9C27B0',
+        '#673AB7',
+        '#3F51B5',
+        '#2196F3',
+        '#00BCD4',
+        '#009688',
+        '#4CAF50',
+        '#FFC107',
+        '#FF9800',
+        '#795548',
+    ]
 
 
     export function converterTempoNumero(tempo: any) {
@@ -74,7 +87,7 @@ namespace ManutencaoService {
     }
 
 
-    export async function processarDadosManutencao(dadosGerais: DadosGeraisManutencao): Promise<DadosProcessadosManutencao> {
+    export function processarDadosManutencao(dadosGerais: DadosGeraisManutencao): DadosProcessadosManutencao {
 
         let qtdsCardsEtiquetasImportancia = {}
 
@@ -104,12 +117,24 @@ namespace ManutencaoService {
         return {
             qtdsCardsEtiquetasImportancia,
             qtdsCardsEtiquetasTipo,
-            qtdsCardsListas,
-            etiquetasImportancia,
-            etiquetasTipo
+            qtdsCardsListas
         }
 
     }
+
+    export function somarPorChaves(dados: any, novosDados: any) {
+        Object.keys(novosDados).map(k => {
+            if (dados[k]) {
+                dados[k] += novosDados[k]
+            } else {
+                dados[k] = novosDados[k]
+            }
+            return k
+        })
+
+        return dados
+    }
+
 
     export function salvarDadosSemanaisQuadroManutencao(dadosGerais: DadosGeraisManutencao, idQuadro: number) {
 
@@ -137,7 +162,7 @@ namespace ManutencaoService {
             }
 
             quadro.dataUltimoProcessamento = new Date()
-            
+
             Repositorio.setItem(`quadro-manutencao.${idQuadro}.json`, quadro)
 
         }
@@ -251,6 +276,58 @@ namespace ManutencaoService {
     export async function arquivarCards(cards: Array<any>) {
 
     }
+
+    export function filtrarDadosManutencaoSemana(
+        dadosManutencao: Array<DadosQuadroManutencaoIntervalo>,
+        filtros: IFiltrosIntervaloManutencao): Array<DadosQuadroManutencaoIntervalo> {
+
+        const {
+            semInicio,
+            semFim,
+        } = filtros
+
+        if (dadosManutencao && dadosManutencao.length > 0) {
+            if (semInicio) {
+                dadosManutencao = dadosManutencao.filter(d => d.numSemana >= semInicio)
+            }
+
+            if (semFim) {
+                dadosManutencao = dadosManutencao.filter(d => d.numSemana <= semFim)
+            }
+        }
+
+        return dadosManutencao
+
+    }
+
+    export function filtrarCartoesDadosGeraisManutencao(cartoes: Array<any>, filtros: IFiltrosCartoesManutencao): Array<any> {
+
+        const {
+            importancias,
+            tipos,
+            listas
+        } = filtros
+
+        return cartoes.filter(c => {
+
+            let deveIrImportancia = true
+            let deveIrTipo = true
+            let deveIrLista = true
+
+            if (importancias) {
+                deveIrImportancia = importancias.split(',').find(i => i === c.importancia.name) != undefined
+            }
+            if (tipos) {
+                deveIrTipo = tipos.split(',').find(t => t === c.tipo.name) != undefined
+            }
+            if (listas) {
+                deveIrLista = listas.split(',').find(l => l === c.list.name) != undefined
+            }
+            return deveIrImportancia && deveIrTipo && deveIrLista
+        })
+
+    }
+
 
     // export async function salvarDadosManutencao(dados, idManutencao) {
 

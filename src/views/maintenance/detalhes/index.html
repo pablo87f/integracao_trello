@@ -179,7 +179,17 @@
 
                             <br />
                             <div class="row">
-                                <div id="chartSemanas" class='col-md-12 col-sm-12'>
+                                <div id="chartSemanasImportancia" class='col-md-12 col-sm-12'>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div id="chartSemanasTipo" class='col-md-12 col-sm-12'>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div id="chartSemanasLista" class='col-md-12 col-sm-12'>
 
                                 </div>
                             </div>
@@ -271,6 +281,37 @@
             fullWidth: false
         },
     }
+
+    const defaultLineChartOptions = {
+        scales: {
+            xAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Num. Semana'
+                },
+
+            }],
+            yAxes: [{
+                display: true,
+                ticks: {
+                    suggestedMin: 0,
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Qtd. Cards'
+                },
+                gridLines: {
+                    zeroLineWidth: 2,
+                },
+            }]
+        },
+        tooltips: {
+            mode: 'index',
+            intersect: true
+        },
+    }
+
 
     let id_quadro = parseInt('{{ quadro_manutencao.id }}')
 
@@ -406,63 +447,164 @@
     }
 
 
-    function montarConfigGraficoSemanas(dados) {
+    function montarConfigGraficoSemanasImportancia(data) {
 
-        const { qtdsCardsSemanas } = dados
+        const {
+            qtdsSemanaCardsImportancia,
+            etiquetasImportancia,
+            semanasFiltradas
+        } = data
 
-        const numerosSemanas = Object.keys(qtdsCardsSemanas)
-        const valoresSemanas = Object.values(qtdsCardsSemanas)
+        const numerosSemanas = Object.keys(semanasFiltradas)
+        const chavesImportancia = Object.keys(qtdsSemanaCardsImportancia)
+
+        const datasets = chavesImportancia.map((chave) => {
+            const etiqueta = etiquetasImportancia.find(e => e.name == chave)
+            const dataset = {
+                label: chave,
+                backgroundColor: etiqueta.color,
+                borderColor: etiqueta.color,
+                data: qtdsSemanaCardsImportancia[chave],
+                type: 'line',
+                fill: false,
+                lineTension: 0,
+            }
+            return dataset
+        })
+
 
         var cfg = {
 
             data: {
                 labels: numerosSemanas,
-                datasets: [
-                    {
-                        label: 'Geral',
-                        backgroundColor: 'red',
-                        borderColor: 'red',
-                        data: valoresSemanas,
-                        type: 'line',
-                        fill: false,
-                        lineTension: 0,
-                    },
-                ],
+                datasets
             },
             options: {
-                scales: {
-                    xAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Num. Semana'
-                        },
-
-                    }],
-                    yAxes: [{
-                        display: true,
-                        ticks: {
-                            stepSize: 100,
-                            suggestedMin: 0, 
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Qtd. Cards'
-                        },
-                        gridLines: {
-                            zeroLineWidth: 2,
-                        },
-                    }]
-                },
-                tooltips: {
-                    mode: 'index',
-                    intersect: true
-                },
+                ...defaultLineChartOptions
             }
         };
 
         return cfg
     }
+
+
+    function montarConfigGraficoSemanasTipo(data) {
+
+        const {
+            qtdsSemanaCardsTipo,
+            etiquetasTipo,
+            semanasFiltradas
+        } = data
+
+        const numerosSemanas = Object.keys(semanasFiltradas)
+        const chavesTipo = Object.keys(qtdsSemanaCardsTipo)
+
+        const datasets = chavesTipo.map((chave) => {
+            const etiqueta = etiquetasTipo.find(e => e.name == chave)
+            const dataset = {
+                label: chave,
+                backgroundColor: etiqueta.color,
+                borderColor: etiqueta.color,
+                data: qtdsSemanaCardsTipo[chave],
+                type: 'line',
+                fill: false,
+                lineTension: 0,
+            }
+            return dataset
+        })
+
+
+        var cfg = {
+
+            data: {
+                labels: numerosSemanas,
+                datasets
+            },
+            options: {
+                ...defaultLineChartOptions
+            }
+        };
+
+        return cfg
+    }
+
+    function montarConfigGraficoSemanas(
+        dataSeries,
+        colorNamesObjects,
+        semanas
+    ) {
+        const numerosSemanas = Object.keys(semanas)
+        const serieTitle = Object.keys(dataSeries)
+
+        const datasets = serieTitle.map((title) => {
+            const objColor = colorNamesObjects.find(e => e.name == title)
+            const dataset = {
+                label: title,
+                backgroundColor: objColor.color,
+                borderColor: objColor.color,
+                data: dataSeries[title],
+                type: 'line',
+                fill: false,
+                lineTension: 0,
+            }
+            return dataset
+        })
+
+
+        var cfg = {
+
+            data: {
+                labels: numerosSemanas,
+                datasets
+            },
+            options: {
+                ...defaultLineChartOptions
+            }
+        };
+
+        return cfg
+    }
+
+    function montarConfigGraficoSemanasLista(data) {
+
+        const {
+            qtdsSemanaCardsLista,
+            listas,
+            semanasFiltradas
+        } = data
+
+        const numerosSemanas = Object.keys(semanasFiltradas)
+        const chavesTipo = Object.keys(qtdsSemanaCardsLista)
+
+        const datasets = chavesLista.map((chave) => {
+            const etiqueta = etiquetasLista.find(e => e.name == chave)
+            const dataset = {
+                label: chave,
+                backgroundColor: etiqueta.color,
+                borderColor: etiqueta.color,
+                data: qtdsSemanaCardsLista[chave],
+                type: 'line',
+                fill: false,
+                lineTension: 0,
+            }
+            return dataset
+        })
+
+
+        var cfg = {
+
+            data: {
+                labels: numerosSemanas,
+                datasets
+            },
+            options: {
+                ...defaultLineChartOptions
+            }
+        };
+
+        return cfg
+    }
+
 
     function calcularPorcentagemProgressoProjeto(data) {
         if (data && data.tempoEsforcoTotalEstimado && data.totalJaExecutadoSprint) {
@@ -556,7 +698,11 @@
 
         montarGraficoListas(data)
 
-        montarGraficoSemanas(data)
+        montarGraficoSemanasImportancia(data)
+
+        montarGraficoSemanasTipo(data)
+
+        montarGraficoSemanasLista(data)
 
         montarTabelaCards(data)
 
@@ -712,25 +858,103 @@
         $chartListas.update()
     }
 
-    function montarGraficoSemanas(data) {
+    function montarGraficoSemanasImportancia(data) {
 
+        const {
+            qtdsSemanaCardsImportancia,
+            etiquetasImportancia,
+            semanasFiltradas
+        } = data
 
-        $('#chartSemanas').html('<canvas id="canvasSemanas" width="90%" height="60%"></canvas>'); // then load chart.
-        var ctxSemanas = document.getElementById('canvasSemanas').getContext('2d');
+        const numerosSemanas = Object.keys(qtdsSemanaCardsImportancia)
 
-        if (typeof $chartSemanas !== "undefined") {
-            $chartSemanas.destroy();
+        if (numerosSemanas.length > 1) {
+            $('#chartSemanasImportancia').html('<canvas id="canvasSemanasImportancia" width="90%" height="60%"></canvas>'); // then load chart.
+            var ctxSemanas = document.getElementById('canvasSemanasImportancia').getContext('2d');
+
+            if (typeof $chartSemanasImportancia !== "undefined") {
+                $chartSemanasImportancia.destroy();
+            }
+
+            const config = montarConfigGraficoSemanas(
+                qtdsSemanaCardsImportancia,
+                etiquetasImportancia,
+                semanasFiltradas
+            )
+
+            $chartSemanasImportancia = new Chart(ctxSemanas, config);
+            $chartSemanasImportancia.update()
+
         }
-        const config = montarConfigGraficoSemanas(data)
-
-        console.warn('config', config)
-
-        $chartSemanas = new Chart(ctxSemanas, config);
-        $chartSemanas.update()
-
-
+        else {
+            $('#chartSemanasImportancia').html('<div> <strong>Selecione um interalo de semanas para ver o progresso entre semanas</strong></div>'); // then load chart.
+        }
     }
 
+    function montarGraficoSemanasTipo(data) {
+        const {
+            qtdsSemanaCardsTipo,
+            etiquetasTipo,
+            semanasFiltradas
+        } = data
+
+        const numerosSemanas = Object.keys(qtdsSemanaCardsTipo)
+
+        if (numerosSemanas.length > 1) {
+            $('#chartSemanasTipo').html('<canvas id="canvasSemanasTipo" width="90%" height="60%"></canvas>'); // then load chart.
+            var ctxSemanas = document.getElementById('canvasSemanasTipo').getContext('2d');
+
+            if (typeof $chartSemanasTipo !== "undefined") {
+                $chartSemanasTipo.destroy();
+            }
+            
+            const config = montarConfigGraficoSemanas(
+                qtdsSemanaCardsTipo,
+                etiquetasTipo,
+                semanasFiltradas
+            )
+
+            $chartSemanasTipo = new Chart(ctxSemanas, config);
+            $chartSemanasTipo.update()
+
+        }
+        else {
+            $('#chartSemanasTipo').html('<div> <strong>Selecione um interalo de semanas para ver o progresso entre semanas</strong></div>'); // then load chart.
+        }
+    }
+
+    function montarGraficoSemanasLista(data) {
+
+        const {
+            qtdsSemanaCardsLista,
+            listas,
+            semanasFiltradas
+        } = data
+
+        const numerosSemanas = Object.keys(qtdsSemanaCardsLista)
+
+        if (numerosSemanas.length > 1) {
+            $('#chartSemanasLista').html('<canvas id="canvasSemanasLista" width="90%" height="60%"></canvas>'); // then load chart.
+            var ctxSemanas = document.getElementById('canvasSemanasLista').getContext('2d');
+
+            if (typeof $chartSemanasLista !== "undefined") {
+                $chartSemanasLista.destroy();
+            }
+            
+            const config = montarConfigGraficoSemanas(
+                qtdsSemanaCardsLista,
+                listas,
+                semanasFiltradas
+            )
+
+            $chartSemanasLista = new Chart(ctxSemanas, config);
+            $chartSemanasLista.update()
+
+        }
+        else {
+            $('#chartSemanasLista').html('<div> <strong>Selecione um interalo de semanas para ver o progresso entre semanas</strong></div>'); // then load chart.
+        }
+    }
 
     function htmlForLoading() {
         return `
