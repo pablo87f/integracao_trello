@@ -120,10 +120,10 @@
                                     <select id="selListas" placeholder="Lista"></select>
                                 </div>
                                 <div class='col-md-2 col-sm-6' style="font-weight: bold;">
-                                    Novos Cards:
+                                    <!-- Novos Cards: -->
                                 </div>
                                 <div class='col-md-4 col-sm-6'>
-                                    <input type="checkbox" name="chkNovosCards" id="chkNovosCards" />
+                                    <!-- <input type="checkbox" name="chkNovosCards" id="chkNovosCards" /> -->
                                 </div>
                             </div>
                         </div>
@@ -139,7 +139,8 @@
                     <div class="card-header">
                         GRÁFICOS
                     </div>
-                    <div class="table-responsive" style="height: 50%;">
+
+                    <div class="table-responsive">
                         <br />
                         <div class='col'>
                             <div class='row'>
@@ -175,6 +176,16 @@
 
                                 </div>
                             </div>
+
+                            <br />
+                            <div class="row">
+                                <div id="chartSemanas" class='col-md-12 col-sm-12'>
+
+                                </div>
+                            </div>
+
+
+
                         </div>
                     </div>
 
@@ -193,7 +204,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="padding: 20px;">
                         <table class="align-middle mb-0 table table-borderless table-striped table-hover"
                             id="tabelaCards">
                             <thead>
@@ -394,6 +405,65 @@
         return cfg
     }
 
+
+    function montarConfigGraficoSemanas(dados) {
+
+        const { qtdsCardsSemanas } = dados
+
+        const numerosSemanas = Object.keys(qtdsCardsSemanas)
+        const valoresSemanas = Object.values(qtdsCardsSemanas)
+
+        var cfg = {
+
+            data: {
+                labels: numerosSemanas,
+                datasets: [
+                    {
+                        label: 'Geral',
+                        backgroundColor: 'red',
+                        borderColor: 'red',
+                        data: valoresSemanas,
+                        type: 'line',
+                        fill: false,
+                        lineTension: 0,
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Num. Semana'
+                        },
+
+                    }],
+                    yAxes: [{
+                        display: true,
+                        ticks: {
+                            stepSize: 100,
+                            suggestedMin: 0, 
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Qtd. Cards'
+                        },
+                        gridLines: {
+                            zeroLineWidth: 2,
+                        },
+                    }]
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: true
+                },
+            }
+        };
+
+        return cfg
+    }
+
     function calcularPorcentagemProgressoProjeto(data) {
         if (data && data.tempoEsforcoTotalEstimado && data.totalJaExecutadoSprint) {
 
@@ -439,9 +509,8 @@
         const lista = $.map($("#selListas option:selected"), function (el, i) {
             return $(el).text();
         }).join(',')
-        const novosCards = $('#chkNovosCards').is(':checked')
+        // const novosCards = $('#chkNovosCards').is(':checked')
 
-        console.warn('novosCards', novosCards)
 
         const todosFiltros = {
             semInicio: semInicio ? `semInicio=${semInicio}` : undefined,
@@ -449,7 +518,7 @@
             importancia: importancia ? `importancia=${importancia}` : undefined,
             tipo: tipo ? `tipo=${tipo}` : undefined,
             lista: lista ? `lista=${lista}` : undefined,
-            novosCards: novosCards ? `novosCards=${novosCards}` : undefined
+            // novosCards: novosCards ? `novosCards=${novosCards}` : undefined
         }
 
 
@@ -486,6 +555,8 @@
         montarGraficoTipo(data)
 
         montarGraficoListas(data)
+
+        montarGraficoSemanas(data)
 
         montarTabelaCards(data)
 
@@ -639,6 +710,25 @@
         }
         $chartListas = new Chart(ctxListas, montarConfigGraficoListas(data));
         $chartListas.update()
+    }
+
+    function montarGraficoSemanas(data) {
+
+
+        $('#chartSemanas').html('<canvas id="canvasSemanas" width="90%" height="60%"></canvas>'); // then load chart.
+        var ctxSemanas = document.getElementById('canvasSemanas').getContext('2d');
+
+        if (typeof $chartSemanas !== "undefined") {
+            $chartSemanas.destroy();
+        }
+        const config = montarConfigGraficoSemanas(data)
+
+        console.warn('config', config)
+
+        $chartSemanas = new Chart(ctxSemanas, config);
+        $chartSemanas.update()
+
+
     }
 
 

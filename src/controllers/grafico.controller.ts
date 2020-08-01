@@ -57,6 +57,7 @@ namespace GraficoController {
         semFim?: Number
         importancia?: String
         tipo?: String
+        lista?: String
     }
 
     export async function gerarGraficoManutencao(req: express.Request, res: express.Response) {
@@ -76,6 +77,8 @@ namespace GraficoController {
 
         let dtInicio = semanaAtual.dtInicio
         let dtFim = semanaAtual.dtFim
+        let numSemanaMin = semanaAtual.numSemana
+        let numSemanaMax = semanaAtual.numSemana
 
         const nomeArquivo = `quadro-manutencao.${idQuadro}.json`
 
@@ -98,48 +101,56 @@ namespace GraficoController {
 
 
                 let dadosGerais: DadosGeraisManutencao = { cartoes: [], listas: [], etiquetas: [] }
+                let qtdsCardsSemanas: any = {}
 
-                for (const dados of dadosManutencao) {
+                for (const dadosSemana of dadosManutencao) {
 
-                    dtInicio = dados.dtInicio < dtInicio ? dados.dtInicio : dtInicio
-                    dtFim = dados.dtFim < dtFim ? dados.dtFim : dtFim
+                    dtInicio = dadosSemana.dtInicio < dtInicio ? dadosSemana.dtInicio : dtInicio
+                    dtFim = dadosSemana.dtFim < dtFim ? dadosSemana.dtFim : dtFim
+                    numSemanaMin = Math.min(numSemanaMin, dadosSemana.numSemana)
+                    numSemanaMax = Math.max(numSemanaMax, dadosSemana.numSemana)
 
-                    dadosGerais.cartoes = dadosGerais.cartoes.concat(
-                        dados.dadosGerais.cartoes.filter(c => {
-                            
-                            let deveIrImportancia = true
-                            let deveIrTipo = true
+                    const cardsFiltradosSemana = dadosSemana.dadosGerais.cartoes.filter(c => {
 
-                            if (importancia) {
-                                const importancias = importancia.split(',')
-                                deveIrImportancia = importancias.find(i => i === c.importancia.name) != undefined
-                            }
-                            if (tipo) {
-                                const tipos = tipo.split(',')
-                                deveIrTipo = tipos.find(t => t === c.tipo.name) != undefined
-                            }
-                            return deveIrImportancia && deveIrTipo
-                        })
-                    )
+                        let deveIrImportancia = true
+                        let deveIrTipo = true
+                        let deveIrLista = true
 
-                    dadosGerais.listas = dadosGerais.listas.concat(dados.dadosGerais.listas)
-                    dadosGerais.etiquetas = dadosGerais.etiquetas.concat(dados.dadosGerais.etiquetas)
+                        if (importancia) {
+                            const importancias = importancia.split(',')
+                            deveIrImportancia = importancias.find(i => i === c.importancia.name) != undefined
+                        }
+                        if (tipo) {
+                            const tipos = tipo.split(',')
+                            deveIrTipo = tipos.find(t => t === c.tipo.name) != undefined
+                        }
+                        if (lista) {
+                            const listas = lista.split(',')
+                            deveIrLista = listas.find(l => l === c.list.name) != undefined
+                        }
+                        return deveIrImportancia && deveIrTipo && deveIrLista
+                    })
+
+                    qtdsCardsSemanas = { ...qtdsCardsSemanas, [dadosSemana.numSemana]: cardsFiltradosSemana.length }
+
+                    dadosGerais.cartoes = dadosGerais.cartoes.concat(cardsFiltradosSemana)
+                    dadosGerais.listas = dadosGerais.listas.concat(dadosSemana.dadosGerais.listas)
+                    dadosGerais.etiquetas = dadosGerais.etiquetas.concat(dadosSemana.dadosGerais.etiquetas)
                 }
 
                 dadosGerais.listas = removeDuplicates(dadosGerais.listas, 'name')
                 dadosGerais.etiquetas = removeDuplicates(dadosGerais.etiquetas, 'name')
 
-                const { numSemana } = quadro.dadosManutencao[quadro.dadosManutencao.length - 1]
-
-
-
+                const numSemana = numSemanaMin != numSemanaMax ? `${numSemanaMin} - ${numSemanaMax}` : `${numSemanaMax}`
 
                 const dadosProcessados: DadosProcessadosManutencao = await ManutencaoService.processarDadosManutencao(dadosGerais)
 
                 const semanaAtual = ManutencaoService.obtemInfoSemanaAtual()
                 const semanas = ManutencaoService.obtemInfoSemanasIntervalo(1, semanaAtual.numSemana)
 
-                return res.send({ dtInicio, dtFim, numSemana, ...dadosGerais, ...dadosProcessados, semanas })
+
+
+                return res.send({ dtInicio, dtFim, numSemana, ...dadosGerais, ...dadosProcessados, qtdsCardsSemanas, semanas })
 
             }
             return res.send({ message: "Sem dados processados" })
