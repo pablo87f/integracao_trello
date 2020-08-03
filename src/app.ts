@@ -66,8 +66,7 @@ app.listen(process.env.port || 3000);
 
 console.log('Running at Port 3000');
 
-
-
+// salvar dados todo hora aos 30 min do relógio
 let ruleSalvar = new schedule.RecurrenceRule();
 ruleSalvar.minute = 30;
 
@@ -76,8 +75,9 @@ let jSalvar = schedule.scheduleJob(ruleSalvar, () => {
     Jobs.SalvarDadosManutencao()
 });
 
+// arquivar ao meio dia de domingo
 let ruleArquivar = new schedule.RecurrenceRule();
-ruleArquivar.hour = 0;
+ruleArquivar.hour = 12;
 ruleArquivar.dayOfWeek = 0;
 
 let jArquivar = schedule.scheduleJob(ruleArquivar, () => { 
