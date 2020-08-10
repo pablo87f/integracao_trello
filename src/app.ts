@@ -69,6 +69,7 @@ console.log('Running at Port 3000');
 // salvar dados todo hora aos 30 min do relógio
 let ruleSalvar = new schedule.RecurrenceRule();
 ruleSalvar.minute = 30;
+ruleSalvar.hour = 23;
 
 let jSalvar = schedule.scheduleJob(ruleSalvar, () => { 
     console.warn(new Date().toUTCString(), 'SalvarDadosManutencao')
@@ -77,6 +78,7 @@ let jSalvar = schedule.scheduleJob(ruleSalvar, () => {
 
 // arquivar ao meio dia de domingo
 let ruleArquivar = new schedule.RecurrenceRule();
+ruleArquivar.minute = 0;
 ruleArquivar.hour = 12;
 ruleArquivar.dayOfWeek = 0;
 
