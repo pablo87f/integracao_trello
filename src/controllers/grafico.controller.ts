@@ -56,9 +56,23 @@ namespace GraficoController {
         const semanaAtual = ManutencaoService.obtemInfoSemanaAtual()
         const filtros: IFiltrosGraficoManutencao = req.query
 
+        const nomeArquivo = `quadro-manutencao.${idQuadro}.json`
+
+        const quadro: QuadroManutencao = Repositorio.getItem(nomeArquivo)
+
+        const minSemanaDados = Math.min.apply(Math, quadro.dadosManutencao.map(function (d) {
+            return d.numSemana
+        }));
+
+        const maxSemanaDados = Math.max.apply(Math, quadro.dadosManutencao.map(function (d) {
+            return d.numSemana
+        }));
+
+        const semanas = ManutencaoService.obtemInfoSemanasIntervalo(minSemanaDados, semanaAtual.numSemana)
+
         const {
-            semInicio = semanaAtual.numSemana,
-            semFim = semanaAtual.numSemana,
+            semInicio = maxSemanaDados,
+            semFim = maxSemanaDados,
             importancia,
             tipo,
             lista
@@ -66,12 +80,8 @@ namespace GraficoController {
 
         let dtInicioGeral = semanaAtual.dtInicio
         let dtFimGeral = semanaAtual.dtFim
-        let numSemanaMin = semanaAtual.numSemana
-        let numSemanaMax = semanaAtual.numSemana
-
-        const nomeArquivo = `quadro-manutencao.${idQuadro}.json`
-
-        const quadro: QuadroManutencao = Repositorio.getItem(nomeArquivo)
+        let numSemanaMin = maxSemanaDados
+        let numSemanaMax = minSemanaDados
 
         if (!quadro) return res.status(401).send({ error: 'Projeto não encontrado' })
 
@@ -141,18 +151,18 @@ namespace GraficoController {
                     semanasFiltradas.push(dadosManutencao.numSemana)
 
                     Object.keys(processadosSemana.qtdsCardsEtiquetasImportancia).map((k) => {
-                        const data: Array<Number> = qtdsSemanaCardsImportancia[k] || []
-                        return qtdsSemanaCardsImportancia[k] = data.concat(processadosSemana.qtdsCardsEtiquetasImportancia[k])
+                        const data: Array<any> = qtdsSemanaCardsImportancia[k] || []
+                        return qtdsSemanaCardsImportancia[k] = data.concat([{ x: dadosManutencao.numSemana, y: processadosSemana.qtdsCardsEtiquetasImportancia[k] }])
                     })
 
                     Object.keys(processadosSemana.qtdsCardsEtiquetasTipo).map((k) => {
-                        const data: Array<Number> = qtdsSemanaCardsTipo[k] || []
-                        return qtdsSemanaCardsTipo[k] = data.concat(processadosSemana.qtdsCardsEtiquetasTipo[k])
+                        const data: Array<any> = qtdsSemanaCardsTipo[k] || []
+                        return qtdsSemanaCardsTipo[k] = data.concat([{ x: dadosManutencao.numSemana, y: processadosSemana.qtdsCardsEtiquetasTipo[k] }])
                     })
 
                     Object.keys(processadosSemana.qtdsCardsListas).map((k) => {
-                        const data: Array<Number> = qtdsSemanaCardsLista[k] || []
-                        return qtdsSemanaCardsLista[k] = data.concat(processadosSemana.qtdsCardsListas[k])
+                        const data: Array<any> = qtdsSemanaCardsLista[k] || []
+                        return qtdsSemanaCardsLista[k] = data.concat([{ x: dadosManutencao.numSemana, y: processadosSemana.qtdsCardsListas[k] }])
                     })
 
 
@@ -175,9 +185,6 @@ namespace GraficoController {
                 })
 
                 const numSemana = numSemanaMin != numSemanaMax ? `${numSemanaMin} - ${numSemanaMax}` : `${numSemanaMax}`
-
-                const semanaAtual = ManutencaoService.obtemInfoSemanaAtual()
-                const semanas = ManutencaoService.obtemInfoSemanasIntervalo(1, semanaAtual.numSemana)
 
                 return res.send({
                     dtInicio: dtInicioGeral, dtFim: dtFimGeral, numSemana,

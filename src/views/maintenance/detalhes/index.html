@@ -341,7 +341,7 @@
     });
 
     function filtrarDados() {
-        const filtros = montarFiltrosQuery()
+        const filtros = obtemFiltrosSelecionados()
         montarGraficosManutencao(filtros)
 
     }
@@ -533,10 +533,15 @@
         colorNamesObjects,
         semanas
     ) {
-        const numerosSemanas = Object.keys(semanas)
+
         const serieTitle = Object.keys(dataSeries)
 
+        const setLabes = new Set()
+
         const datasets = serieTitle.map((title) => {
+
+            dataSeries[title].map(d => setLabes.add(d.x))
+
             const objColor = colorNamesObjects.find(e => e.name == title)
             const dataset = {
                 label: title,
@@ -554,7 +559,7 @@
         var cfg = {
 
             data: {
-                labels: numerosSemanas,
+                labels: Array.from(setLabes),
                 datasets
             },
             options: {
@@ -638,7 +643,7 @@
         }
     }
 
-    function montarFiltrosQuery() {
+    function obtemFiltrosSelecionados() {
 
         const semInicio = $('#selSemanaInicio').find(":selected").val();
         const semFim = $('#selSemanaFim').find(":selected").val();
@@ -668,7 +673,7 @@
 
         return chavesFiltrosAplicaveis.map(k => todosFiltros[k]).join('&')
     }
-
+    
     function montarGraficosManutencao(filtrosQuery = '') {
 
         if (id_quadro) {
@@ -907,7 +912,7 @@
             if (typeof $chartSemanasTipo !== "undefined") {
                 $chartSemanasTipo.destroy();
             }
-            
+
             const config = montarConfigGraficoSemanas(
                 qtdsSemanaCardsTipo,
                 etiquetasTipo,
@@ -940,7 +945,7 @@
             if (typeof $chartSemanasLista !== "undefined") {
                 $chartSemanasLista.destroy();
             }
-            
+
             const config = montarConfigGraficoSemanas(
                 qtdsSemanaCardsLista,
                 listas,
