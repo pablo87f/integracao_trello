@@ -71,7 +71,7 @@ namespace GraficoController {
         const semanas = ManutencaoService.obtemInfoSemanasIntervalo(minSemanaDados, semanaAtual.numSemana)
 
         const {
-            semInicio = maxSemanaDados,
+            semInicio = minSemanaDados,
             semFim = maxSemanaDados,
             importancia,
             tipo,
