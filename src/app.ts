@@ -66,6 +66,8 @@ app.listen(process.env.port || 3000);
 
 console.log('Running at Port 3000');
 
+Jobs.SalvarDadosManutencao()
+
 // salvar dados todo hora aos 30 min do relógio
 let ruleSalvar = new schedule.RecurrenceRule();
 ruleSalvar.minute = 30;
