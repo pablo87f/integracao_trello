@@ -130,18 +130,6 @@
                     </div>
 
                     <div class="d-block text-center card-footer">
-
-                    </div>
-                </div>
-                <!-- fim Busca -->
-                <!-- graficos -->
-                <div class="main-card mb-3 card">
-                    <div class="card-header">
-                        GRÁFICOS
-                    </div>
-
-                    <div class="table-responsive">
-                        <br />
                         <div class='col'>
                             <div class='row'>
                                 <div class='col-md-2 col-sm-12 text-center ' style="font-weight: bold;">
@@ -163,85 +151,132 @@
                                     <span id='dataFim'>--/--/--</span>
                                 </div>
                             </div>
-
-                            <br />
-                            <div class="row">
-                                <div id="chartContainerImportancia" class='col-md-4 col-sm-10'>
-
-                                </div>
-                                <div id="chartContainerTipo" class='col-md-4 col-sm-10'>
-
-                                </div>
-                                <div id="chartContainerListas" class='col-md-4 col-sm-10'>
-
-                                </div>
-                            </div>
-
-                            <br />
-                            <div class="row">
-                                <div id="chartSemanasImportancia" class='col-md-12 col-sm-12'>
-
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div id="chartSemanasTipo" class='col-md-12 col-sm-12'>
-
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div id="chartSemanasLista" class='col-md-12 col-sm-12'>
-
-                                </div>
-                            </div>
-
-
-
                         </div>
                     </div>
-
-                    <div class="d-block text-center card-footer">
-
-                    </div>
                 </div>
-                <!-- fim graficos -->
-                <!-- cards -->
+                <!-- fim Busca -->
+                <!-- graficos importancia-->
                 <div class="main-card mb-3 card">
-                    <div class="card-header">Cards
-                        <div class="btn-actions-pane-right">
-                            <div role="group" class="btn-group-sm btn-group">
-                                <!-- <button class="active btn btn-focus">Last Week</button>
-                                <button class="btn btn-focus">All Month</button> -->
+                    <div class="card-header">
+                        GRÁFICOS IMPORTÂNCIA
+                    </div>
+
+                    <div class="table-responsive">
+                        <br />
+                        <div class='col'>
+
+                            <div class="row">
+                                <div id="chartContainerImportancia" class='col-md-3 col-sm-8'>
+
+                                </div>
+                                <div id="chartSemanasImportancia" class='col-md-9 col-sm-12'>
+
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="table-responsive" style="padding: 20px;">
-                        <table class="align-middle mb-0 table table-borderless table-striped table-hover"
-                            id="tabelaCards">
-                            <thead>
-                                <tr>
-                                    <!-- <th class="text-center">Nome</th> -->
-                                    <th>Nome</th>
-                                    <th class="text-center">Lista</th>
-                                    <th class="text-center">Importância</th>
-                                    <th class="text-center">Tipo</th>
-                                    <th class="text-center">Criado em</th>
-                                    <th class="text-center">Duração</th>
-                                </tr>
-                            </thead>
-                            <tbody id="corpoTabelaCards">
 
-                            </tbody>
-                        </table>
+                    <div class="d-block text-center card-footer">
+
+                    </div>
+                </div>
+                <!-- fim graficos importancia-->
+
+                <!-- graficos tipo -->
+                <div class="main-card mb-3 card">
+                    <div class="card-header">
+                        GRÁFICOS TIPOS
+                    </div>
+                    <div class="table-responsive">
+                        <br />
+                        <div class='col'>
+
+                            <div class="row">
+
+                                <div id="chartContainerTipo" class='col-md-3 col-sm-8'>
+
+                                </div>
+                                <div id="chartSemanasTipo" class='col-md-9 col-sm-12'>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="d-block text-center card-footer">
 
                     </div>
                 </div>
-                <!-- fim cards -->
+
+
+           
+            <!-- fim graficos tipo -->
+
+            <!-- graficos listas -->
+            <div class="main-card mb-3 card">
+                <div class="card-header">
+                    GRÁFICOS LISTAS
+                </div>
+                <div class="table-responsive">
+                    <br />
+                    <div class='col'>
+
+                        <div class="row">
+                            <div id="chartContainerListas" class='col-md-3 col-sm-8'>
+
+                            </div>
+                            <div id="chartSemanasLista" class='col-md-9 col-sm-12'>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-block text-center card-footer">
+
+                </div>
+            </div>
+
+        </div>
+        <!-- fim graficos listas -->
+
+    </div>
+        <!-- cards -->
+        <div class="main-card mb-3 card">
+            <div class="card-header">Cards
+                <div class="btn-actions-pane-right">
+                    <div role="group" class="btn-group-sm btn-group">
+                        <!-- <button class="active btn btn-focus">Last Week</button>
+                                <button class="btn btn-focus">All Month</button> -->
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive" style="padding: 20px;">
+                <table class="align-middle mb-0 table table-borderless table-striped table-hover" id="tabelaCards">
+                    <thead>
+                        <tr>
+                            <!-- <th class="text-center">Nome</th> -->
+                            <th>Nome</th>
+                            <th class="text-center">Lista</th>
+                            <th class="text-center">Importância</th>
+                            <th class="text-center">Tipo</th>
+                            <th class="text-center">Criado em</th>
+                            <th class="text-center">Duração</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoTabelaCards">
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-block text-center card-footer">
 
             </div>
         </div>
+        <!-- fim cards -->
+
     </div>
+</div>
+</div>
 </div>
 
 <div class="modal">
@@ -673,7 +708,7 @@
 
         return chavesFiltrosAplicaveis.map(k => todosFiltros[k]).join('&')
     }
-    
+
     function montarGraficosManutencao(filtrosQuery = '') {
 
         if (id_quadro) {
