@@ -12,7 +12,7 @@ const _feriados = {
     '24/12/2020': 'Véspera Natal',
     '25/12/2020': 'Natal',
     '31/12/2020': 'Véspera ano novo',
-    '01/12/2021': 'Dia internacional da paz',
+    '01/01/2021': 'Dia internacional da paz',
 }
 
 module.exports = _feriados
